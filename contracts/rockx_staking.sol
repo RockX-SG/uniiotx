@@ -8,8 +8,9 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     // errors
     error MintZero();
 
-    address public xIOTEXAddress;   // xIOTEX token address
-    uint256 private totalPending;   // total pending IOTEXs awaiting to be staked
+    address public iotexSystemStakingContract;  // IoTeX system staking contract
+    address public xIOTEXAddress;               // xIOTEX token address
+    uint256 private totalPending;               // total pending IOTEXs awaiting to be staked
 
     /**
      * ======================================================================================
@@ -39,6 +40,16 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     function initialize() initializer public {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
+    }
+
+
+    /**
+     * @dev set eth deposit contract address
+     */
+    function setIOTEXSystemStakingContract(address _iotexSystemStakingContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        iotexSystemStakingContract = _iotexSystemStakingContract;
+
+        emit SystemStakingContractSet(_iotexSystemStakingContract);
     }
 
     /**
@@ -113,6 +124,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
      *
      * ======================================================================================
      */
+    event SystemStakingContractSet(address addr);
     event XIOTEXContractSet(address addr);
     event DepositEvent(address indexed from, uint256 amount);
 }
