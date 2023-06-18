@@ -10,6 +10,8 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
 
     address public iotexSystemStakingContract;  // IoTeX system staking contract
     address public xIOTEXAddress;               // xIOTEX token address
+    address public redeemContract;          // redeeming contract for user to pull iotexs
+
     uint256 private totalPending;               // total pending IOTEXs awaiting to be staked
 
     /**
@@ -61,6 +63,14 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         emit XIOTEXContractSet(_xIOTEXAddress);
     }
 
+    /**
+     * @dev set redeem contract
+     */
+    function setRedeemContract(address _redeemContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        redeemContract = _redeemContract;
+
+        emit RedeemContractSet(_redeemContract);
+    }
 
     /**
      * ======================================================================================
@@ -115,6 +125,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
 
     function stake() private {
         // TODO: to be implemented
+
     }
 
     /**
@@ -127,4 +138,5 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     event SystemStakingContractSet(address addr);
     event XIOTEXContractSet(address addr);
     event DepositEvent(address indexed from, uint256 amount);
+    event RedeemContractSet(address addr);
 }
