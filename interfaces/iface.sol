@@ -10,3 +10,7 @@ interface SystemStakingContract {
     function stake(uint256 _duration, address _delegate) external payable returns (uint256);
     function merge(uint256[] calldata tokenIds, uint256 _newDuration) external payable;
 }
+
+interface IRockXRedeem {
+    function pay(address account) external payable;
+}
