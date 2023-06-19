@@ -5,8 +5,11 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
 contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgradeable {
-    // errors
-    error MintZero();
+    // track iotex debts to return to async caller
+    struct Debt {
+        address account;
+        uint256 amount;
+    }
 
     address public iotexSystemStakingContract;  // IoTeX system staking contract
     address public xIOTEXAddress;               // xIOTEX token address
@@ -14,6 +17,13 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
 
     uint256 private totalPending;               // total pending IOTEXs awaiting to be staked
     uint256 private totalDebts;             // track current unpaid debts
+
+
+    // FIFO of debts from redeemFromDelegates
+    mapping(uint256=>Debt) private iotexDebts;
+    uint256 private firstDebt;
+    uint256 private lastDebt;
+    mapping(address=>uint256) private userDebts;    // debts from user's perspective
 
     /**
      * ======================================================================================
@@ -43,6 +53,10 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     function initialize() initializer public {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
+
+        // init default values
+        firstDebt = 1;
+        lastDebt = 0;
     }
 
 
@@ -92,6 +106,21 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     function getCurrentDebts() external view returns (uint256) { return totalDebts; }
 
     /**
+     * @dev return debt of index
+     */
+    function checkDebt(uint256 index) external view returns (address account, uint256 amount) {
+        Debt memory debt = iotexDebts[index];
+        return (debt.account, debt.amount);
+    }
+
+    /**
+     * @dev return debt queue index
+     */
+    function getDebtQueue() external view returns (uint256 first, uint256 last) {
+        return (firstDebt, lastDebt);
+    }
+
+    /**
      * ======================================================================================
      *
      * EXTERNAL FUNCTIONS
@@ -104,7 +133,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
      */
     function mint() external payable returns (uint256 minted) {
         amount = msg.value;
-        if  (amount == 0) revert MintZero();
+        require(amount > 0, "USR002");
 
         // merge
         _merge();
@@ -155,7 +184,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     function _enqueueDebt(address account, uint256 amount) internal {
         // debt is paid in FIFO queue
         lastDebt += 1;
-        etherDebts[lastDebt] = Debt({account:account, amount:amount});
+        iotexDebts[lastDebt] = Debt({account:account, amount:amount});
 
         // track user debts
         userDebts[account] += amount;
@@ -166,6 +195,48 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         emit DebtQueued(account, amount);
     }
 
+    function _dequeueDebt() internal returns (Debt memory debt) {
+        require(lastDebt >= firstDebt, "SYS022");  // non-empty queue
+        debt = iotexDebts[firstDebt];
+        delete iotexDebts[firstDebt];
+        firstDebt += 1;
+    }
+
+    /**
+     * @dev pay debts for a given amount
+     */
+    function _payDebts(uint256 total) internal returns(uint256 amountPaid) {
+        require(address(redeemContract) != address(0x0), "SYS023");
+
+        // iotexs to pay
+        for (uint i=firstDebt;i<=lastDebt;i++) {
+            if (total == 0) {
+                break;
+            }
+
+            Debt storage debt = iotexDebts[i];
+
+            // clean debts
+            uint256 toPay = debt.amount <= total? debt.amount:total;
+            debt.amount -= toPay;
+            total -= toPay;
+            userDebts[debt.account] -= toPay;
+            amountPaid += toPay;
+
+            // transfer money to debt contract
+            IRockXRedeem(redeemContract).pay{value:toPay}(debt.account);
+
+            // dequeue if cleared
+            if (debt.amount == 0) {
+                _dequeueDebt();
+            }
+        }
+
+        totalDebts -= amountPaid;
+
+        // track balance
+        _balanceDecrease(amountPaid);
+    }
 
     /**
      * ======================================================================================
@@ -190,6 +261,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
      *
      * ======================================================================================
      */
+    event DelegateStopped(uint256 stoppedCount);
     event DebtQueued(address creditor, uint256 amountEther);
     event SystemStakingContractSet(address addr);
     event XIOTEXContractSet(address addr);
