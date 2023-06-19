@@ -5,6 +5,9 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
 contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgradeable {
+    // errors
+    error ZeroDelegates();
+
     // track iotex debts to return to async caller
     struct Debt {
         address account;
@@ -24,6 +27,9 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     uint256 private firstDebt;
     uint256 private lastDebt;
     mapping(address=>uint256) private userDebts;    // debts from user's perspective
+
+    // delegates
+    address[] delegateRegistry;
 
     /**
      * ======================================================================================
@@ -59,6 +65,18 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         lastDebt = 0;
     }
 
+
+    /**
+     * @dev register a new batch of validators
+     */
+    function registerDelegates(address[] delegates) external onlyRole(REGISTRY_ROLE) {
+        if (delegates.length == 0) revert ZeroDelegates();
+        delete delegates;
+        uint256 len = delegates.length;
+        for (uint256 i = 0; i < len; i++) {
+            delegateRegistry.push(delegates[i]);
+        }
+    }
 
     /**
      * @dev set eth deposit contract address
@@ -118,6 +136,20 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
      */
     function getDebtQueue() external view returns (uint256 first, uint256 last) {
         return (firstDebt, lastDebt);
+    }
+
+    /**
+     * @dev return number of registered delegates
+     */
+    function getDelegatesCount() external view returns (uint256) {
+        return delegateRegistry.length;
+    }
+
+    /**
+     * @dev return all registered delegates
+     */
+    function getAllDelegates() external view returns (address[]) {
+        return delegateRegistry;
     }
 
     /**
