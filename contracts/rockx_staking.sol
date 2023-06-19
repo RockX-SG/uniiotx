@@ -29,7 +29,16 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     mapping(address=>uint256) private userDebts;    // debts from user's perspective
 
     // delegates
-    address[] delegateRegistry;
+    address[] private delegateRegistry;
+
+    // next delegate index
+    uint256 private nextDelegateIndex;
+
+    // default stake params
+    uint256 private stakeAmount01 = 10000;
+    uint256 private stakeAmount02 = 100000;
+    uint256 private stakeAmount03 = 1000000;
+    uint256 private stakeDuration = 3600*91;
 
     /**
      * ======================================================================================
@@ -179,7 +188,14 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         emit DepositEvent(msg.sender, amount);
 
         // stake
-        _stake();
+        count = totalPending / stakeAmount03;
+        _stake(stakeAmount03, count);
+
+        count = totalPending / stakeAmount02;
+        _stake(stakeAmount02, count);
+
+        count = totalPending / stakeAmount01;
+        _stake(stakeAmount01, count);
 
         return toMint;
     }
@@ -282,8 +298,10 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         // TODO: to be implemented
     }
 
-    function _stake() private {
+    function _stake(uint256 amount, uint256 count) private {
+        if (count == 0) return;
         // TODO: to be implemented
+        totalPending -= amount*count;
     }
 
     /**
