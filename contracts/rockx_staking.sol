@@ -13,6 +13,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     address public redeemContract;          // redeeming contract for user to pull iotexs
 
     uint256 private totalPending;               // total pending IOTEXs awaiting to be staked
+    uint256 private totalDebts;             // track current unpaid debts
 
     /**
      * ======================================================================================
@@ -85,6 +86,10 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
      */
     function getPendingIotexs() external view returns (uint256) { return totalPending; }
 
+    /**
+     * @dev return current debts
+     */
+    function getCurrentDebts() external view returns (uint256) { return totalDebts; }
 
     /**
      * ======================================================================================
@@ -102,7 +107,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         if  (amount == 0) revert MintZero();
 
         // merge
-        merge();
+        _merge();
 
         // TODO: to be optimized
 
@@ -113,19 +118,69 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         emit DepositEvent(msg.sender, amount);
 
         // stake
-        stake();
+        _stake();
 
         return toMint;
     }
 
+    // TODO: to be modified
+    function redeemFromDelegates(uint256 iotexsToRedeem, uint256 maxToBurn, uint256 deadline) external nonReentrant returns(uint256 burned) {
+        require(block.timestamp < deadline, "USR001");
+        require(iotexsToRedeem % DEPOSIT_SIZE == 0, "USR005");
 
-    function merge() private {
+        uint256 totalXIOTEX = IERC20(xIOTEXAddress).totalSupply();
+        uint256 xIOTEXToBurn = totalXIOTEX * iotexsToRedeem / currentReserve(); // TODO:
+        require(xIOTEXToBurn <= maxToBurn, "USR004");
+
+        // NOTE: the following procdure must keep exchangeRatio invariant:
+        // transfer xETH from sender & burn
+        IERC20(xETHAddress).safeTransferFrom(msg.sender, address(this), xIOTEXToBurn);
+        IMintableContract(xIOTEXAddress).burn(xIOTEXToBurn);
+
+        // queue ether debts
+        _enqueueDebt(msg.sender, iotexsToRedeem);
+
+        // return burned
+        return xIOTEXToBurn;
+    }
+
+    /**
+     * ======================================================================================
+     *
+     * INTERNAL FUNCTIONS
+     *
+     * ======================================================================================
+     */
+
+    function _enqueueDebt(address account, uint256 amount) internal {
+        // debt is paid in FIFO queue
+        lastDebt += 1;
+        etherDebts[lastDebt] = Debt({account:account, amount:amount});
+
+        // track user debts
+        userDebts[account] += amount;
+        // track total debts
+        totalDebts += amount;
+
+        // log
+        emit DebtQueued(account, amount);
+    }
+
+
+    /**
+     * ======================================================================================
+     *
+     * PRIVATE FUNCTIONS
+     *
+     * ======================================================================================
+     */
+
+    function _merge() private {
         // TODO: to be implemented
     }
 
-    function stake() private {
+    function _stake() private {
         // TODO: to be implemented
-
     }
 
     /**
@@ -135,6 +190,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
      *
      * ======================================================================================
      */
+    event DebtQueued(address creditor, uint256 amountEther);
     event SystemStakingContractSet(address addr);
     event XIOTEXContractSet(address addr);
     event DepositEvent(address indexed from, uint256 amount);

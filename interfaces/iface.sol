@@ -2,6 +2,7 @@ pragma solidity ^0.8.9;
 
 interface IMintableContract is IERC20 {
     function mint(address account, uint256 amount) external;
+    function burn(uint256 amount) external;
 }
 
 // @notice This is the IoTeX system contract interface. It issues an NFT token for each bucket creation.
