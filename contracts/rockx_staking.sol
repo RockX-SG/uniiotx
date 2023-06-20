@@ -8,6 +8,12 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     // errors
     error ZeroDelegates();
 
+    enum BucketType {
+        BucketType1,
+        BucketType2,
+        BucketType3
+    }
+
     // track iotex debts to return to async caller
     struct Debt {
         address account;
@@ -39,6 +45,8 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     uint256 private stakeAmount02 = 100000;
     uint256 private stakeAmount03 = 1000000;
     uint256 private stakeDuration = 3600*91;
+
+    uint256 private mergeThreshold = 10;
 
     /**
      * ======================================================================================
@@ -171,14 +179,11 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
      */
 
     /**
-     * @dev mint xIOTEX with IOTEX
+     * @dev mint uniIOTEX with IOTEX
      */
     function deposit() external payable returns (uint256 minted) {
         amount = msg.value;
         require(amount > 0, "USR002");
-
-        // merge
-        _merge();
 
         // TODO: to be optimized
 
@@ -187,7 +192,11 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
 
         // stake
         _stake();
-        return toMint;
+
+        // merge
+        _merge();
+
+    return toMint;
     }
 
     // TODO: to be modified
@@ -284,10 +293,6 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
      * ======================================================================================
      */
 
-    function _merge() private {
-        // TODO: to be implemented+lock
-    }
-
     // todo: to be optimized
     function _mint() private {
         uint256 toMint = 1 * amount; // default exchange ratio 1:1
@@ -296,7 +301,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         emit DepositEvent(msg.sender, amount);
     }
 
-    function _stake() internal {
+    function _stake() private {
         delegate = _nextDelegate();
 
         count = totalPending / stakeAmount03;
@@ -309,15 +314,35 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         _requestStake(stakeAmount01, count, delegate);
     }
 
-    function _requestStake(uint256 amount, uint256 count, address delegate) private {
+    function _merge() private {
+        count = _lockedTokenIdCount(BucketType.BucketType1);
+        if (count >= mergeThreshold) {
+            tokenIds = _removeLockedTokenIds(BucketType.BucketType1, mergeThreshold);
+            iotexSystemStakingContract.merge(tokenIds,stakeDuration);
+            theFirst = new uint256[](1);
+            theFirst[0] = tokenIds[0];
+            _pushLockedTokens(BucketType.BucketType2, theFirst);
+        }
+
+        count = _lockedTokenIdCount(BucketType.BucketType2);
+        if (count >= mergeThreshold) {
+            tokenIds = _removeLockedTokenIds(BucketType.BucketType2, mergeThreshold);
+            iotexSystemStakingContract.merge(tokenIds,stakeDuration);
+            theFirst = new uint256[](1);
+            theFirst[0] = tokenIds[0];
+            _pushLockedTokens(BucketType.BucketType3, theFirst);
+        }
+    }
+
+    function _requestStake(BucketType bucketType, uint256 amount, uint256 count, address delegate) private{
         if (count == 0) return;
         totalAmount = amount*count;
         if (count == 1) {
-            // TODO: handle returned tokenId
-            iotexSystemStakingContract.stake{value:totalAmount}(stakeDuration, delegate);
+            tokenId = iotexSystemStakingContract.stake{value:totalAmount}(stakeDuration, delegate);
+            _addLockedTokenId(BucketType.bucketType, tokenId);
         } else {
-            // TODO: handle returned tokenId
-            iotexSystemStakingContract.stake{value:totalAmount}(amount,stakeDuration, delegate, count);
+            firstTokenId = iotexSystemStakingContract.stake{value:totalAmount}(amount,stakeDuration, delegate, count);
+            _addLockedTokenIds(BucketType.bucketType, firstTokenId, count);
         }
         totalPending -= totalAmount;
     }
@@ -326,6 +351,27 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         delegate = delegates[nextDelegateIndex];
         nextDelegateIndex = (nextDelegateIndex + 1) % delegates.length;
         return delegate;
+    }
+
+    function _lockedTokenIdCount(BucketType bucketType) private returns (uint256) {
+        // TODO:
+        return 0;
+    }
+
+    function _removeLockedTokenIds(BucketType bucketType, uint256 count) private returns (uint256[]) {
+        // TODO:
+        return 0;
+    }
+
+    function _addLockedTokenId(BucketType bucketType, uint256 tokenId) private {
+        // TODO:
+        for (i = 0; i < tokensIds.length; i++) {
+
+        }
+    }
+
+    function _addLockedTokenIds(BucketType bucketType, uint256 firstTokenId, uint256 count) private {
+        // TODO:
     }
 
     /**
