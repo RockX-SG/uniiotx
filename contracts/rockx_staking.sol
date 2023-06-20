@@ -48,6 +48,17 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
 
     uint256 private mergeThreshold = 10;
 
+    // token ids
+    struct tokenIds {
+        uint256 size;
+        // startId => count
+        mapping(uint256 => uint256) data;
+    }
+    mapping(BucketType => tokenIds) public lockedTokenIds;
+    mapping(BucketType => tokenIds) public unlockedTokenIds;
+    mapping(BucketType => tokenIds) public unstakedTokenIds;
+    mapping(BucketType => tokenIds) public withdrawedTokenIds;
+
     /**
      * ======================================================================================
      *
@@ -339,10 +350,10 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         totalAmount = amount*count;
         if (count == 1) {
             tokenId = iotexSystemStakingContract.stake{value:totalAmount}(stakeDuration, delegate);
-            _addLockedTokenId(BucketType.bucketType, tokenId);
+            _addLockedTokenIds(BucketType.bucketType, tokenId,1);
         } else {
-            firstTokenId = iotexSystemStakingContract.stake{value:totalAmount}(amount,stakeDuration, delegate, count);
-            _addLockedTokenIds(BucketType.bucketType, firstTokenId, count);
+            startTokenId = iotexSystemStakingContract.stake{value:totalAmount}(amount,stakeDuration, delegate, count);
+            _addLockedTokenIds(BucketType.bucketType, startTokenId, count);
         }
         totalPending -= totalAmount;
     }
@@ -354,24 +365,18 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     }
 
     function _lockedTokenIdCount(BucketType bucketType) private returns (uint256) {
-        // TODO:
-        return 0;
+        return lockedTokenIds[bucketType].size;
     }
 
     function _removeLockedTokenIds(BucketType bucketType, uint256 count) private returns (uint256[]) {
+//        delete lockedTokenIds[bucketType].ids[]
         // TODO:
         return 0;
     }
 
-    function _addLockedTokenId(BucketType bucketType, uint256 tokenId) private {
-        // TODO:
-        for (i = 0; i < tokensIds.length; i++) {
-
-        }
-    }
-
     function _addLockedTokenIds(BucketType bucketType, uint256 firstTokenId, uint256 count) private {
-        // TODO:
+        lockedTokenIds[bucketType].data[firstTokenId] = count;
+        lockedTokenIds[bucketType].size += count;
     }
 
     /**
