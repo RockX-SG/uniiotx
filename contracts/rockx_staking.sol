@@ -14,9 +14,9 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
         uint256 amount;
     }
 
-    address public iotexSystemStakingContract;  // IoTeX system staking contract
-    address public xIOTEXAddress;               // xIOTEX token address
-    address public redeemContract;          // redeeming contract for user to pull iotexs
+    ISystemStakingContract public iotexSystemStakingContract;  // IoTeX system staking contract
+    IMintableContract public xIOTEXAddress;               // xIOTEX token address
+    IRockXRedeem public redeemContract;          // redeeming contract for user to pull iotexs
 
     uint256 private totalPending;               // total pending IOTEXs awaiting to be staked
     uint256 private totalDebts;             // track current unpaid debts
@@ -29,7 +29,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     mapping(address=>uint256) private userDebts;    // debts from user's perspective
 
     // delegates
-    address[] private delegateRegistry;
+    address[] private delegates;
 
     // next delegate index
     uint256 private nextDelegateIndex;
@@ -78,12 +78,13 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     /**
      * @dev register a new batch of validators
      */
-    function registerDelegates(address[] delegates) external onlyRole(REGISTRY_ROLE) {
-        if (delegates.length == 0) revert ZeroDelegates();
+    function registerDelegates(address[] _delegates) external onlyRole(REGISTRY_ROLE) {
+        uint256 len = _delegates.length;
+        if (len == 0) revert ZeroDelegates();
         delete delegates;
-        uint256 len = delegates.length;
+        delete nextDelegateIndex;
         for (uint256 i = 0; i < len; i++) {
-            delegateRegistry.push(delegates[i]);
+            delegates.push(_delegates[i]);
         }
     }
 
@@ -151,14 +152,14 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
      * @dev return number of registered delegates
      */
     function getDelegatesCount() external view returns (uint256) {
-        return delegateRegistry.length;
+        return delegates.length;
     }
 
     /**
      * @dev return all registered delegates
      */
     function getAllDelegates() external view returns (address[]) {
-        return delegateRegistry;
+        return delegates;
     }
 
     /**
@@ -172,7 +173,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     /**
      * @dev mint xIOTEX with IOTEX
      */
-    function mint() external payable returns (uint256 minted) {
+    function deposit() external payable returns (uint256 minted) {
         amount = msg.value;
         require(amount > 0, "USR002");
 
@@ -181,22 +182,11 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
 
         // TODO: to be optimized
 
-        // mint xIOTEX
-        uint256 toMint = 1 * amount; // default exchange ratio 1:1
-        IMintableContract(xIOTEXAddress).mint(msg.sender, toMint);
-        totalPending += amount;
-        emit DepositEvent(msg.sender, amount);
+        // mint uniIOTEX
+        _mint();
 
         // stake
-        count = totalPending / stakeAmount03;
-        _stake(stakeAmount03, count);
-
-        count = totalPending / stakeAmount02;
-        _stake(stakeAmount02, count);
-
-        count = totalPending / stakeAmount01;
-        _stake(stakeAmount01, count);
-
+        _stake();
         return toMint;
     }
 
@@ -295,13 +285,47 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
      */
 
     function _merge() private {
-        // TODO: to be implemented
+        // TODO: to be implemented+lock
     }
 
-    function _stake(uint256 amount, uint256 count) private {
+    // todo: to be optimized
+    function _mint() private {
+        uint256 toMint = 1 * amount; // default exchange ratio 1:1
+        xIOTEXAddress.mint(msg.sender, toMint);
+        totalPending += amount;
+        emit DepositEvent(msg.sender, amount);
+    }
+
+    function _stake() internal {
+        delegate = _nextDelegate();
+
+        count = totalPending / stakeAmount03;
+        _requestStake(stakeAmount03, count, delegate);
+
+        count = totalPending / stakeAmount02;
+        _requestStake(stakeAmount02, count, delegate);
+
+        count = totalPending / stakeAmount01;
+        _requestStake(stakeAmount01, count, delegate);
+    }
+
+    function _requestStake(uint256 amount, uint256 count, address delegate) private {
         if (count == 0) return;
-        // TODO: to be implemented
-        totalPending -= amount*count;
+        totalAmount = amount*count;
+        if (count == 1) {
+            // TODO: handle returned tokenId
+            iotexSystemStakingContract.stake{value:totalAmount}(stakeDuration, delegate);
+        } else {
+            // TODO: handle returned tokenId
+            iotexSystemStakingContract.stake{value:totalAmount}(amount,stakeDuration, delegate, count);
+        }
+        totalPending -= totalAmount;
+    }
+
+    function _nextDelegate() private returns (address) {
+        delegate = delegates[nextDelegateIndex];
+        nextDelegateIndex = (nextDelegateIndex + 1) % delegates.length;
+        return delegate;
     }
 
     /**
