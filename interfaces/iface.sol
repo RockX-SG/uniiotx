@@ -27,6 +27,6 @@ interface ISystemStakingContract {
     function merge(uint256[] calldata tokenIds, uint256 _newDuration) external payable;
 }
 
-interface IRockXRedeem {
+interface IIOTXClear {
     function pay(address account) external payable;
 }

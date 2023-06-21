@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver {
+contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver {
     // errors
     error ZeroDelegates();
 
@@ -23,7 +23,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
 
     ISystemStakingContract public iotexSystemStakingContract;  // IoTeX system staking contract
     IMintableContract public xIOTEXAddress;               // xIOTEX token address
-    IRockXRedeem public redeemContract;          // redeeming contract for user to pull iotexs
+    IIOTXClear public redeemContract;          // redeeming contract for user to pull iotexs
 
     uint256 private totalPending;               // total pending IOTEXs awaiting to be staked
     uint256 private totalDebts;             // track current unpaid debts
@@ -283,7 +283,7 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
             amountPaid += toPay;
 
             // transfer money to debt contract
-            IRockXRedeem(redeemContract).pay{value:toPay}(debt.account);
+            IIOTXClear(redeemContract).pay{value:toPay}(debt.account);
 
             // dequeue if cleared
             if (debt.amount == 0) {
