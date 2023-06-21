@@ -3,8 +3,9 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgradeable {
+contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver {
     // errors
     error ZeroDelegates();
 
@@ -377,6 +378,16 @@ contract RockXStaking is Initializable, PausableUpgradeable, AccessControlUpgrad
     function _addLockedTokenIds(BucketType bucketType, uint256 firstTokenId, uint256 count) private {
         lockedTokenIds[bucketType].data[firstTokenId] = count;
         lockedTokenIds[bucketType].size += count;
+    }
+
+    // must implement IERC721Receiver to receive staking NFT
+    function onERC721Received(
+        address, // operator
+        address, // from
+        uint256, // tokenId
+        bytes calldata // data
+    ) external pure override returns (bytes4) {
+        return this.onERC721Received.selector;
     }
 
     /**
