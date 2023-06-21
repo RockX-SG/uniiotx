@@ -52,7 +52,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     /**
      * @dev pay debts from rockx staking contract
      */
-    function pay(address account) external override payable {
+    function payDebt(address account) external override payable {
         balances[account] += msg.value;
         totalBalance += msg.value;
 
