@@ -15,22 +15,22 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         BucketType3
     }
 
-    // track iotex debts to return to async caller
+    // track IOTX debts to return to async caller
     struct Debt {
         address account;
         uint256 amount;
     }
 
-    ISystemStakingContract public iotexSystemStakingContract;  // IoTeX system staking contract
-    IMintableContract public xIOTEXAddress;               // xIOTEX token address
-    IIOTXClear public redeemContract;          // redeeming contract for user to pull iotexs
+    ISystemStakingContract public IOTXSystemStakingContract;  // IOTX system staking contract
+    IMintableContract public xIOTXAddress;               // xIOTX token address
+    IIOTXClear public redeemContract;          // redeeming contract for user to pull IOTXs
 
-    uint256 private totalPending;               // total pending IOTEXs awaiting to be staked
+    uint256 private totalPending;               // total pending IOTXs awaiting to be staked
     uint256 private totalDebts;             // track current unpaid debts
 
 
     // FIFO of debts from redeemFromDelegates
-    mapping(uint256=>Debt) private iotexDebts;
+    mapping(uint256=>Debt) private IOTXDebts;
     uint256 private firstDebt;
     uint256 private lastDebt;
     mapping(address=>uint256) private userDebts;    // debts from user's perspective
@@ -111,19 +111,19 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     /**
      * @dev set eth deposit contract address
      */
-    function setIOTEXSystemStakingContract(address _iotexSystemStakingContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        iotexSystemStakingContract = _iotexSystemStakingContract;
+    function setIOTXSystemStakingContract(address _IOTXSystemStakingContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        IOTXSystemStakingContract = _IOTXSystemStakingContract;
 
-        emit SystemStakingContractSet(_iotexSystemStakingContract);
+        emit SystemStakingContractSet(_IOTXSystemStakingContract);
     }
 
     /**
-     * @dev set xIOTEX token contract address
+     * @dev set xIOTX token contract address
      */
-    function setXIOTEXContractAddress(address _xIOTEXAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        xIOTEXAddress = _xIOTEXAddress;
+    function setXIOTXContractAddress(address _xIOTXAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        xIOTXAddress = _xIOTXAddress;
 
-        emit XIOTEXContractSet(_xIOTEXAddress);
+        emit XIOTXContractSet(_xIOTXAddress);
     }
 
     /**
@@ -144,9 +144,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
 
     /**
-     * @dev return pending iotexs
+     * @dev return pending IOTXs
      */
-    function getPendingIotexs() external view returns (uint256) { return totalPending; }
+    function getPendingIOTXs() external view returns (uint256) { return totalPending; }
 
     /**
      * @dev return current debts
@@ -157,7 +157,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @dev return debt of index
      */
     function checkDebt(uint256 index) external view returns (address account, uint256 amount) {
-        Debt memory debt = iotexDebts[index];
+        Debt memory debt = IOTXDebts[index];
         return (debt.account, debt.amount);
     }
 
@@ -191,7 +191,19 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
 
     /**
-     * @dev mint uniIOTEX with IOTEX
+     * @dev IERC721Receiver implement for receiving staking NFT
+     */
+    function onERC721Received(
+        address, // operator
+        address, // from
+        uint256, // tokenId
+        bytes calldata // data
+    ) external pure override returns (bytes4) {
+        return this.onERC721Received.selector;
+    }
+
+    /**
+     * @dev mint uniIOTX with IOTX
      */
     function deposit() external payable returns (uint256 minted) {
         amount = msg.value;
@@ -199,7 +211,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
         // TODO: to be optimized
 
-        // mint uniIOTEX
+        // mint uniIOTX
         _mint();
 
         // stake
@@ -212,24 +224,24 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // TODO: to be modified
-    function redeemFromDelegates(uint256 iotexsToRedeem, uint256 maxToBurn, uint256 deadline) external nonReentrant returns(uint256 burned) {
+    function redeemFromDelegates(uint256 IOTXsToRedeem, uint256 maxToBurn, uint256 deadline) external nonReentrant returns(uint256 burned) {
         require(block.timestamp < deadline, "USR001");
-        require(iotexsToRedeem % DEPOSIT_SIZE == 0, "USR005");
+        require(IOTXsToRedeem % DEPOSIT_SIZE == 0, "USR005");
 
-        uint256 totalXIOTEX = IERC20(xIOTEXAddress).totalSupply();
-        uint256 xIOTEXToBurn = totalXIOTEX * iotexsToRedeem / currentReserve(); // TODO:
-        require(xIOTEXToBurn <= maxToBurn, "USR004");
+        uint256 totalXIOTX = IERC20(xIOTXAddress).totalSupply();
+        uint256 xIOTXToBurn = totalXIOTX * IOTXsToRedeem / currentReserve(); // TODO:
+        require(xIOTXToBurn <= maxToBurn, "USR004");
 
         // NOTE: the following procdure must keep exchangeRatio invariant:
         // transfer xETH from sender & burn
-        IERC20(xETHAddress).safeTransferFrom(msg.sender, address(this), xIOTEXToBurn);
-        IMintableContract(xIOTEXAddress).burn(xIOTEXToBurn);
+        IERC20(xETHAddress).safeTransferFrom(msg.sender, address(this), xIOTXToBurn);
+        IMintableContract(xIOTXAddress).burn(xIOTXToBurn);
 
         // queue ether debts
-        _enqueueDebt(msg.sender, iotexsToRedeem);
+        _enqueueDebt(msg.sender, IOTXsToRedeem);
 
         // return burned
-        return xIOTEXToBurn;
+        return xIOTXToBurn;
     }
 
     /**
@@ -243,7 +255,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function _enqueueDebt(address account, uint256 amount) internal {
         // debt is paid in FIFO queue
         lastDebt += 1;
-        iotexDebts[lastDebt] = Debt({account:account, amount:amount});
+        IOTXDebts[lastDebt] = Debt({account:account, amount:amount});
 
         // track user debts
         userDebts[account] += amount;
@@ -256,8 +268,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     function _dequeueDebt() internal returns (Debt memory debt) {
         require(lastDebt >= firstDebt, "SYS022");  // non-empty queue
-        debt = iotexDebts[firstDebt];
-        delete iotexDebts[firstDebt];
+        debt = IOTXDebts[firstDebt];
+        delete IOTXDebts[firstDebt];
         firstDebt += 1;
     }
 
@@ -267,13 +279,13 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function _payDebts(uint256 total) internal returns(uint256 amountPaid) {
         require(address(redeemContract) != address(0x0), "SYS023");
 
-        // iotexs to pay
+        // IOTXs to pay
         for (uint i=firstDebt;i<=lastDebt;i++) {
             if (total == 0) {
                 break;
             }
 
-            Debt storage debt = iotexDebts[i];
+            Debt storage debt = IOTXDebts[i];
 
             // clean debts
             uint256 toPay = debt.amount <= total? debt.amount:total;
@@ -308,7 +320,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     // todo: to be optimized
     function _mint() private {
         uint256 toMint = 1 * amount; // default exchange ratio 1:1
-        xIOTEXAddress.mint(msg.sender, toMint);
+        xIOTXAddress.mint(msg.sender, toMint);
         totalPending += amount;
         emit DepositEvent(msg.sender, amount);
     }
@@ -330,7 +342,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         count = _lockedTokenIdCount(BucketType.BucketType1);
         if (count >= mergeThreshold) {
             tokenIds = _removeLockedTokenIds(BucketType.BucketType1, mergeThreshold);
-            iotexSystemStakingContract.merge(tokenIds,stakeDuration);
+            IOTXSystemStakingContract.merge(tokenIds,stakeDuration);
             theFirst = new uint256[](1);
             theFirst[0] = tokenIds[0];
             _pushLockedTokens(BucketType.BucketType2, theFirst);
@@ -339,7 +351,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         count = _lockedTokenIdCount(BucketType.BucketType2);
         if (count >= mergeThreshold) {
             tokenIds = _removeLockedTokenIds(BucketType.BucketType2, mergeThreshold);
-            iotexSystemStakingContract.merge(tokenIds,stakeDuration);
+            IOTXSystemStakingContract.merge(tokenIds,stakeDuration);
             theFirst = new uint256[](1);
             theFirst[0] = tokenIds[0];
             _pushLockedTokens(BucketType.BucketType3, theFirst);
@@ -350,10 +362,10 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (count == 0) return;
         totalAmount = amount*count;
         if (count == 1) {
-            tokenId = iotexSystemStakingContract.stake{value:totalAmount}(stakeDuration, delegate);
+            tokenId = IOTXSystemStakingContract.stake{value:totalAmount}(stakeDuration, delegate);
             _addLockedTokenIds(BucketType.bucketType, tokenId,1);
         } else {
-            startTokenId = iotexSystemStakingContract.stake{value:totalAmount}(amount,stakeDuration, delegate, count);
+            startTokenId = IOTXSystemStakingContract.stake{value:totalAmount}(amount,stakeDuration, delegate, count);
             _addLockedTokenIds(BucketType.bucketType, startTokenId, count);
         }
         totalPending -= totalAmount;
@@ -380,16 +392,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         lockedTokenIds[bucketType].size += count;
     }
 
-    // must implement IERC721Receiver to receive staking NFT
-    function onERC721Received(
-        address, // operator
-        address, // from
-        uint256, // tokenId
-        bytes calldata // data
-    ) external pure override returns (bytes4) {
-        return this.onERC721Received.selector;
-    }
-
     /**
      * ======================================================================================
      *
@@ -400,7 +402,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     event DelegateStopped(uint256 stoppedCount);
     event DebtQueued(address creditor, uint256 amountEther);
     event SystemStakingContractSet(address addr);
-    event XIOTEXContractSet(address addr);
+    event XIOTXContractSet(address addr);
     event DepositEvent(address indexed from, uint256 amount);
     event RedeemContractSet(address addr);
 }
