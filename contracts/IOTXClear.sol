@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.4;
 
-import "interfaces/iface.sol";
+import "interfaces/IUniIOTX.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -15,6 +15,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
 
     mapping(address=>uint256) private balances;
     uint256 private totalBalance;
+
+    event Paied(address account, uint256 amount);
+    event Claimed(address indexed _from, address indexed _to, uint256 _value);
 
     /**
      * @dev initialization
@@ -69,7 +72,4 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     ) external pure override returns (bytes4) {
         return this.onERC721Received.selector;
     }
-
-    event Paied(address account, uint256 amount);
-    event Claimed(address indexed _from, address indexed _to, uint256 _value);
 }

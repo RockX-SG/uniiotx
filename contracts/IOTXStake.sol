@@ -5,9 +5,16 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
+import "interfaces/IIOTXClear.sol"
+import "interfaces/IUniIOTX.sol"
+import "../IIOTXStake.sol"
+
 contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver {
-    // errors
-    error ZeroDelegates();
+    // track IOTX debts to return to async caller
+    struct Debt {
+        address account;
+        uint256 amount
+    }
 
     enum BucketType {
         BucketType1,
@@ -15,19 +22,12 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         BucketType3
     }
 
-    // track IOTX debts to return to async caller
-    struct Debt {
-        address account;
-        uint256 amount;
-    }
-
-    ISystemStakingContract public IOTXSystemStakingContract;  // IOTX system staking contract
-    IMintableContract public xIOTXAddress;               // xIOTX token address
-    IIOTXClear public redeemContract;          // redeeming contract for user to pull IOTXs
+    IIOTXStake public iotxStake;
+    IUniIOTX public uniIOTX;
+    IIOTXClear public iotxClear;
 
     uint256 private totalPending;               // total pending IOTXs awaiting to be staked
     uint256 private totalDebts;             // track current unpaid debts
-
 
     // FIFO of debts from redeemFromDelegates
     mapping(uint256=>Debt) private IOTXDebts;
@@ -59,6 +59,17 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     mapping(BucketType => tokenIds) public unlockedTokenIds;
     mapping(BucketType => tokenIds) public unstakedTokenIds;
     mapping(BucketType => tokenIds) public withdrawedTokenIds;
+
+    // Events
+    event DelegateStopped(uint256 stoppedCount);
+    event DebtQueued(address creditor, uint256 amountEther);
+    event SystemStakingContractSet(address addr);
+    event XIOTXContractSet(address addr);
+    event DepositEvent(address indexed from, uint256 amount);
+    event RedeemContractSet(address addr);
+
+    // Errors
+    error ZeroDelegates();
 
     /**
      * ======================================================================================
@@ -111,17 +122,17 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     /**
      * @dev set eth deposit contract address
      */
-    function setIOTXSystemStakingContract(address _IOTXSystemStakingContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        IOTXSystemStakingContract = _IOTXSystemStakingContract;
+    function setSystemStakingContract(address _SystemStakingContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        iotxStake = _SystemStakingContract;
 
-        emit SystemStakingContractSet(_IOTXSystemStakingContract);
+        emit SystemStakingContractSet(_SystemStakingContract);
     }
 
     /**
      * @dev set xIOTX token contract address
      */
     function setXIOTXContractAddress(address _xIOTXAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        xIOTXAddress = _xIOTXAddress;
+        uniIOTX = _xIOTXAddress;
 
         emit XIOTXContractSet(_xIOTXAddress);
     }
@@ -130,7 +141,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @dev set redeem contract
      */
     function setRedeemContract(address _redeemContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        redeemContract = _redeemContract;
+        iotxClear = _redeemContract;
 
         emit RedeemContractSet(_redeemContract);
     }
@@ -228,14 +239,14 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         require(block.timestamp < deadline, "USR001");
         require(IOTXsToRedeem % DEPOSIT_SIZE == 0, "USR005");
 
-        uint256 totalXIOTX = IERC20(xIOTXAddress).totalSupply();
+        uint256 totalXIOTX = IERC20(uniIOTX).totalSupply();
         uint256 xIOTXToBurn = totalXIOTX * IOTXsToRedeem / currentReserve(); // TODO:
         require(xIOTXToBurn <= maxToBurn, "USR004");
 
         // NOTE: the following procdure must keep exchangeRatio invariant:
         // transfer xETH from sender & burn
         IERC20(xETHAddress).safeTransferFrom(msg.sender, address(this), xIOTXToBurn);
-        IMintableContract(xIOTXAddress).burn(xIOTXToBurn);
+        IUniIOTX(uniIOTX).burn(xIOTXToBurn);
 
         // queue ether debts
         _enqueueDebt(msg.sender, IOTXsToRedeem);
@@ -277,7 +288,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @dev pay debts for a given amount
      */
     function _payDebts(uint256 total) internal returns(uint256 amountPaid) {
-        require(address(redeemContract) != address(0x0), "SYS023");
+        require(address(iotxClear) != address(0x0), "SYS023");
 
         // IOTXs to pay
         for (uint i=firstDebt;i<=lastDebt;i++) {
@@ -295,7 +306,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             amountPaid += toPay;
 
             // transfer money to debt contract
-            IIOTXClear(redeemContract).pay{value:toPay}(debt.account);
+            IIOTXClear(iotxClear).pay{value:toPay}(debt.account);
 
             // dequeue if cleared
             if (debt.amount == 0) {
@@ -320,7 +331,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     // todo: to be optimized
     function _mint() private {
         uint256 toMint = 1 * amount; // default exchange ratio 1:1
-        xIOTXAddress.mint(msg.sender, toMint);
+        uniIOTX.mint(msg.sender, toMint);
         totalPending += amount;
         emit DepositEvent(msg.sender, amount);
     }
@@ -342,7 +353,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         count = _lockedTokenIdCount(BucketType.BucketType1);
         if (count >= mergeThreshold) {
             tokenIds = _removeLockedTokenIds(BucketType.BucketType1, mergeThreshold);
-            IOTXSystemStakingContract.merge(tokenIds,stakeDuration);
+            iotxStake.merge(tokenIds,stakeDuration);
             theFirst = new uint256[](1);
             theFirst[0] = tokenIds[0];
             _pushLockedTokens(BucketType.BucketType2, theFirst);
@@ -351,7 +362,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         count = _lockedTokenIdCount(BucketType.BucketType2);
         if (count >= mergeThreshold) {
             tokenIds = _removeLockedTokenIds(BucketType.BucketType2, mergeThreshold);
-            IOTXSystemStakingContract.merge(tokenIds,stakeDuration);
+            iotxStake.merge(tokenIds,stakeDuration);
             theFirst = new uint256[](1);
             theFirst[0] = tokenIds[0];
             _pushLockedTokens(BucketType.BucketType3, theFirst);
@@ -362,10 +373,10 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (count == 0) return;
         totalAmount = amount*count;
         if (count == 1) {
-            tokenId = IOTXSystemStakingContract.stake{value:totalAmount}(stakeDuration, delegate);
+            tokenId = iotxStake.stake{value:totalAmount}(stakeDuration, delegate);
             _addLockedTokenIds(BucketType.bucketType, tokenId,1);
         } else {
-            startTokenId = IOTXSystemStakingContract.stake{value:totalAmount}(amount,stakeDuration, delegate, count);
+            startTokenId = iotxStake.stake{value:totalAmount}(amount,stakeDuration, delegate, count);
             _addLockedTokenIds(BucketType.bucketType, startTokenId, count);
         }
         totalPending -= totalAmount;
@@ -391,18 +402,4 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         lockedTokenIds[bucketType].data[firstTokenId] = count;
         lockedTokenIds[bucketType].size += count;
     }
-
-    /**
-     * ======================================================================================
-     *
-     * ROCKX SYSTEM EVENTS
-     *
-     * ======================================================================================
-     */
-    event DelegateStopped(uint256 stoppedCount);
-    event DebtQueued(address creditor, uint256 amountEther);
-    event SystemStakingContractSet(address addr);
-    event XIOTXContractSet(address addr);
-    event DepositEvent(address indexed from, uint256 amount);
-    event RedeemContractSet(address addr);
 }
