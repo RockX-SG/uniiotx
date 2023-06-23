@@ -234,6 +234,10 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         return xIOTXToBurn;
     }
 
+    function changeDelegates(uint256[] tokenId, address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
+        systemStake.changeDelegates(tokenId, delegate);
+    }
+
     /**
      * ======================================================================================
      *

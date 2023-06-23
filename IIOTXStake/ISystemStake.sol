@@ -22,4 +22,6 @@ interface ISystemStake {
     function transferFrom(address from, address to, uint256 tokenId) public;
     function safeTransferFrom(address from, address to, uint256 tokenId) public;
 //    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public;
+
+    function changeDelegates(uint256[] calldata _tokenIds, address _delegate) external;
 }

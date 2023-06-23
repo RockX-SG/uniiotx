@@ -188,6 +188,10 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
      * ======================================================================================
      */
 
+    function changeDelegates(uint256[] tokenId, address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
+        systemStake.changeDelegates(tokenId, delegate);
+    }
+
     function unstake(uint256[] calldata tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
         if (tokenIds.length > 0) systemStake.unstake(tokenIds);
     }
