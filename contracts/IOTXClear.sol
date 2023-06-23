@@ -9,10 +9,16 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
+import "../ISystemStake.sol"
+
 contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, ReentrancyGuardUpgradeable, OwnableUpgradeable, IERC721Receiver {
     using SafeERC20 for IERC20;
     using Address for address payable;
 
+    // External dependencies
+    ISystemStake public systemStake;
+
+    // Type declarations
     struct Debt {
         address account;
         uint256 amount;
@@ -33,6 +39,15 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     event DebtQueued(address creditor, uint256 amountEther);
     event Paied(address account, uint256 amount);
     event Claimed(address indexed _from, address indexed _to, uint256 _value);
+    event SystemStakingContractSet(address addr);
+
+    /**
+     * ======================================================================================
+     *
+     * SYSTEM SETTINGS
+     *
+     * ======================================================================================
+     */
 
     /**
      * @dev initialization
@@ -45,6 +60,15 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
         // init default values
         firstDebt = 1;
         lastDebt = 0;
+    }
+
+    /**
+     * @dev set eth deposit contract address
+         */
+    function setSystemStakingContract(address _SystemStakingContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        systemStake = _SystemStakingContract;
+
+        emit SystemStakingContractSet(_SystemStakingContract);
     }
 
     // some convenient method to help show their claimable in wallet
@@ -81,7 +105,6 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     function getDebtQueue() external view returns (uint256 first, uint256 last) {
         return (firstDebt, lastDebt);
     }
-
 
     /**
      * ======================================================================================
@@ -165,6 +188,10 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
      * ======================================================================================
      */
 
+    function unstake(uint256[] calldata tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
+        if (tokenIds.length > 0) systemStake.unstake(tokenIds);
+    }
+
     function claim(address to, uint256 amount) public nonReentrant returns (bool success) {
         // check
         require(balances[msg.sender] >= amount, "INSUFFICIENT_BALANCE");
@@ -202,4 +229,15 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     ) external pure override returns (bytes4) {
         return this.onERC721Received.selector;
     }
+
+    /**
+    * ======================================================================================
+    *
+    * PRIVATE FUNCTIONS
+    *
+    * ======================================================================================
+    */
+
+
+
 }

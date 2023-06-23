@@ -61,7 +61,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     /**
      * ======================================================================================
      *
-     * SYSTEM SETTINGS, OPERATED VIA OWNER(DAO/TIMELOCK)
+     * SYSTEM SETTINGS
      *
      * ======================================================================================
      */
@@ -326,6 +326,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         lockedTokenIds[bucketType].size += count;
     }
 
+    // TODO: consider move it to IOTXCLear.sol
     function _addUnlockedTokenIds(BucketType bucketType, uint256[] tokenIds) private {
         // todo:
     }

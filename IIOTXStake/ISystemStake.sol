@@ -12,7 +12,6 @@ interface ISystemStake {
     function unlock(uint256 _tokenId) external whenNotPaused onlyTokenOwner(_tokenId);
     function unlock(uint256[] calldata _tokenIds) external;
 
-    function unstake(uint256 _tokenId) external whenNotPaused onlyTokenOwner(_tokenId);
     function unstake(uint256[] calldata _tokenIds) external;
 
     function withdraw( uint256 _tokenId, address payable _recipient) external whenNotPaused onlyTokenOwner(_tokenId);
