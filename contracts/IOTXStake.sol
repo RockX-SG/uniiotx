@@ -185,7 +185,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
     function deposit() external payable returns (uint256 minted) {
         amount = msg.value;
-        require(amount > 0, "USR002");
+        require(amount > 0, "USR002"); // TODO: don't need to check zero mint?
+        // TODO: check msgValue ceiling
 
         // TODO: to be optimized
 
@@ -206,14 +207,17 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         now = block.timestamp;
         if (deadline <= now) revert TransactionExpired(deadline, now);
         if (amount % stakeAmount03 != 0) revert InvalidRedeemAmount(amount, stakeAmount03);
+        // TODO: verify the rights/preconditiions of msg.sender to redeem ? including:
+        // TODO: check amount ceiling according to clients deposit amount.
 
         uint256 totalXIOTX = uniIOTX.totalSupply();
         uint256 xIOTXToBurn = totalXIOTX * amount / currentReserve(); // TODO:
         require(xIOTXToBurn <= maxToBurn, "USR004");
 
         // NOTE: the following procdure must keep exchangeRatio invariant:
-        // transfer xETH from sender & burn
-        IERC20(xETHAddress).safeTransferFrom(msg.sender, address(this), xIOTXToBurn);
+        // transfer uniIOTX from sender & burn
+        // TODO: why transfer and burn, but not only burn?
+        uniIOTX.safeTransferFrom(msg.sender, address(this), xIOTXToBurn);
         uniIOTX.burn(xIOTXToBurn);
 
         // Unlock NFT(s)

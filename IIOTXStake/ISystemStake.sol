@@ -9,7 +9,7 @@ interface ISystemStake {
 //    function stake(uint256 _amount, uint256 _duration, address[] memory _delegates) external payable returns (uint256 firstTokenId_);
     function stake(uint256 _amount, uint256 _duration, address _delegate, uint256 _count) external payable returns (uint256 firstTokenId_);
 
-    function unlock(uint256 _tokenId) external whenNotPaused onlyTokenOwner(_tokenId);
+//    function unlock(uint256 _tokenId) external whenNotPaused onlyTokenOwner(_tokenId);
     function unlock(uint256[] calldata _tokenIds) external;
 
     function unstake(uint256[] calldata _tokenIds) external;
