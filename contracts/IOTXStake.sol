@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 import "interfaces/IIOTXClear.sol"
 import "interfaces/IUniIOTX.sol"
-import "../ISystemStake.sol"
+import "../interfaces/ISystemStake.sol"
 
 contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver {
     // External dependencies
