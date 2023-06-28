@@ -27,8 +27,27 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         mapping(uint256 => uint256) data;   // startId => count
     }
 
+    // Constants
+    uint256 public defaultExchangeRatio = 1;
+    uint256 private constant MULTIPLIER = 1e18;
+
+    // State variables
+
+    uint256 public accountedBalance; // TODO: Double check whether its value can be negative.
+
+
     // Stake variables
+
+    // exchange ratio related variables
+    // track user deposits & redeem (uniIOTX mint & burn)
     uint256 private totalPending;               // total pending IOTXs awaiting to be staked
+    uint256 private totalStaked;            // track current staked ethers for delegates
+    uint256 private totalDebts;             // track current unpaid debts // TODO: ignore it?
+
+    // track revenue from validators to form exchange ratio
+    uint256 private accountedUserRevenue;           // accounted shared user revenue
+    uint256 private accountedManagerRevenue;        // accounted manager's revenue
+    uint256 private rewardDebts;                    // check validatorStopped function // TODO: modify this comment
 
     address[] private delegates;
     uint256 private nextDelegateIndex;
@@ -50,13 +69,28 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     event DelegateStopped(uint256 stoppedCount);
     event SystemStakingContractSet(address addr);
     event XIOTXContractSet(address addr);
-    event DepositEvent(address indexed from, uint256 amount);
+    event MintEvent(address user, uint256 minToMint, uint256 minted);
     event RedeemContractSet(address addr);
+
 
     // Errors
     error ZeroDelegates();
     error TransactionExpired(uint256 deadline, uint256 now);
     error InvalidRedeemAmount(uint256 redeemAmount, uint256 redeemBase);
+    error ExchangeRatioMismatch(uint256 expectedAmount, uint256 gotAmount);
+
+    // Modifiers // TODO: code reuse across smart contracts
+    modifier onlyValidTransaction(uint256 deadline) {
+        if (deadline <= block.timestamp) revert TransactionExpired(deadline, block.timestamp);
+        _;
+    }
+
+    modifer notZeroMint() {
+        if (msg.value == 0) {
+            return;
+        }
+        _;
+    }
 
     /**
      * ======================================================================================
@@ -65,6 +99,10 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      *
      * ======================================================================================
      */
+
+    // TODO: What if a user accidentally sent some IOTXs to this contract?
+    // These IOTXs will be treated as reward. How could we prevent that?
+    receive() external payable { }
 
     /**
      * @dev pause the contract
@@ -141,6 +179,26 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
+
+    /**
+     * @dev Return exchange ratio of uniIOTX to IOTX, multiplied by 1e18
+     */
+    function exchangeRatio() external view returns (uint256 ratio) {
+        uint256 uniIOTXAmount = uniIOTX.totalSupply();
+        if (uniIOTXAmount == 0) {
+            return 1 * MULTIPLIER;
+        }
+
+        ratio = currentReserve() * MULTIPLIER / uniIOTXAmount; // TODO: further consideration on the fractional part
+    }
+
+    /**
+     * @dev returns current reserve of ethers
+         */
+    function currentReserve() public view returns(uint256) {
+        return totalPending + totalStaked + accountedUserRevenue - totalDebts - rewardDebts;  // TODO: ignore total debts?
+    }
+
     /**
      * @dev return pending IOTXs
      */
@@ -183,7 +241,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     /**
      * @dev mint uniIOTX with IOTX
      */
-    function deposit() external payable returns (uint256 minted) {
+    function deposit(uint256 minToMint, uint256 deadline) external payable onlyValidTransaction(deadline) returns (uint256 minted) {
         amount = msg.value;
         require(amount > 0, "USR002"); // TODO: don't need to check zero mint?
         // TODO: check msgValue ceiling
@@ -191,7 +249,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         // TODO: to be optimized
 
         // mint uniIOTX
-        _mint();
+        _mint(minToMint);
 
         // stake
         _stake();
@@ -203,9 +261,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // TODO: to be modified
-    function redeem(uint256 amount, uint256 maxToBurn, uint256 deadline) external nonReentrant returns(uint256 burned) {
-        now = block.timestamp;
-        if (deadline <= now) revert TransactionExpired(deadline, now);
+    function redeem(uint256 amount, uint256 maxToBurn, uint256 deadline) external onlyValidTransaction(deadline) nonReentrant returns(uint256 burned) {
         if (amount % stakeAmount03 != 0) revert InvalidRedeemAmount(amount, stakeAmount03);
         // TODO: verify the rights/preconditiions of msg.sender to redeem ? including:
         // TODO: check amount ceiling according to clients deposit amount.
@@ -259,12 +315,19 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
-    // todo: to be optimized
-    function _mint() private {
-        uint256 toMint = 1 * amount; // default exchange ratio 1:1
+    // TODO: Consider whitelisting KYC users?
+    // TODO: Give an explanation of param minToMint
+    function _mint(uint256 minToMint) private notZeroMint returns (uint256 minted) {
+        accountedBalance += msg.value;
+
+        toMint = _convertIotxToUniIotx(msg.value);
+        if (toMint < minToMint) revert ExchangeRatioMismatch(minToMint, toMint);
         uniIOTX.mint(msg.sender, toMint);
-        totalPending += amount;
-        emit DepositEvent(msg.sender, amount);
+        minted = toMint;
+
+        totalPending += msg.value;
+
+        emit MintEvent(msg.sender, minToMint, minted);
     }
 
     function _stake() private {
@@ -338,5 +401,21 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function _addUnlockedTokenIds(BucketType bucketType, uint256[] tokenIds) private {
         // todo:
     }
+
+
+    /**
+     * @dev Calculates uniIOTX amount based on IOTX amount for mint and burn operation,
+     * aiming to keep the exchange ratio invariant to avoid user arbitrage.
+     * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
+     */
+    function _convertIotxToUniIotx(uint256 amountIOTX) private pure returns (uint256 amountUniIOTX) {
+        uint256 totalSupply = uniIOTX.totalSupply();
+        uint256 currentReserve = currentReserve();
+        amountUniIOTX = defaultExchangeRatio * amountIOTX
+
+        if (currentReserve > 0) { // avert division overflow
+            amountUniIOTX = totalSupply * amountIOTX / currentReserve; // TODO: further consideration on the fractional part
+        }
+ }
 
 }
