@@ -16,22 +16,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     IUniIOTX public uniIOTXContract;
     IIOTXClear public iotxClearContract;
 
-// Todo: code cleaning
-//    enum stakeState (
-//        LOCKED,
-//        UNLOCKED,
-//    )
-//
-//    struct tokenIdContainer {
-//
-//        stakeState
-//    }
-
-//    struct tokenIds {
-//        uint256 size;
-//        mapping(uint256 => uint256) data;   // startId => count
-//    }
-
     // Constants
     uint256 public defaultExchangeRatio = 1;
     uint256 private constant MULTIPLIER = 1e18;
@@ -39,7 +23,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     // State variables
 
     uint256 public accountedBalance; // TODO: Double check whether its value can be negative.
-
 
     // Stake variables
 
@@ -60,8 +43,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     // Token ids: stake amount index => tokenIds
     mapping(uint256 => uint256[]) public stakedTokenIds;
     uint256[] public redeemedTokenIds;
-//    mapping(BucketType => tokenIds) public redeemedTokenIds; // Todo: Code cleaning
-//    mapping(BucketType => tokenIds) public withdrawedTokenIds;
 
     // Events
     event DelegateStopped(uint256 stoppedCount);
@@ -78,13 +59,13 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     error InvalidRedeemAmount(uint256 redeemAmount, uint256 redeemBase);
     error ExchangeRatioMismatch(uint256 expectedAmount, uint256 gotAmount);
 
-    // Modifiers // TODO: code reuse across smart contracts
+    // Modifiers // TODO: code reuse across smart contracts?
     modifier onlyValidTransaction(uint256 deadline) {
         if (deadline <= block.timestamp) revert TransactionExpired(deadline, block.timestamp);
         _;
     }
 
-    modifer notZeroMint() {
+    modifier notZeroMint() {
         if (msg.value == 0) {
             return;
         }
@@ -135,7 +116,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 //        lastDebt = 0;
     }
 
-    // TODO: do it in initialization
+    // TODO: do it in initialization?
     /**
      * @dev set eth deposit contract address
      */
@@ -259,10 +240,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         return xIOTXToBurn;
     }
 
-//    function updateDelegates(uint256[] tokenIds, address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
-//        systemStake.changeDelegates(tokenIds, delegate);
-//    }
-
     /**
      * ======================================================================================
      *
@@ -367,6 +344,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (currentReserve > 0) { // avert division overflow
             amountUniIOTX = totalSupply * amountIOTX / currentReserve; // TODO: further consideration on the fractional part
         }
- }
+    }
 
 }
