@@ -216,11 +216,12 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         return this.onERC721Received.selector;
     }
 
-    /**
-     * @dev mint uniIOTX with IOTX
-     */
     function deposit(uint256 minToMint, uint256 deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint256 minted) {
         minted = _mint(minToMint);
+        if (_stake()) _merge();
+    }
+
+    function stake() external whenNotPaused onlyRole(ORACLE_ROLE) {
         if (_stake()) _merge();
     }
 
