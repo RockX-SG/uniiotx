@@ -34,7 +34,7 @@ contract DelegateManager is Initializable, AccessControlUpgradeable, PausableUpg
         systemStakeContract.changeDelegates(tokenIds, delegate);
     }
 
-    function nextDelegate() external view whenNotPaused returns (address) {
-        return globalDelegate;
-    }
+//    function nextDelegate() external view whenNotPaused returns (address) {
+//        return globalDelegate;
+//    }
 }

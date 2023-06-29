@@ -8,24 +8,29 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "interfaces/IIOTXClear.sol";
 import "interfaces/IUniIOTX.sol";
 import "../interfaces/ISystemStake.sol";
+import "./DelegateManager.sol"
 
-contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver {
+contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, DelegateManager {
     // External dependencies
-    ISystemStake public systemStake;
-    IUniIOTX public uniIOTX;
-    IIOTXClear public iotxClear;
+    ISystemStake public systemStakeContract;
+    IUniIOTX public uniIOTXContract;
+    IIOTXClear public iotxClearContract;
 
-    // Type declarations
-    enum BucketType {
-        BucketType1,
-        BucketType2,
-        BucketType3
-    }
+// Todo: code cleaning
+//    enum stakeState (
+//        LOCKED,
+//        UNLOCKED,
+//    )
+//
+//    struct tokenIdContainer {
+//
+//        stakeState
+//    }
 
-    struct tokenIds {
-        uint256 size;
-        mapping(uint256 => uint256) data;   // startId => count
-    }
+//    struct tokenIds {
+//        uint256 size;
+//        mapping(uint256 => uint256) data;   // startId => count
+//    }
 
     // Constants
     uint256 public defaultExchangeRatio = 1;
@@ -49,24 +54,21 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     uint256 private accountedManagerRevenue;        // accounted manager's revenue
     uint256 private rewardDebts;                    // check validatorStopped function // TODO: modify this comment
 
-    uint256 private stakeAmount01 = 10000;
-    uint256 private stakeAmount02 = 100000;
-    uint256 private stakeAmount03 = 1000000;
-    uint256 private stakeDuration = 3600*91;
+    uint256[] public immutable stakeAmountBases; // In sorted ascending order, i.e. [10000, 100000, 1000000]
+    uint256 public immutable stakeDuration;
 
-    uint256 private mergeThreshold = 10;
-
-    // Token ids
-    mapping(BucketType => tokenIds) public lockedTokenIds;
-    mapping(BucketType => tokenIds) public unlockedTokenIds;
-    mapping(BucketType => tokenIds) public unstakedTokenIds;
-    mapping(BucketType => tokenIds) public withdrawedTokenIds;
+    // Token ids: stake amount index => tokenIds
+    mapping(uint256 => uint256[]) public stakedTokenIds;
+    uint256[] public redeemedTokenIds;
+//    mapping(BucketType => tokenIds) public redeemedTokenIds; // Todo: Code cleaning
+//    mapping(BucketType => tokenIds) public withdrawedTokenIds;
 
     // Events
     event DelegateStopped(uint256 stoppedCount);
     event SystemStakingContractSet(address addr);
     event XIOTXContractSet(address addr);
-    event MintEvent(address user, uint256 minToMint, uint256 minted);
+    event Minted(address user, uint256 minToMint, uint256 minted);
+    event Staked(address user, uint256 startTokenId, uint256 stakeCount, uint256 stakeAmount, address delegate);
     event RedeemContractSet(address addr);
 
 
@@ -118,9 +120,15 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     /**
      * @dev initialization address
      */
-    function initialize() initializer public {
+    function initialize(
+        uint256[] _stakeAmountSequence,
+        uint256 _globalStakeDuration
+    ) initializer public {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
+
+    stakeAmountSequence = _stakeAmountSequence
+    globalStakeDuration = _globalStakeDuration
 
 //        // init default values
 //        firstDebt = 1;
@@ -236,9 +244,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
         // Unlock NFT(s)
         count = amount / stakeAmount03;
-        tokenIds = _removeLockedTokenIds(BucketType.BucketType3, count);
+        tokenIds = _removestakedTokenIds(BucketType.BucketType3, count);
         systemStake.unlock(tokenIds);
-        _addUnlockedTokenIds(tokenIds);
+        _addredeemedTokenIds(tokenIds);
 
         // Transfer NFT owner
         for (i = 0; i < tokenIds.length; i++) {
@@ -285,26 +293,34 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
         totalPending += msg.value;
 
-        emit MintEvent(msg.sender, minToMint, minted);
+        emit Minted(msg.sender, minToMint, minted);
     }
 
     function _stake() private returns (bool staked) {
-        delegate = _nextDelegate();
+        for ( uint256 i = stakeAmountBases-1; i >= 0; i--) {
+            base = stakeAmountBases[i];
+            count = totalPending / base;
+            amount = base * count;
 
-        count = totalPending / stakeAmount03;
-        _requestStake(stakeAmount03, count, delegate);
+            if (amount == 0) continue;
 
-        count = totalPending / stakeAmount02;
-        _requestStake(stakeAmount02, count, delegate);
+            startTokenId = systemStakeContract.stake{value:amount}(amount, stakeDuration, globalDelegate, count);
+            for (uint256 j = 0; j < count; j++) {
+                stakedTokenIds[i] = stakedTokenIds[i].push(startTokenId+i)
+            }
+            staked = true;
+            totalPending -= amount;
+            totalStaked  += amount;
+            accountedBalance -= amount;
 
-        count = totalPending / stakeAmount01;
-        _requestStake(stakeAmount01, count, delegate);
+            emit Staked(msg.sender, startTokenId, count, amount, globalDelegate);
+        }
     }
 
     function _merge() private {
         count = _lockedTokenIdCount(BucketType.BucketType1);
-        if (count >= mergeThreshold) {
-            tokenIds = _removeLockedTokenIds(BucketType.BucketType1, mergeThreshold);
+        if (count >= mergeMultiple) {
+            tokenIds = _removestakedTokenIds(BucketType.BucketType1, mergeMultiple);
             systemStake.merge(tokenIds,stakeDuration);
             theFirst = new uint256[](1);
             theFirst[0] = tokenIds[0];
@@ -312,8 +328,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         }
 
         count = _lockedTokenIdCount(BucketType.BucketType2);
-        if (count >= mergeThreshold) {
-            tokenIds = _removeLockedTokenIds(BucketType.BucketType2, mergeThreshold);
+        if (count >= mergeMultiple) {
+            tokenIds = _removestakedTokenIds(BucketType.BucketType2, mergeMultiple);
             systemStake.merge(tokenIds,stakeDuration);
             theFirst = new uint256[](1);
             theFirst[0] = tokenIds[0];
@@ -321,38 +337,26 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         }
     }
 
-    function _requestStake(BucketType bucketType, uint256 amount, uint256 count, address delegate) private{
-        if (count == 0) return;
-        totalAmount = amount*count;
-        if (count == 1) {
-            tokenId = systemStake.stake{value:totalAmount}(stakeDuration, delegate);
-            _addLockedTokenIds(BucketType.bucketType, tokenId,1);
-        } else {
-            startTokenId = systemStake.stake{value:totalAmount}(amount,stakeDuration, delegate, count);
-            _addLockedTokenIds(BucketType.bucketType, startTokenId, count);
-        }
-        totalPending -= totalAmount;
-    }
-
-    function _lockedTokenIdCount(BucketType bucketType) private returns (uint256) {
-        return lockedTokenIds[bucketType].size;
-    }
-
-    function _removeLockedTokenIds(BucketType bucketType, uint256 count) private returns (uint256[]) {
-//        delete lockedTokenIds[bucketType].ids[]
-        // TODO:
-        return 0;
-    }
-
-    function _addLockedTokenIds(BucketType bucketType, uint256 firstTokenId, uint256 count) private {
-        lockedTokenIds[bucketType].data[firstTokenId] = count;
-        lockedTokenIds[bucketType].size += count;
-    }
-
-    // TODO: consider move it to IOTXCLear.sol
-    function _addUnlockedTokenIds(BucketType bucketType, uint256[] tokenIds) private {
-        // todo:
-    }
+// Todo: code cleaning
+//    function _lockedTokenIdCount(BucketType bucketType) private returns (uint256) {
+//        return stakedTokenIds[bucketType].size;
+//    }
+//
+//    function _removestakedTokenIds(BucketType bucketType, uint256 count) private returns (uint256[]) {
+////        delete stakedTokenIds[bucketType].ids[]
+//        // TODO:
+//        return 0;
+//    }
+//
+//    function _addstakedTokenIds(BucketType bucketType, uint256 firstTokenId, uint256 count) private {
+//        stakedTokenIds[bucketType].data[firstTokenId] = count;
+//        stakedTokenIds[bucketType].size += count;
+//    }
+//
+//    // TODO: consider move it to IOTXCLear.sol
+//    function _addredeemedTokenIds(BucketType bucketType, uint256[] tokenIds) private {
+//        // todo:
+//    }
 
 
     /**

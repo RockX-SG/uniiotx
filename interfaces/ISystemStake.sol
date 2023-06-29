@@ -5,7 +5,7 @@ pragma solidity ^0.8.9;
 interface ISystemStake {
     function bucketOf(uint256 _tokenId) external view returns ( uint256 amount_, uint256 duration_, uint256 unlockedAt_, uint256 unstakedAt_, address delegate_);
 
-    function stake(uint256 _duration, address _delegate) external payable returns (uint256);
+//    function stake(uint256 _duration, address _delegate) external payable returns (uint256);
 //    function stake(uint256 _amount, uint256 _duration, address[] memory _delegates) external payable returns (uint256 firstTokenId_);
     function stake(uint256 _amount, uint256 _duration, address _delegate, uint256 _count) external payable returns (uint256 firstTokenId_);
 
