@@ -5,9 +5,9 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-import "interfaces/IIOTXClear.sol"
-import "interfaces/IUniIOTX.sol"
-import "../interfaces/ISystemStake.sol"
+import "interfaces/IIOTXClear.sol";
+import "interfaces/IUniIOTX.sol";
+import "../interfaces/ISystemStake.sol";
 
 contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver {
     // External dependencies
@@ -48,9 +48,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     uint256 private accountedUserRevenue;           // accounted shared user revenue
     uint256 private accountedManagerRevenue;        // accounted manager's revenue
     uint256 private rewardDebts;                    // check validatorStopped function // TODO: modify this comment
-
-    address[] private delegates;
-    uint256 private nextDelegateIndex;
 
     uint256 private stakeAmount01 = 10000;
     uint256 private stakeAmount02 = 100000;
@@ -130,25 +127,12 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 //        lastDebt = 0;
     }
 
-
-    /**
-     * @dev register a new batch of validators
-     */
-    function registerDelegates(address[] _delegates) external onlyRole(REGISTRY_ROLE) {
-        uint256 len = _delegates.length;
-        if (len == 0) revert ZeroDelegates();
-        delete delegates;
-        delete nextDelegateIndex;
-        for (uint256 i = 0; i < len; i++) {
-            delegates.push(_delegates[i]);
-        }
-    }
-
+    // TODO: do it in initialization
     /**
      * @dev set eth deposit contract address
      */
-    function setSystemStakingContract(address _SystemStakingContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        systemStake = _SystemStakingContract;
+    function setSystemStakingContract(address _systemStake) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        systemStake = _systemStake;
 
         emit SystemStakingContractSet(_SystemStakingContract);
     }
@@ -205,20 +189,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function getPendingIOTXs() external view returns (uint256) { return totalPending; }
 
     /**
-     * @dev return number of registered delegates
-     */
-    function getDelegatesCount() external view returns (uint256) {
-        return delegates.length;
-    }
-
-    /**
-     * @dev return all registered delegates
-     */
-    function getAllDelegates() external view returns (address[]) {
-        return delegates;
-    }
-
-    /**
      * ======================================================================================
      *
      * EXTERNAL FUNCTIONS
@@ -241,23 +211,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     /**
      * @dev mint uniIOTX with IOTX
      */
-    function deposit(uint256 minToMint, uint256 deadline) external payable onlyValidTransaction(deadline) returns (uint256 minted) {
-        amount = msg.value;
-        require(amount > 0, "USR002"); // TODO: don't need to check zero mint?
-        // TODO: check msgValue ceiling
-
+    function deposit(uint256 minToMint, uint256 deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint256 minted) {
         // TODO: to be optimized
 
-        // mint uniIOTX
-        _mint(minToMint);
-
-        // stake
-        _stake();
-
-        // merge
-        _merge();
-
-        return toMint;
+        minted = _mint(minToMint);
+        if (_stake()) _merge();
     }
 
     // TODO: to be modified
@@ -294,9 +252,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         return xIOTXToBurn;
     }
 
-    function changeDelegates(uint256[] tokenId, address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
-        systemStake.changeDelegates(tokenId, delegate);
-    }
+//    function updateDelegates(uint256[] tokenIds, address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
+//        systemStake.changeDelegates(tokenIds, delegate);
+//    }
 
     /**
      * ======================================================================================
@@ -330,7 +288,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         emit MintEvent(msg.sender, minToMint, minted);
     }
 
-    function _stake() private {
+    function _stake() private returns (bool staked) {
         delegate = _nextDelegate();
 
         count = totalPending / stakeAmount03;
@@ -374,12 +332,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             _addLockedTokenIds(BucketType.bucketType, startTokenId, count);
         }
         totalPending -= totalAmount;
-    }
-
-    function _nextDelegate() private returns (address) {
-        delegate = delegates[nextDelegateIndex];
-        nextDelegateIndex = (nextDelegateIndex + 1) % delegates.length;
-        return delegate;
     }
 
     function _lockedTokenIdCount(BucketType bucketType) private returns (uint256) {
