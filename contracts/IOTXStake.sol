@@ -66,11 +66,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     // Events
     event DelegateStopped(uint256 stoppedCount);
     event SystemStakingContractSet(address addr);
+    event RedeemContractSet(address addr);
     event XIOTXContractSet(address addr);
     event Minted(address user, uint256 minToMint, uint256 minted);
-    event Staked(address user, uint256 startTokenId, uint256 stakeCount, uint256 stakeAmount, address delegate);
-    event RedeemContractSet(address addr);
-
+    event Staked(uint256[] tokenIds, uint256 amount, address delegate);
+    event Merged(uint256[] tokenIds, uint256 amount);
 
     // Errors
     error ZeroDelegates();
@@ -127,8 +127,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
 
-    stakeAmountSequence = _stakeAmountSequence
-    globalStakeDuration = _globalStakeDuration
+        stakeAmountSequence = _stakeAmountSequence
+        globalStakeDuration = _globalStakeDuration
 
 //        // init default values
 //        firstDebt = 1;
@@ -220,8 +220,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @dev mint uniIOTX with IOTX
      */
     function deposit(uint256 minToMint, uint256 deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint256 minted) {
-        // TODO: to be optimized
-
         minted = _mint(minToMint);
         if (_stake()) _merge();
     }
@@ -297,7 +295,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     function _stake() private returns (bool staked) {
-        for ( uint256 i = stakeAmountBases-1; i >= 0; i--) {
+        for (uint256 i = stakeAmountBases.length-1; i >= 0; i--) {
             base = stakeAmountBases[i];
             count = totalPending / base;
             amount = base * count;
@@ -305,59 +303,55 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             if (amount == 0) continue;
 
             startTokenId = systemStakeContract.stake{value:amount}(amount, stakeDuration, globalDelegate, count);
+            uint256[] tokenIds = new uint256[](count);
             for (uint256 j = 0; j < count; j++) {
-                stakedTokenIds[i] = stakedTokenIds[i].push(startTokenId+i)
+                uint256 tokenId = startTokenId+j;
+                stakedTokenIds[i].push(tokenId)
+                tokenIds[j] = tokenId;
             }
             staked = true;
             totalPending -= amount;
             totalStaked  += amount;
             accountedBalance -= amount;
 
-            emit Staked(msg.sender, startTokenId, count, amount, globalDelegate);
+            emit Staked(tokenIds, amount, globalDelegate);
         }
     }
 
+    // Todo: Optimize performance?
     function _merge() private {
-        count = _lockedTokenIdCount(BucketType.BucketType1);
-        if (count >= mergeMultiple) {
-            tokenIds = _removestakedTokenIds(BucketType.BucketType1, mergeMultiple);
-            systemStake.merge(tokenIds,stakeDuration);
-            theFirst = new uint256[](1);
-            theFirst[0] = tokenIds[0];
-            _pushLockedTokens(BucketType.BucketType2, theFirst);
-        }
+        for (uint256 i = 0; i < stakeAmountBases.length-1; i++) {
+            targetAmount = stakeAmountBases[i+1];
+            baseAmount = stakeAmountBases[i];
+            accumulatedLen = stakedTokenIds[i].length
 
-        count = _lockedTokenIdCount(BucketType.BucketType2);
-        if (count >= mergeMultiple) {
-            tokenIds = _removestakedTokenIds(BucketType.BucketType2, mergeMultiple);
-            systemStake.merge(tokenIds,stakeDuration);
-            theFirst = new uint256[](1);
-            theFirst[0] = tokenIds[0];
-            _pushLockedTokens(BucketType.BucketType3, theFirst);
+            uint256 accumulatedAmount;
+            uint256 j;
+            for (; j < accumulatedLen; j++) {
+                accumulatedAmount += baseAmount;
+                if (accumulatedAmount == targetAmount) break;
+            }
+
+            if (accumulatedAmount != targetAmount) continue;
+
+            uint256[] memory tokenIdsToMerge = new uint256[](j+1);
+            uint256[] memory tokenIdsUnmerge = new uint256[](accumulatedLen-j-1);
+            for (k = 0; k < accumulatedLen; k++) {
+                if (k <= j) {
+                    tokenIdsToMerge[k] = stakedTokenIds[k];
+                } else {
+                    tokenIdsUnmerge[k] = stakedTokenIds[k];
+                }
+            }
+
+            // Reference: https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol#L302
+            systemStake.merge(tokenIdsToMerge, stakeDuration);
+            stakedTokenIds[i] = tokenIdsUnmerge;
+            stakedTokenIds[i+1].push(tokenIdsToMerge[0]);
+
+            emit Merged(tokenIdsToMerge, targetAmount);
         }
     }
-
-// Todo: code cleaning
-//    function _lockedTokenIdCount(BucketType bucketType) private returns (uint256) {
-//        return stakedTokenIds[bucketType].size;
-//    }
-//
-//    function _removestakedTokenIds(BucketType bucketType, uint256 count) private returns (uint256[]) {
-////        delete stakedTokenIds[bucketType].ids[]
-//        // TODO:
-//        return 0;
-//    }
-//
-//    function _addstakedTokenIds(BucketType bucketType, uint256 firstTokenId, uint256 count) private {
-//        stakedTokenIds[bucketType].data[firstTokenId] = count;
-//        stakedTokenIds[bucketType].size += count;
-//    }
-//
-//    // TODO: consider move it to IOTXCLear.sol
-//    function _addredeemedTokenIds(BucketType bucketType, uint256[] tokenIds) private {
-//        // todo:
-//    }
-
 
     /**
      * @dev Calculates uniIOTX amount based on IOTX amount for mint and burn operation,
