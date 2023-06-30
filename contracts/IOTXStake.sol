@@ -28,24 +28,29 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     uint256 public accountedBalance; // TODO: Double check whether its value can be negative.
 
+    uint256 public recentReceived;
+
+
     // Stake variables
 
-    // exchange ratio related variables
-    // track user deposits & redeem (uniIOTX mint & burn)
-    uint256 private totalPending;               // total pending IOTXs awaiting to be staked
-    uint256 private totalStaked;            // track current staked ethers for delegates
-    uint256 private totalDebts;             // track current unpaid debts // TODO: ignore it?
+    // Exchange ratio related variables
+    // Track user deposits & redeem (uniIOTX mint & burn)
+    uint256 private totalPending;               // Total pending IOTXs awaiting to be staked
+    uint256 private totalStaked;            // Track current staked ethers for delegates
+    uint256 private totalDebts;             // Track current unpaid debts // TODO: ignore it?
 
-    // track revenue from validators to form exchange ratio
-    uint256 private accountedUserRevenue;           // accounted shared user revenue
-    uint256 private accountedManagerRevenue;        // accounted manager's revenue
-    uint256 private rewardDebts;                    // check validatorStopped function // TODO: modify this comment
+    uint256 public managerFeeShares; // Shares range: [0, 1000]
+
+    // Track revenue from validators to form exchange ratio
+    uint256 private accountedUserRevenue;           // Accounted shared user revenue
+    uint256 private accountedManagerRevenue;        // Accounted manager's revenue
+    uint256 private rewardDebts;                    // Check validatorStopped function // TODO: modify this comment
 
     uint256[] public immutable stakeAmountBases; // In sorted ascending order, i.e. [10000, 100000, 1000000] // Todo: optimize with less data provided
     uint256 public immutable stakeDuration;
     // Todo: Add mergeMultiple // Rate of increase
 
-    // Token ids: stake amount index => tokenIds
+    // Token ids: Stake amount index => tokenIds
     mapping(uint256 => uint256[]) public stakedTokenIds;
     uint256[] public redeemedTokenIds;
 
@@ -54,16 +59,20 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     event SystemStakingContractSet(address addr);
     event RedeemContractSet(address addr);
     event XIOTXContractSet(address addr);
+    event ManagerFeeSharesSet(uint256 shares);
     event Minted(address user, uint256 minted);
     event Redeemed(address user, uint256 burned, uint256[] tokenIds);
     event Staked(uint256[] tokenIds, uint256 amount, address delegate);
     event Merged(uint256[] tokenIds, uint256 amount);
+    event BalanceSynced(uint256 diff);
+    event RevenueAccounted(uint256 amount);
 
     // Errors
     error ZeroDelegates();
     error TransactionExpired(uint256 deadline, uint256 now);
     error InvalidRedeemAmount(uint256 redeemAmount, uint256 redeemBase);
     error ExchangeRatioMismatch(uint256 expectedAmount, uint256 gotAmount);
+    error ShareOutOfRange();
 
     // Modifiers // TODO: code reuse across smart contracts?
     modifier onlyValidTransaction(uint256 deadline) {
@@ -91,21 +100,21 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     receive() external payable { }
 
     /**
-     * @dev pause the contract
+     * @dev Pause the contract
      */
     function pause() public onlyRole(PAUSER_ROLE) {
         _pause();
     }
 
     /**
-     * @dev unpause the contract
+     * @dev Unpause the contract
      */
     function unpause() public onlyRole(PAUSER_ROLE) {
         _unpause();
     }
 
     /**
-     * @dev initialization address
+     * @dev Initialization address
      */
     function initialize(
         uint256[] _stakeAmountSequence,
@@ -124,7 +133,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // TODO: do it in initialization?
     /**
-     * @dev set eth deposit contract address
+     * @dev Set eth deposit contract address
      */
     function setSystemStakingContract(address _systemStake) external onlyRole(DEFAULT_ADMIN_ROLE) {
         systemStake = _systemStake;
@@ -133,7 +142,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev set xIOTX token contract address
+     * @dev Set xIOTX token contract address
      */
     function setXIOTXContractAddress(address _xIOTXAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
         uniIOTX = _xIOTXAddress;
@@ -142,12 +151,22 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev set redeem contract
+     * @dev Set redeem contract
      */
     function setRedeemContract(address _redeemContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
         iotxClear = _redeemContract;
 
         emit RedeemContractSet(_redeemContract);
+    }
+
+    /**
+     * @dev Set Manager's fee in range [0, 1000]
+     */
+    function setManagerFeeShares(uint256 shares) external onlyRole(DEFAULT_ADMIN_ROLE)  {
+        if (shares > 1000) revert ShareOutOfRange();
+        managerFeeShares = shares;
+
+        emit ManagerFeeSharesSet(shares);
     }
 
     /**
@@ -233,14 +252,24 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (_stake()) _merge();
     }
 
-    // TODO: to be optimized
-    // TODO: Give an explanation of param maxToBurn
+    // Todo: to be optimized
+    // Todo: Give an explanation of param maxToBurn
     /**
      * @notice This function keeps the exchange ratio invariant to avoid user arbitrage.
      * @param iotxsToRedeem The number of IOTXs to redeem must be a multiple of the accepted amount of redeeming base.
      */
     function redeem(uint256 iotxsToRedeem, uint256 maxToBurn, uint256 deadline) external nonReentrant onlyValidTransaction(deadline) returns(uint256 burned) {
         burned = _redeem(iotxsToRedeem, maxToBurn);
+    }
+
+    // Todo: reconsideration on economic params.
+    functon updateReward() external onlyRole(ORACLE_ROLE) {
+        if (_syncBalance()) {
+            uint256 rewards = _calculateRewards();
+            _distributeRewards(rewards);
+            _autoCompoud();
+            recentReceived = 0;
+        }
     }
 
     /**
@@ -260,7 +289,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
-    // TODO: Consider whitelisting KYC users?
+    // Todo: Consider whitelisting KYC users?
     function _mint(uint256 minToMint) private notZeroMint returns (uint256 minted) {
         accountedBalance += msg.value;
 
@@ -333,7 +362,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         }
     }
 
-
+    // Todo: Optimization is needed
     function _redeem(uint256 iotxsToRedeem, uint256 maxToBurn) private returns(uint256 burned) {
         uint256 baseIndex = stakeAmountBases.legnth-1;
         uint256 base = stakeAmountBases[baseIndex];
@@ -387,6 +416,40 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (currentReserve > 0) { // avert division overflow
             amountUniIOTX = totalSupply * amountIOTX / currentReserve; // TODO: further consideration on the fractional part
         }
+    }
+
+    function _syncBalance() private returns (bool changed) {
+        uint256 thisBalance = address(this).balance
+        if (thisBalance > accountedBalance) {
+            uint256 diff = thisBalance - accountedBalance;
+            accountedBalance = thisBalance;
+            recentReceived += diff;
+            changed = true;
+            // Todo: Trigger vectorClockTick ?
+
+            emit BalanceSynced(diff);
+        }
+    }
+
+    // Todo: Reconsider the rules for calculating rewards.
+    function _calculateRewards() private returns (uint256) {
+        // Todo: Check whether to account in slash
+        return recentReceived;
+    }
+
+    function _distributeRewards(uint256 rewards) private {
+        uint256 fee = rewards * managerFeeShares / 1000;
+        accountedManagerRevenue += fee;
+        accountedUserRevenue += rewards - fee;
+
+        emit RevenueAccounted(rewards);
+    }
+
+    // Todo: Reconsider the amount for auto compound
+    function _autoCompound() private {
+        uint256 amount = accountedUserRevenue - rewardDebts;
+        totalPending += amount;
+        rewardDebts += amount;
     }
 
 }
