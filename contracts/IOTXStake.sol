@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 import "interfaces/IIOTXClear.sol";
@@ -11,6 +12,9 @@ import "../interfaces/ISystemStake.sol";
 import "./DelegateManager.sol"
 
 contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, DelegateManager {
+    // Libraries
+    using SafeERC20 for IERC20;
+
     // External dependencies
     ISystemStake public systemStakeContract;
     IUniIOTX public uniIOTXContract;
@@ -37,8 +41,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     uint256 private accountedManagerRevenue;        // accounted manager's revenue
     uint256 private rewardDebts;                    // check validatorStopped function // TODO: modify this comment
 
-    uint256[] public immutable stakeAmountBases; // In sorted ascending order, i.e. [10000, 100000, 1000000]
+    uint256[] public immutable stakeAmountBases; // In sorted ascending order, i.e. [10000, 100000, 1000000] // Todo: optimize with less data provided
     uint256 public immutable stakeDuration;
+    // Todo: Add mergeMultiple // Rate of increase
 
     // Token ids: stake amount index => tokenIds
     mapping(uint256 => uint256[]) public stakedTokenIds;
@@ -49,7 +54,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     event SystemStakingContractSet(address addr);
     event RedeemContractSet(address addr);
     event XIOTXContractSet(address addr);
-    event Minted(address user, uint256 minToMint, uint256 minted);
+    event Minted(address user, uint256 minted);
+    event Redeemed(address user, uint256 burned, uint256[] tokenIds);
     event Staked(uint256[] tokenIds, uint256 amount, address delegate);
     event Merged(uint256[] tokenIds, uint256 amount);
 
@@ -108,7 +114,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
 
-        stakeAmountSequence = _stakeAmountSequence
+        stakeAmountSequence = _stakeAmountSequence // Todo: Validate amount
         globalStakeDuration = _globalStakeDuration
 
 //        // init default values
@@ -197,6 +203,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         return this.onERC721Received.selector;
     }
 
+    // Todo: Give an explanation of param minToMint
+    // Todo: Prove that
+    /**
+     * @notice This function keeps the exchange ratio invariant to avoid user arbitrage.
+     */
     function deposit(uint256 minToMint, uint256 deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint256 minted) {
         minted = _mint(minToMint);
         if (_stake()) _merge();
@@ -206,38 +217,50 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (_stake()) _merge();
     }
 
-    // TODO: to be modified
-    function redeem(uint256 amount, uint256 maxToBurn, uint256 deadline) external onlyValidTransaction(deadline) nonReentrant returns(uint256 burned) {
-        if (amount % stakeAmount03 != 0) revert InvalidRedeemAmount(amount, stakeAmount03);
-        // TODO: verify the rights/preconditiions of msg.sender to redeem ? including:
-        // TODO: check amount ceiling according to clients deposit amount.
+    // TODO: to be optimized
+    // TODO: Give an explanation of param maxToBurn
+    /**
+     * @notice This function keeps the exchange ratio invariant to avoid user arbitrage.
+     * @param iotxsToRedeem The number of IOTXs to redeem must be a multiple of the accepted amount of redeeming base.
+     */
+    function redeem(uint256 iotxsToRedeem, uint256 maxToBurn, uint256 deadline) external nonReentrant onlyValidTransaction(deadline) returns(uint256 burned) {
+        uint256 baseIndex = stakeAmountBases.legnth-1;
+        uint256 base = stakeAmountBases[baseIndex];
+        if (iotxsToRedeem % base != 0) revert InvalidRedeemAmount(iotxsToRedeem, base);
 
-        uint256 totalXIOTX = uniIOTX.totalSupply();
-        uint256 xIOTXToBurn = totalXIOTX * amount / currentReserve(); // TODO:
-        require(xIOTXToBurn <= maxToBurn, "USR004");
-
-        // NOTE: the following procdure must keep exchangeRatio invariant:
-        // transfer uniIOTX from sender & burn
-        // TODO: why transfer and burn, but not only burn?
-        uniIOTX.safeTransferFrom(msg.sender, address(this), xIOTXToBurn);
-        uniIOTX.burn(xIOTXToBurn);
+        // Burn uniIOTXs
+        toBurn = _convertIotxToUniIotx(msg.value);
+        if (toBurn > maxToBurn) revert ExchangeRatioMismatch(minToMint, toMint);
+        uniIOTX.safeTransferFrom(msg.sender, address(this), toBurn); // Todo: Why transfer and burn, but not just burn?
+        uniIOTX.burn(toBurn);
+        burned = toBurn;
+        totalStaked -= iotxsToRedeem; // Todo: double check whether we should decrease it here.
 
         // Unlock NFT(s)
-        count = amount / stakeAmount03;
-        tokenIds = _removestakedTokenIds(BucketType.BucketType3, count);
-        systemStake.unlock(tokenIds);
-        _addredeemedTokenIds(tokenIds);
+        count = iotxsToRedeem / base;
+        uint256[] stakedTokenIds = stakedTokenIds[baseIndex];
+        uint256[] tokenIdsToUnlock = new uint256[](count);
+        uint256[] tokenIdsReserve = new uint256[](stakedTokenIds.length-count);
+        for (i = 0; i < stakedTokenIds.length; i++) { // Todo: Code reuse and remove loop.
+            if (i <= j) {
+                tokenIdsToUnlock[i] = stakedTokenIds[i];
+                redeemedTokenIds.push(stakedTokenIds[i]);
+        } else {
+                tokenIdsReserve[i] = stakedTokenIds[i]; // Todo: Assignment with incorrect index
+            }
+        }
+        systemStake.unlock(tokenIdsToUnlock);
+        stakedTokenIds[baseIndex] = tokenIdsReserve;
 
-        // Transfer NFT owner
-        for (i = 0; i < tokenIds.length; i++) {
-            systemStake.transferFrom(address(this), address(iotxClear), tokenIds[i]);
+        // Transfer NFT(s)
+        for (i = 0; i < count; i++) {
+            systemStake.safeTransferFrom(address(this), address(iotxClear), tokenIds[i]);
         }
 
         // Join debt
-        iotxClear.joinDebt(msg.sender, amount);
+        iotxClear.joinDebt(msg.sender, iotxsToRedeem);
 
-        // return burned
-        return xIOTXToBurn;
+        emit Redeemed(msg.sender, burned, tokenIdsToUnlock);
     }
 
     /**
@@ -258,7 +281,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
 
     // TODO: Consider whitelisting KYC users?
-    // TODO: Give an explanation of param minToMint
     function _mint(uint256 minToMint) private notZeroMint returns (uint256 minted) {
         accountedBalance += msg.value;
 
@@ -269,7 +291,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
         totalPending += msg.value;
 
-        emit Minted(msg.sender, minToMint, minted);
+        emit Minted(msg.sender, minted);
     }
 
     function _stake() private returns (bool staked) {
@@ -314,11 +336,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
             uint256[] memory tokenIdsToMerge = new uint256[](j+1);
             uint256[] memory tokenIdsUnmerge = new uint256[](accumulatedLen-j-1);
-            for (k = 0; k < accumulatedLen; k++) {
+            for (k = 0; k < accumulatedLen; k++) { // Todo: Code reuse and remove loop.
                 if (k <= j) {
                     tokenIdsToMerge[k] = stakedTokenIds[k];
                 } else {
-                    tokenIdsUnmerge[k] = stakedTokenIds[k];
+                    tokenIdsUnmerge[k] = stakedTokenIds[k]; // Todo: Assignment with incorrect index?
                 }
             }
 
