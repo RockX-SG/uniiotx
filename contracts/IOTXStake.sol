@@ -172,16 +172,32 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev returns current reserve of ethers
+     * @dev Returns current reserve of ethers
          */
     function currentReserve() public view returns(uint256) {
         return totalPending + totalStaked + accountedUserRevenue - totalDebts - rewardDebts;  // TODO: ignore total debts?
     }
 
     /**
-     * @dev return pending IOTXs
+     * @dev Return pending IOTXs
      */
     function getPendingIOTXs() external view returns (uint256) { return totalPending; }
+
+    /**
+     * @dev Return the length of redeemedTokenIds
+     */
+    function getRedeemedTokensCount() external view returns (uint256) {
+        return redeemedTokenIds.length;
+    }
+
+    /**
+     * @dev Return the [i, j) slice of redeemedTokenIds
+     */
+    function getRedeemedTokenIds(uint256 i, uint256 j) external view returns (uint256[] memory tokenIds) {
+        for (uint256 k := i; k < j; k++) {
+            tokenIds.push(redeemedTokenIds[k])
+        }
+    }
 
     /**
      * ======================================================================================
