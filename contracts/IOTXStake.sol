@@ -224,43 +224,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @param iotxsToRedeem The number of IOTXs to redeem must be a multiple of the accepted amount of redeeming base.
      */
     function redeem(uint256 iotxsToRedeem, uint256 maxToBurn, uint256 deadline) external nonReentrant onlyValidTransaction(deadline) returns(uint256 burned) {
-        uint256 baseIndex = stakeAmountBases.legnth-1;
-        uint256 base = stakeAmountBases[baseIndex];
-        if (iotxsToRedeem % base != 0) revert InvalidRedeemAmount(iotxsToRedeem, base);
-
-        // Burn uniIOTXs
-        toBurn = _convertIotxToUniIotx(msg.value);
-        if (toBurn > maxToBurn) revert ExchangeRatioMismatch(minToMint, toMint);
-        uniIOTX.safeTransferFrom(msg.sender, address(this), toBurn); // Todo: Why transfer and burn, but not just burn?
-        uniIOTX.burn(toBurn);
-        burned = toBurn;
-        totalStaked -= iotxsToRedeem; // Todo: double check whether we should decrease it here.
-
-        // Unlock NFT(s)
-        count = iotxsToRedeem / base;
-        uint256[] stakedTokenIds = stakedTokenIds[baseIndex];
-        uint256[] tokenIdsToUnlock = new uint256[](count);
-        uint256[] tokenIdsReserve = new uint256[](stakedTokenIds.length-count);
-        for (i = 0; i < stakedTokenIds.length; i++) { // Todo: Code reuse and remove loop.
-            if (i <= j) {
-                tokenIdsToUnlock[i] = stakedTokenIds[i];
-                redeemedTokenIds.push(stakedTokenIds[i]);
-        } else {
-                tokenIdsReserve[i] = stakedTokenIds[i]; // Todo: Assignment with incorrect index
-            }
-        }
-        systemStake.unlock(tokenIdsToUnlock);
-        stakedTokenIds[baseIndex] = tokenIdsReserve;
-
-        // Transfer NFT(s)
-        for (i = 0; i < count; i++) {
-            systemStake.safeTransferFrom(address(this), address(iotxClear), tokenIds[i]);
-        }
-
-        // Join debt
-        iotxClear.joinDebt(msg.sender, iotxsToRedeem);
-
-        emit Redeemed(msg.sender, burned, tokenIdsToUnlock);
+        burned = _redeem(iotxsToRedeem, maxToBurn);
     }
 
     /**
@@ -351,6 +315,47 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
             emit Merged(tokenIdsToMerge, targetAmount);
         }
+    }
+
+
+    function _redeem(uint256 iotxsToRedeem, uint256 maxToBurn) private returns(uint256 burned) {
+        uint256 baseIndex = stakeAmountBases.legnth-1;
+        uint256 base = stakeAmountBases[baseIndex];
+        if (iotxsToRedeem % base != 0) revert InvalidRedeemAmount(iotxsToRedeem, base);
+
+        // Burn uniIOTXs
+        toBurn = _convertIotxToUniIotx(msg.value);
+        if (toBurn > maxToBurn) revert ExchangeRatioMismatch(minToMint, toMint);
+        uniIOTX.safeTransferFrom(msg.sender, address(this), toBurn); // Todo: Why transfer and burn, but not just burn?
+        uniIOTX.burn(toBurn);
+        burned = toBurn;
+        totalStaked -= iotxsToRedeem; // Todo: double check whether we should decrease it here.
+
+        // Unlock NFT(s)
+        count = iotxsToRedeem / base;
+        uint256[] stakedTokenIds = stakedTokenIds[baseIndex];
+        uint256[] tokenIdsToUnlock = new uint256[](count);
+        uint256[] tokenIdsReserve = new uint256[](stakedTokenIds.length-count);
+        for (i = 0; i < stakedTokenIds.length; i++) { // Todo: Code reuse and remove loop.
+        if (i <= j) {
+            tokenIdsToUnlock[i] = stakedTokenIds[i];
+            redeemedTokenIds.push(stakedTokenIds[i]);
+        } else {
+            tokenIdsReserve[i] = stakedTokenIds[i]; // Todo: Assignment with incorrect index
+        }
+        }
+        systemStake.unlock(tokenIdsToUnlock);
+        stakedTokenIds[baseIndex] = tokenIdsReserve;
+
+        // Transfer NFT(s)
+        for (i = 0; i < count; i++) {
+            systemStake.safeTransferFrom(address(this), address(iotxClear), tokenIds[i]);
+        }
+
+        // Join debt
+        iotxClear.joinDebt(msg.sender, iotxsToRedeem);
+
+        emit Redeemed(msg.sender, burned, tokenIdsToUnlock);
     }
 
     /**
