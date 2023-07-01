@@ -22,7 +22,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // Constants
     uint256 public defaultExchangeRatio = 1;
-    uint256 private constant MULTIPLIER = 1e18;
+    uint256 public constant MULTIPLIER = 1e18;
 
     // State variables
 
@@ -35,16 +35,15 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // Exchange ratio related variables
     // Track user deposits & redeem (uniIOTX mint & burn)
-    uint256 private totalPending;               // Total pending IOTXs awaiting to be staked
-    uint256 private totalStaked;            // Track current staked ethers for delegates
-    uint256 private totalDebts;             // Track current unpaid debts // TODO: ignore it?
+    uint256 public totalPending;               // Total pending IOTXs awaiting to be staked
+    uint256 public totalStaked;            // Track current staked ethers for delegates
 
     uint256 public managerFeeShares; // Shares range: [0, 1000]
 
     // Track revenue from validators to form exchange ratio
-    uint256 private accountedUserRevenue;           // Accounted shared user revenue
-    uint256 private accountedManagerRevenue;        // Accounted manager's revenue
-    uint256 private rewardDebts;                    // Check validatorStopped function // TODO: modify this comment
+    uint256 public accountedUserRevenue;           // Accounted shared user revenue
+    uint256 public accountedManagerRevenue;        // Accounted manager's revenue
+    uint256 public rewardDebts;
 
     uint256[] public immutable stakeAmountBases; // In sorted ascending order, i.e. [10000, 100000, 1000000] // Todo: optimize with less data provided
     uint256 public immutable stakeDuration;
@@ -66,13 +65,16 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     event Merged(uint256[] tokenIds, uint256 amount);
     event BalanceSynced(uint256 diff);
     event RevenueAccounted(uint256 amount);
+    event ManagerFeeWithdrawed(uint256 amount, uint256 minted, address recipient);
 
-    // Errors
+
+// Errors
     error ZeroDelegates();
     error TransactionExpired(uint256 deadline, uint256 now);
     error InvalidRedeemAmount(uint256 redeemAmount, uint256 redeemBase);
     error ExchangeRatioMismatch(uint256 expectedAmount, uint256 gotAmount);
-    error ShareOutOfRange();
+    error ManagerFeeSharesOutOfRange();
+    error InsufficientManagerRevenue(uint256 withdrawAmount, uint256 availableAmount);
 
     // Modifiers // TODO: code reuse across smart contracts?
     modifier onlyValidTransaction(uint256 deadline) {
@@ -163,7 +165,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @dev Set Manager's fee in range [0, 1000]
      */
     function setManagerFeeShares(uint256 shares) external onlyRole(DEFAULT_ADMIN_ROLE)  {
-        if (shares > 1000) revert ShareOutOfRange();
+        if (shares > 1000) revert ManagerFeeSharesOutOfRange();
         managerFeeShares = shares;
 
         emit ManagerFeeSharesSet(shares);
@@ -187,20 +189,15 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             return 1 * MULTIPLIER;
         }
 
-        ratio = currentReserve() * MULTIPLIER / uniIOTXAmount; // TODO: further consideration on the fractional part
+        ratio = currentReserve() * MULTIPLIER / uniIOTXAmount; // Todo: further consideration on the fractional part
     }
 
     /**
      * @dev Returns current reserve of ethers
          */
     function currentReserve() public view returns(uint256) {
-        return totalPending + totalStaked + accountedUserRevenue - totalDebts - rewardDebts;  // TODO: ignore total debts?
+        return totalPending + totalStaked + accountedUserRevenue - rewardDebts; // Todo: Second thought of the correctness, including potential total debts.
     }
-
-    /**
-     * @dev Return pending IOTXs
-     */
-    function getPendingIOTXs() external view returns (uint256) { return totalPending; }
 
     /**
      * @dev Return the length of redeemedTokenIds
@@ -270,6 +267,24 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             _autoCompoud();
             recentReceived = 0;
         }
+    }
+
+    // Todo: Should we support directive withdrawing of IOTXs?
+    /**
+     * @dev This function handles manager revenue in this way:
+     * 1. Mint uniIOTXs to the given recipient based on the given IOTX amount;
+     * 2. Shift the corresponding amount of accountedManagerRevenue to totalPending.
+     */
+    function withdrawManagerFee(uint256 amount, address recipient) external nonReentrant onlyRole(MANAGER_ROLE)  {
+        if (amount > accountedManagerRevenue) revert InsufficientManagerRevenue();
+
+        toMint = _convertIotxToUniIotx(amount);
+        uniIOTX.mint(recipient, toMint);
+
+        accountedManagerRevenue -= amount;
+        totalPending += amount;
+
+        emit ManagerFeeWithdrawed(amount, toMint, recipient);
     }
 
     /**
