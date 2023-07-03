@@ -381,7 +381,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function _redeem(uint256 iotxsToRedeem, uint256 maxToBurn) private returns(uint256 burned) {
         uint256 baseIndex = stakeAmountBases.legnth-1;
         uint256 base = stakeAmountBases[baseIndex];
-        if (iotxsToRedeem % base != 0) revert InvalidRedeemAmount(iotxsToRedeem, base);
+        if (iotxsToRedeem % base != 0) revert InvalidRedeemAmount(iotxsToRedeem, base); // Todo: This condition is very picky and maybe needs a more flexible policy.
 
         // Burn uniIOTXs
         toBurn = _convertIotxToUniIotx(msg.value);
@@ -461,7 +461,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // Todo: Reconsider the amount for auto compound
-    function _autoCompound() private {
+    function _autoCompound() private { // Todo: What if disabling this feature?
         uint256 amount = accountedUserRevenue - rewardDebts;
         totalPending += amount;
         rewardDebts += amount;
