@@ -147,7 +147,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
         if (tokenIds.length > 0) systemStake.unstake(tokenIds);
     }
 
-    // Todo: Maybe optimize the implementation.
+    // Todo: Maybe optimize the implementation, including introducing necessary validations.
     function withdraw(uint256[] tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
         for (uint256 i = 0; i < tokenIds.length); i++ {
             address account = _payDebt(tokenIds[i]);
@@ -227,16 +227,12 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
         info.accSharePoint = accShare;
     }
 
+    // Todo: Confirm whether consider an extra manager fee in IOTXClear contract (We also count it in IOTXStake contract).
     function _updateReward() internal {
         if (address(this).balance > accountedBalance && totalDebts > 0) {
-            reward = _calcPendingReward();
-            accShare += reward * MULTIPLIER / totalDebts;
+            uint256 incrReward = address(this).balance - accountedBalance;
+            accShare += incrReward * MULTIPLIER / totalDebts;
             accountedBalance = address(this).balance;
         }
-    }
-
-    // Todo: Confirm whether consider an extra manager fee in IOTXClear contract (We also count it in IOTXStake contract).
-    function _calcPendingReward() internal view returns (uint256 reward)  {
-        reward = address(this).balance - accountedBalance;
     }
 }
