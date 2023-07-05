@@ -9,7 +9,8 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-import "../interfaces/ISystemStake.sol"
+import "interfaces/IIOTXStake.sol";
+import "../interfaces/ISystemStake.sol";
 
 contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, ReentrancyGuardUpgradeable, OwnableUpgradeable, IERC721Receiver {
     using SafeERC20 for IERC20;
@@ -17,66 +18,73 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
 
     // External dependencies
     ISystemStake public systemStake;
+    IIOTXStake public iotxStake;
+
+    // Constants
+    uint256 public constant MULTIPLIER = 1e18;
 
     // Type declarations
+
+    struct UserInfo {
+        uint256 accSharePoint; // share starting point
+        uint256 debt;   // user's debt
+        uint256 reward;  // user's reward which is available for claim
+    }
+
     struct Debt {
         address account;
         uint256 amount;
     }
 
-    uint256 private totalDebts;             // track current unpaid debts
+    // State variables
+    uint256 public accountedBalance;
 
-    // FIFO of debts from redeemFromDelegates
-    mapping(uint256=>Debt) private IOTXDebts;
-    uint256 private firstDebt;
-    uint256 private lastDebt;
-    mapping(address=>uint256) private userDebts;    // debts from user's perspective
+    uint256 public totalDebts;             // Track current unpaid debts
 
-    mapping(address=>uint256) private balances;
-    uint256 private totalBalance;
+    // FIFO of debts
+    mapping(uint256=>Debt) private iotxDebts;   // Index -> Debt
+    uint256 public firstDebt;
+    uint256 public lastDebt;
+
+    mapping(address => UserInfo) public userInfos; // account -> info
 
     // Events
-    event DebtQueued(address creditor, uint256 amountEther);
-    event Paied(address account, uint256 amount);
-    event Claimed(address indexed _from, address indexed _to, uint256 _value);
-    event SystemStakingContractSet(address addr);
+    event DebtJoined(address account, uint256 amount);
+    event DebtLeft(address account, uint256 amount);
+    event RewardClaimed(address claimer, address recipient, uint256 amount);
+
+    // Errors
+    error InsufficientReward(uint256 expected, uint256 available);
+    error DebtAmountMismatched(uint256 toPayAmount, uint256 queuedAmount);
 
     /**
      * ======================================================================================
      *
-     * SYSTEM SETTINGS
+     * CONFIGURATION FUNCTIONS
      *
      * ======================================================================================
      */
 
+    // Todo: Tune it properly
     /**
      * @dev initialization
      */
-    function initialize() initializer public {
+    function initialize(
+        address _iotxStakeAddress,
+        address _systemStakeAddress,
+    ) initializer public {
         __Ownable_init();
         __Pausable_init();
         __ReentrancyGuard_init();
 
-        // init default values
+        _grantRole(IOTX_STAKE_ROLE, _iotxStakeAddress);
+
+        systemStake = _systemStakeAddress;
+        iotxStake = _ _iotxStakeAddress;
+
         firstDebt = 1;
         lastDebt = 0;
     }
-
-    /**
-     * @dev set eth deposit contract address
-         */
-    function setSystemStakingContract(address _SystemStakingContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        systemStake = _SystemStakingContract;
-
-        emit SystemStakingContractSet(_SystemStakingContract);
-    }
-
-    // some convenient method to help show their claimable in wallet
-    function name() external pure returns (string memory) { return "RockX Claimable IOTX"; }
-    function symbol() external pure returns (string memory) { return "redeemIOTX"; }
-    function decimals() external pure returns (uint8) { return 18; }
-    function totalSupply() external view returns (uint256) { return totalBalance; }
-    function balanceOf(address account) external view returns(uint256) { return balances[account]; }
 
     /**
      * ======================================================================================
@@ -87,97 +95,30 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
      */
 
     /**
-     * @dev return current debts
-     */
-    function getCurrentDebts() external view returns (uint256) { return totalDebts; }
-
-    /**
-     * @dev return debt of index
+     * @dev Return debt of index
      */
     function checkDebt(uint256 index) external view returns (address account, uint256 amount) {
-        Debt memory debt = IOTXDebts[index];
+        Debt memory debt = iotxDebts[index];
         return (debt.account, debt.amount);
     }
 
     /**
-     * @dev return debt queue index
+     * @dev Return debt queue index
      */
     function getDebtQueue() external view returns (uint256 first, uint256 last) {
         return (firstDebt, lastDebt);
     }
 
     /**
-     * ======================================================================================
-     *
-     * INTERNAL FUNCTIONS
-     *
-     * ======================================================================================
-     */
-
-    function _dequeueDebt() internal returns (Debt memory debt) {
-        require(lastDebt >= firstDebt, "SYS022");  // non-empty queue
-        debt = IOTXDebts[firstDebt];
-        delete IOTXDebts[firstDebt];
-        firstDebt += 1;
-    }
-
-    /**
-     * @dev pay debts for a given amount
-     */
-    function _payDebts(uint256 total) internal returns(uint256 amountPaid) {
-        require(address(iotxClear) != address(0x0), "SYS023");
-
-        // IOTXs to pay
-        for (uint i=firstDebt;i<=lastDebt;i++) {
-            if (total == 0) {
-                break;
-            }
-
-            Debt storage debt = IOTXDebts[i];
-
-            // clean debts
-            uint256 toPay = debt.amount <= total? debt.amount:total;
-            debt.amount -= toPay;
-            total -= toPay;
-            userDebts[debt.account] -= toPay;
-            amountPaid += toPay;
-
-            // transfer money to debt contract
-            IIOTXClear(iotxClear).pay{value:toPay}(debt.account);
-
-            // dequeue if cleared
-            if (debt.amount == 0) {
-                _dequeueDebt();
-            }
-        }
-
-        totalDebts -= amountPaid;
-
-        // track balance
-        _balanceDecrease(amountPaid);
-    }
-
-
-    /**
-     * ======================================================================================
-     *
-     * PUBLIC FUNCTIONS
-     *
-     * ======================================================================================
-     */
-
-    function joinDebt(address account, uint256 amount) public {
-        // debt is paid in FIFO queue
-        lastDebt += 1;
-        IOTXDebts[lastDebt] = Debt({account:account, amount:amount});
-
-        // track user debts
-        userDebts[account] += amount;
-        // track total debts
-        totalDebts += amount;
-
-        // log
-        emit DebtQueued(account, amount);
+     * @dev IERC721Receiver implement for receiving redeemed/unlocked NFT transferred by IOTXStake contract
+         */
+    function onERC721Received(
+        address, // operator
+        address, // from
+        uint256, // tokenId
+        bytes calldata // data
+    ) external pure override returns (bytes4) {
+            return this.onERC721Received.selector;
     }
 
     /**
@@ -188,60 +129,114 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
      * ======================================================================================
      */
 
-    function changeDelegates(uint256[] tokenId, address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
-        systemStake.changeDelegates(tokenId, delegate);
+    function joinDebt(address account, uint256 amount) public shenNotPaused onlyRole(IOTX_STAKE_ROLE) {
+        // Update current user reward
+        _updateReward(account);
+
+        // Record new user debt
+        _enqueueDebt(account, amount);
+
+        emit DebtJoined(account, amount);
+    }
+
+    function updateDelegates(uint256[] tokenIds, address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
+        systemStake.changeDelegates(tokenIds, delegate);
     }
 
     function unstake(uint256[] calldata tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
         if (tokenIds.length > 0) systemStake.unstake(tokenIds);
     }
 
-    function claim(address to, uint256 amount) public nonReentrant returns (bool success) {
-        // check
-        require(balances[msg.sender] >= amount, "INSUFFICIENT_BALANCE");
+    // Todo: Maybe optimize the implementation.
+    function withdraw(uint256[] tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
+        for (uint256 i = 0; i < tokenIds.length); i++ {
+            address account = _payDebt(tokenIds[i]);
+            _updateReward(account);
+        }
+    }
 
-        // modify
-        balances[msg.sender] -= amount;
-        totalBalance -= amount;
-        payable(to).sendValue(amount);
-
-        // log
-        emit Claimed(msg.sender, to, amount);
-        return true;
+    function updateReward() external {
+        _updateReward();
     }
 
     /**
-     * @dev pay debts from rockx staking contract
+     * @dev Return updated user reward which is available for a later claim
      */
-    function payDebt(address account) external override payable {
-        balances[account] += msg.value;
-        totalBalance += msg.value;
-
-        // log
-        emit Paied(account, msg.value);
+    function updateReward(address acount) external returns (uint256) {
+        _updateReward(account);
+        return userInfos[account].reward;
     }
 
+    function claimRewards(uint256 amount, address recipient) external nonReentrant whenNotPaused {
+         // Update reward
+        _updateReward(msg.sender);
 
-    /**
-     * @dev IERC721Receiver implement for receiving staking NFT
-     */
-    function onERC721Received(
-        address, // operator
-        address, // from
-        uint256, // tokenId
-        bytes calldata // data
-    ) external pure override returns (bytes4) {
-        return this.onERC721Received.selector;
+        // Check reward
+        UserInfo info = userInfos[msg.sender];
+        if (info.reward < amount) revert InsufficientReward(amount, info.reward);
+
+        // Transfer reward
+        payable(recipient).sendValue(amount);
+        info.reward -= amount;
+        accountedBalance -= amount;
+
+        emit RewardClaimed(msg.sender, recipient, amount);
     }
 
     /**
     * ======================================================================================
     *
-    * PRIVATE FUNCTIONS
+    * INTERNAL FUNCTIONS
     *
     * ======================================================================================
     */
 
+    function _enqueueDebt(address account, uint256 amount) internal {
+        lastDebt += 1;
+        iotxDebts[lastDebt] = Debt({account:account, amount:amount});
 
+        userInfos[account].debt += amount;
+        totalDebts += amount;
+    }
 
+    function _payDebt(uint256 tokenId) internal returns (address account) {
+        // Pick a debt in FIFO order
+        Debt storage firstDebt = iotxDebts[firstDebt];
+        account = firstDebt.account;
+
+        // Validate NFT amount
+        (amount, _, _, _, _,) = systemStake.bucketOf(tokenId);
+        if (amount != firstDebt.amount) revert DebtAmountMismathced(amount, firstDebt.amount);
+
+        // Withdraw NFT to user account
+        systemStake.withdraw(tokenId, account);
+
+        // Update debt states
+        userInfos[account].debt -= amount;
+        totalDebts -= amount;
+        delete iotxDebts[firstDebt];
+        firstDebt += 1;
+
+        event DebtLeft(account, amount);
+    }
+
+    function _updateReward(address acount) internal {
+        _updateReward();
+        UserInfo storage info = userInfos[account];
+        info.reward += (accShare - info.accSharePoint) * info.debt / MULTIPLIER;
+        info.accSharePoint = accShare;
+    }
+
+    function _updateReward() internal {
+        if (address(this).balance > accountedBalance && totalDebts > 0) {
+            reward = _calcPendingReward();
+            accShare += reward * MULTIPLIER / totalDebts;
+            accountedBalance = address(this).balance;
+        }
+    }
+
+    // Todo: Confirm whether consider an extra manager fee in IOTXClear contract (We also count it in IOTXStake contract).
+    function _calcPendingReward() internal view returns (uint256 reward)  {
+        reward = address(this).balance - accountedBalance;
+    }
 }
