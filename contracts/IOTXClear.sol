@@ -49,8 +49,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     mapping(address => UserInfo) public userInfos; // account -> info
 
     // Events
-    event DebtJoined(address account, uint256 amount);
-    event DebtLeft(address account, uint256 amount);
+    event DebtAdded(address account, uint256 amount);
+    event DebtPaid(address account, uint256 amount);
     event RewardClaimed(address claimer, address recipient, uint256 amount);
 
     // Errors
@@ -134,9 +134,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
         _updateReward(account);
 
         // Record new user debt
-        _enqueueDebt(account, amount);
-
-        emit DebtJoined(account, amount);
+        _addDebt(account, amount);
     }
 
     function updateDelegates(uint256[] tokenIds, address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
@@ -191,12 +189,16 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     * ======================================================================================
     */
 
-    function _enqueueDebt(address account, uint256 amount) internal {
+    function _addDebt(address account, uint256 amount) internal {
+        // Add a debt in FIFO order
         lastDebt += 1;
         iotxDebts[lastDebt] = Debt({account:account, amount:amount});
 
+        // Update debt states
         userInfos[account].debt += amount;
         totalDebts += amount;
+
+        emit DebtAdded(account, amount);
     }
 
     function _payDebt(uint256 tokenId) internal returns (address account) {
@@ -217,7 +219,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
         delete iotxDebts[firstDebt];
         firstDebt += 1;
 
-        event DebtLeft(account, amount);
+        event DebtPaid(account, amount);
     }
 
     function _updateReward(address acount) internal {
