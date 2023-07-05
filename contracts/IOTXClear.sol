@@ -28,7 +28,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     struct UserInfo {
         uint256 accSharePoint; // share starting point
         uint256 debt;   // user's debt
-        uint256 reward;  // user's reward which is available for claim
+        uint256 reward;  // user's claimable reward
     }
 
     struct Debt {
@@ -41,7 +41,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
 
     uint256 public totalDebts;             // Track current unpaid debts
 
-    // Simulate a FIFO queue of debts
+    // Simulating a FIFO queue of debts
     mapping(uint256=>Debt) public iotxDebts;   // Index -> Debt
     uint256 public firstIndex;
     uint256 public lastIndex;
