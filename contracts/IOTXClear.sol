@@ -21,14 +21,14 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     IIOTXStake public iotxStake;
 
     // Constants
-    uint256 private constant MULTIPLIER = 1e18;
+    uint256 public constant MULTIPLIER = 1e18;
 
     // Type declarations
 
     struct UserInfo {
-        uint256 accSharePoint; // share starting point
-        uint256 debt;   // user's debt
-        uint256 reward;  // user's claimable reward
+        uint256 debt;   // IOTX value a user requests to redeem but hasn't been withdrawn
+        uint256 reward;  // The claimable reward which is distributed after redeeming requested
+        uint256 rewardRate; // Latest rewardRate assigned upon reward update
     }
 
     struct Debt {
@@ -39,7 +39,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     // State variables
     uint256 public accountedBalance;
 
-    uint256 public totalDebts;             // Track current unpaid debts
+    uint256 public totalDebts;  // Current total unpaid debts caused by redeeming requests
+    uint256 public rewardRate;    // Accumulated reward rate calculated against totalDebts, multiplied by MULTIPLIER
+
 
     // Simulating a FIFO queue of debts
     mapping(uint256=>Debt) public iotxDebts;   // Index -> Debt
@@ -115,6 +117,10 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
      * ======================================================================================
      */
 
+    /**
+     * @dev IOTXStake contract calls this function upon the user's redeeming request.
+     * This function queues the redeemed amount as debt, which can be paid by withdrawal in FIFO order.
+     */
     function joinDebt(address account, uint256 amount) public shenNotPaused onlyRole(IOTX_STAKE_ROLE) {
         // Update current user reward
         _updateReward(account);
@@ -211,15 +217,15 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     function _updateReward(address acount) internal {
         _updateReward();
         UserInfo storage info = userInfos[account];
-        info.reward += (accShare - info.accSharePoint) * info.debt / MULTIPLIER;
-        info.accSharePoint = accShare;
+        info.reward += (rewardRate - info.rewardRate) * info.debt / MULTIPLIER;
+        info.rewardRate = rewardRate;
     }
 
     // Todo: Confirm whether consider an extra manager fee in IOTXClear contract (We also count it in IOTXStake contract).
     function _updateReward() internal {
         if (address(this).balance > accountedBalance && totalDebts > 0) {
             uint256 incrReward = address(this).balance - accountedBalance;
-            accShare += incrReward * MULTIPLIER / totalDebts;
+            rewardRate += incrReward * MULTIPLIER / totalDebts;
             accountedBalance = address(this).balance;
         }
     }
