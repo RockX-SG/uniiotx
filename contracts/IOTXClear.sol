@@ -21,7 +21,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     IIOTXStake public iotxStake;
 
     // Constants
-    uint256 public constant MULTIPLIER = 1e18;
+    uint256 private constant MULTIPLIER = 1e18;
 
     // Type declarations
 
@@ -42,10 +42,11 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     uint256 public totalDebts;             // Track current unpaid debts
 
     // FIFO of debts
-    mapping(uint256=>Debt) private iotxDebts;   // Index -> Debt
+    mapping(uint256=>Debt) public iotxDebts;   // Index -> Debt
     uint256 public firstDebt;
     uint256 public lastDebt;
 
+    // User infos
     mapping(address => UserInfo) public userInfos; // account -> info
 
     // Events
@@ -93,21 +94,6 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
      *
      * ======================================================================================
      */
-
-    /**
-     * @dev Return debt of index
-     */
-    function checkDebt(uint256 index) external view returns (address account, uint256 amount) {
-        Debt memory debt = iotxDebts[index];
-        return (debt.account, debt.amount);
-    }
-
-    /**
-     * @dev Return debt queue index
-     */
-    function getDebtQueue() external view returns (uint256 first, uint256 last) {
-        return (firstDebt, lastDebt);
-    }
 
     /**
      * @dev IERC721Receiver implement for receiving redeemed/unlocked NFT transferred by IOTXStake contract
