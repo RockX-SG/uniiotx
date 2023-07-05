@@ -41,10 +41,10 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
 
     uint256 public totalDebts;             // Track current unpaid debts
 
-    // FIFO of debts
+    // Simulate a FIFO queue of debts
     mapping(uint256=>Debt) public iotxDebts;   // Index -> Debt
-    uint256 public firstDebt;
-    uint256 public lastDebt;
+    uint256 public firstIndex;
+    uint256 public lastIndex;
 
     // User infos
     mapping(address => UserInfo) public userInfos; // account -> info
@@ -83,8 +83,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
         systemStake = _systemStakeAddress;
         iotxStake = _ _iotxStakeAddress;
 
-        firstDebt = 1;
-        lastDebt = 0;
+        firstIndex = 1;
+        lastIndex = 0;
     }
 
     /**
@@ -177,8 +177,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
 
     function _addDebt(address account, uint256 amount) internal {
         // Add a debt in FIFO order
-        lastDebt += 1;
-        iotxDebts[lastDebt] = Debt({account:account, amount:amount});
+        lastIndex += 1;
+        iotxDebts[lastIndex] = Debt({account:account, amount:amount});
 
         // Update debt states
         userInfos[account].debt += amount;
@@ -189,7 +189,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
 
     function _payDebt(uint256 tokenId) internal returns (address account) {
         // Pick a debt in FIFO order
-        Debt storage firstDebt = iotxDebts[firstDebt];
+        Debt storage firstDebt = iotxDebts[firstIndex];
         account = firstDebt.account;
 
         // Validate NFT amount
@@ -202,8 +202,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
         // Update debt states
         userInfos[account].debt -= amount;
         totalDebts -= amount;
-        delete iotxDebts[firstDebt];
-        firstDebt += 1;
+        delete iotxDebts[firstIndex];
+        firstIndex += 1;
 
         event DebtPaid(account, amount);
     }
