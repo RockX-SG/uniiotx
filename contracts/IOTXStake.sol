@@ -36,7 +36,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     // Exchange ratio related variables
     // Track user deposits & redeem (uniIOTX mint & burn)
     uint256 public totalPending;               // Total pending IOTXs awaiting to be staked
-    uint256 public totalStaked;            // Track current staked ethers for delegates
+    uint256 public totalStaked;            // Track current staked iotxs for delegates
 
     uint256 public managerFeeShares; // Shares range: [0, 1000]
 
@@ -45,11 +45,15 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     uint256 public accountedManagerRevenue;        // Accounted manager's revenue
     uint256 public rewardDebts;
 
-    uint256[] public immutable stakeAmountBases; // In sorted ascending order, i.e. [10000, 100000, 1000000] // Todo: optimize with less data provided
+    // The geometric sequence of amount that can be staked onto IoTeX network by our liquid staking protocol
+    uint256 public immutable startAmount;
+    uint256 public immutable commonRatio;
+    uint256 public immutable sequenceLength;
+
     uint256 public immutable stakeDuration;
-    // Todo: Add mergeMultiple // Rate of increase
 
     // Token ids: Stake amount index => tokenIds
+    // Todo: Mode optimization
     mapping(uint256 => uint256[]) public stakedTokenIds;
     uint256[] public redeemedTokenIds;
 
@@ -58,7 +62,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     event ManagerFeeSharesSet(uint256 shares);
     event Minted(address user, uint256 minted);
     event Redeemed(address user, uint256 burned, uint256[] tokenIds);
-    event Staked(uint256[] tokenIds, uint256 amount, address delegate);
+    event Staked(uint256 firstTokenId, uint256 amount, address delegate, uint256 count);
     event Merged(uint256[] tokenIds, uint256 amount);
     event BalanceSynced(uint256 diff);
     event RevenueAccounted(uint256 amount);
@@ -68,7 +72,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 // Errors
     error ZeroDelegates();
     error TransactionExpired(uint256 deadline, uint256 now);
-    error InvalidRedeemAmount(uint256 redeemAmount, uint256 redeemBase);
+    error InvalidRedeemAmount(uint256 expectedAmount, uint256 allowedAmount);
     error ExchangeRatioMismatch(uint256 expectedAmount, uint256 gotAmount);
     error ManagerFeeSharesOutOfRange();
     error InsufficientManagerRevenue(uint256 withdrawAmount, uint256 availableAmount);
@@ -280,57 +284,60 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     function _stake() internal returns (bool staked) {
-        for (uint256 i = stakeAmountBases.length-1; i >= 0; i--) {
-            base = stakeAmountBases[i];
-            count = totalPending / base;
-            amount = base * count;
+        for (uint256 i = sequenceLength-1; i >= 0 && totalPending >= startAmount; i--) {
+            // Determine stake amount
+            uint256 amount = startAmount * (commonRatio**i);
+            uint256 count = totalPending / amount;
 
-            if (amount == 0) continue;
+            if (count == 0) continue
 
-            startTokenId = systemStakeContract.stake{value:amount}(amount, stakeDuration, globalDelegate, count);
-            uint256[] tokenIds = new uint256[](count);
+            uint256 totalAmount = amount * count;
+
+            // Call system stake service
+            firstTokenId = systemStakeContract.stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
+
+            // Record minted & staked NFTs
+            // Todo: Optimization without looping push operation?
             for (uint256 j = 0; j < count; j++) {
-                uint256 tokenId = startTokenId+j;
+                uint256 tokenId = firstTokenId+j;
                 stakedTokenIds[i].push(tokenId)
-                tokenIds[j] = tokenId;
             }
-            staked = true;
-            totalPending -= amount;
-            totalStaked  += amount;
-            accountedBalance -= amount;
 
-            emit Staked(tokenIds, amount, globalDelegate);
+            // Update fund status
+            totalPending -= totalAmount;
+            totalStaked  += totalAmount;
+            accountedBalance -= totalAmount;
+
+            staked = true;
+
+            emit Staked(firstTokenId, amount, globalDelegate, count);
         }
     }
 
-    // Todo: Optimize performance?
     function _merge() internal {
-        for (uint256 i = 0; i < stakeAmountBases.length-1; i++) {
-            targetAmount = stakeAmountBases[i+1];
-            baseAmount = stakeAmountBases[i];
-            accumulatedLen = stakedTokenIds[i].length
+        for (uint256 i = 0; i < sequenceLength; i++) {
+            // Check merge condition
+            uint256 tokenCount = stakedTokenIds[i].length
+            if (tokenCount < commonRatio) break;
 
-            uint256 accumulatedAmount;
-            uint256 j;
-            for (; j < accumulatedLen; j++) {
-                accumulatedAmount += baseAmount;
-                if (accumulatedAmount == targetAmount) break;
-            }
-
-            if (accumulatedAmount != targetAmount) continue;
-
-            uint256[] memory tokenIdsToMerge = new uint256[](j+1);
-            uint256[] memory tokenIdsUnmerge = new uint256[](accumulatedLen-j-1);
-            for (k = 0; k < accumulatedLen; k++) { // Todo: Code reuse and remove loop.
-                if (k <= j) {
-                    tokenIdsToMerge[k] = stakedTokenIds[k];
+            // Determine tokens to merge
+            // Todo: Optimization maybe without loop?
+            uint256[] memory tokenIdsToMerge = new uint256[](commonRatio);
+            uint256[] memory tokenIdsUnmerge = new uint256[](tokenCount-commonRatio);
+            for (j = 0; j < tokenCount; j++) {
+                if (j < commonRatio) {
+                    tokenIdsToMerge[j] = stakedTokenIds[j];
                 } else {
-                    tokenIdsUnmerge[k] = stakedTokenIds[k]; // Todo: Assignment with incorrect index?
+                    tokenIdsUnmerge[j-commonRatio] = stakedTokenIds[j];
                 }
             }
 
+            // Call system merge service
+            // All tokens will be merged into the first token in tokenIdsToMerge
             // Reference: https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol#L302
             systemStake.merge(tokenIdsToMerge, stakeDuration);
+
+            // Update and shift token status
             stakedTokenIds[i] = tokenIdsUnmerge;
             stakedTokenIds[i+1].push(tokenIdsToMerge[0]);
 
@@ -338,11 +345,12 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         }
     }
 
-    // Todo: Optimization is needed
+    // Todo: Optimization is needed?
     function _redeem(uint256 iotxsToRedeem, uint256 maxToBurn) internal returns(uint256 burned) {
-        uint256 baseIndex = stakeAmountBases.legnth-1;
-        uint256 base = stakeAmountBases[baseIndex];
-        if (iotxsToRedeem % base != 0) revert InvalidRedeemAmount(iotxsToRedeem, base); // Todo: This condition is very picky and maybe needs a more flexible policy.
+        // Check redeem condition
+        // Todo: This condition is very picky and maybe needs a more flexible policy.
+        uint256 allowedAmount = startAmount * (commonRatio ** (sequenceLength-1));
+        if (iotxsToRedeem % allowedAmount != 0) revert InvalidRedeemAmount(iotxsToRedeem, allowedAmount);
 
         // Burn uniIOTXs
         toBurn = _convertIotxToUniIotx(msg.value);
@@ -350,30 +358,31 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         uniIOTX.safeTransferFrom(msg.sender, address(this), toBurn); // Todo: Why transfer and burn, but not just burn?
         uniIOTX.burn(toBurn);
         burned = toBurn;
-        totalStaked -= iotxsToRedeem; // Todo: double check whether we should decrease it here.
+        totalStaked -= iotxsToRedeem;
 
-        // Unlock NFT(s)
-        count = iotxsToRedeem / base;
-        uint256[] stakedTokenIds = stakedTokenIds[baseIndex];
+        // Unlock staked tokens
+        // Todo: Optimization maybe without loop?
+        uint256 count = iotxsToRedeem / allowedAmount;
+        uint256[] stakedTokenIds = stakedTokenIds[sequenceLength-1];
         uint256[] tokenIdsToUnlock = new uint256[](count);
         uint256[] tokenIdsReserve = new uint256[](stakedTokenIds.length-count);
-        for (i = 0; i < stakedTokenIds.length; i++) { // Todo: Code reuse and remove loop.
-        if (i <= j) {
-            tokenIdsToUnlock[i] = stakedTokenIds[i];
-            redeemedTokenIds.push(stakedTokenIds[i]);
-        } else {
-            tokenIdsReserve[i] = stakedTokenIds[i]; // Todo: Assignment with incorrect index
-        }
+        for (i = 0; i < stakedTokenIds.length; i++) { // Todo: Code reuse?
+            if (i < count) {
+                tokenIdsToUnlock[i] = stakedTokenIds[i];
+                redeemedTokenIds.push(stakedTokenIds[i]);
+            } else {
+                tokenIdsReserve[i-count] = stakedTokenIds[i];
+            }
         }
         systemStake.unlock(tokenIdsToUnlock);
-        stakedTokenIds[baseIndex] = tokenIdsReserve;
+        stakedTokenIds[sequenceLength-1] = tokenIdsReserve;
 
-        // Transfer NFT(s)
+        // Transfer unlocked tokens to IOTXClear contract
         for (i = 0; i < count; i++) {
             systemStake.safeTransferFrom(address(this), address(iotxClear), tokenIds[i]);
         }
 
-        // Join debt
+        // Record corresponding amount of debt with IOTXClear contract
         iotxClear.joinDebt(msg.sender, iotxsToRedeem);
 
         emit Redeemed(msg.sender, burned, tokenIdsToUnlock);
