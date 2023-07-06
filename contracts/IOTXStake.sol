@@ -55,9 +55,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // Events
     event DelegateStopped(uint256 stoppedCount);
-    event SystemStakingContractSet(address addr);
-    event RedeemContractSet(address addr);
-    event XIOTXContractSet(address addr);
     event ManagerFeeSharesSet(uint256 shares);
     event Minted(address user, uint256 minted);
     event Redeemed(address user, uint256 burned, uint256[] tokenIds);
@@ -115,50 +112,24 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         _unpause();
     }
 
+    // Todo: Tune it properly
     /**
      * @dev Initialization address
      */
     function initialize(
+        address _systemStake,
+        address _iotxClear,
         uint256[] _stakeAmountSequence,
         uint256 _globalStakeDuration
     ) initializer public {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
 
+        systemStake = _systemStake;
+        iotxClear = _iotxClear;
+
         stakeAmountSequence = _stakeAmountSequence // Todo: Validate amount
         globalStakeDuration = _globalStakeDuration
-
-//        // init default values
-//        firstDebt = 1;
-//        lastDebt = 0;
-    }
-
-    // TODO: do it in initialization?
-    /**
-     * @dev Set eth deposit contract address
-     */
-    function setSystemStakingContract(address _systemStake) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        systemStake = _systemStake;
-
-        emit SystemStakingContractSet(_SystemStakingContract);
-    }
-
-    /**
-     * @dev Set xIOTX token contract address
-     */
-    function setXIOTXContractAddress(address _xIOTXAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        uniIOTX = _xIOTXAddress;
-
-        emit XIOTXContractSet(_xIOTXAddress);
-    }
-
-    /**
-     * @dev Set redeem contract
-     */
-    function setRedeemContract(address _redeemContract) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        iotxClear = _redeemContract;
-
-        emit RedeemContractSet(_redeemContract);
     }
 
     /**
@@ -179,6 +150,17 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
+    /**
+     * @dev IERC721Receiver implement for receiving staking NFT
+         */
+    function onERC721Received(
+        address, // operator
+        address, // from
+        uint256, // tokenId
+        bytes calldata // data
+    ) external pure override returns (bytes4) {
+        return this.onERC721Received.selector;
+    }
 
     /**
      * @dev Return exchange ratio of uniIOTX to IOTX, multiplied by 1e18
@@ -223,18 +205,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
-    /**
-     * @dev IERC721Receiver implement for receiving staking NFT
-     */
-    function onERC721Received(
-        address, // operator
-        address, // from
-        uint256, // tokenId
-        bytes calldata // data
-    ) external pure override returns (bytes4) {
-        return this.onERC721Received.selector;
-    }
-
     // Todo: Give an explanation of param minToMint
     // Todo: Prove that
     /**
@@ -260,7 +230,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // Todo: reconsideration on economic params.
-    functon updateReward() external onlyRole(ORACLE_ROLE) {
+    functon updateReward() external onlyRole(ORACLE_ROLE) { // Todo: Disable onlyRole check?
         if (_syncBalance()) {
             uint256 rewards = _calculateRewards();
             _distributeRewards(rewards);
@@ -295,17 +265,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
-
-    /**
-     * ======================================================================================
-     *
-     * PRIVATE FUNCTIONS
-     *
-     * ======================================================================================
-     */
-
     // Todo: Consider whitelisting KYC users?
-    function _mint(uint256 minToMint) private notZeroMint returns (uint256 minted) {
+    function _mint(uint256 minToMint) internal notZeroMint returns (uint256 minted) {
         accountedBalance += msg.value;
 
         toMint = _convertIotxToUniIotx(msg.value);
@@ -318,7 +279,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         emit Minted(msg.sender, minted);
     }
 
-    function _stake() private returns (bool staked) {
+    function _stake() internal returns (bool staked) {
         for (uint256 i = stakeAmountBases.length-1; i >= 0; i--) {
             base = stakeAmountBases[i];
             count = totalPending / base;
@@ -343,7 +304,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // Todo: Optimize performance?
-    function _merge() private {
+    function _merge() internal {
         for (uint256 i = 0; i < stakeAmountBases.length-1; i++) {
             targetAmount = stakeAmountBases[i+1];
             baseAmount = stakeAmountBases[i];
@@ -378,7 +339,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // Todo: Optimization is needed
-    function _redeem(uint256 iotxsToRedeem, uint256 maxToBurn) private returns(uint256 burned) {
+    function _redeem(uint256 iotxsToRedeem, uint256 maxToBurn) internal returns(uint256 burned) {
         uint256 baseIndex = stakeAmountBases.legnth-1;
         uint256 base = stakeAmountBases[baseIndex];
         if (iotxsToRedeem % base != 0) revert InvalidRedeemAmount(iotxsToRedeem, base); // Todo: This condition is very picky and maybe needs a more flexible policy.
@@ -423,7 +384,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * aiming to keep the exchange ratio invariant to avoid user arbitrage.
      * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
      */
-    function _convertIotxToUniIotx(uint256 amountIOTX) private pure returns (uint256 amountUniIOTX) {
+    function _convertIotxToUniIotx(uint256 amountIOTX) internal pure returns (uint256 amountUniIOTX) {
         uint256 totalSupply = uniIOTX.totalSupply();
         uint256 currentReserve = currentReserve();
         amountUniIOTX = defaultExchangeRatio * amountIOTX
@@ -433,7 +394,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         }
     }
 
-    function _syncBalance() private returns (bool changed) {
+    function _syncBalance() internal returns (bool changed) {
         uint256 thisBalance = address(this).balance
         if (thisBalance > accountedBalance) {
             uint256 diff = thisBalance - accountedBalance;
@@ -447,12 +408,12 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // Todo: Reconsider the rules for calculating rewards.
-    function _calculateRewards() private returns (uint256) {
+    function _calculateRewards() internal returns (uint256) {
         // Todo: Check whether to account in slash
         return recentReceived;
     }
 
-    function _distributeRewards(uint256 rewards) private {
+    function _distributeRewards(uint256 rewards) internal {
         uint256 fee = rewards * managerFeeShares / 1000;
         accountedManagerRevenue += fee;
         accountedUserRevenue += rewards - fee;
@@ -461,7 +422,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // Todo: Reconsider the amount for auto compound
-    function _autoCompound() private { // Todo: What if disabling this feature?
+    function _autoCompound() internal { // Todo: What if disabling this feature?
         uint256 amount = accountedUserRevenue - rewardDebts;
         totalPending += amount;
         rewardDebts += amount;
