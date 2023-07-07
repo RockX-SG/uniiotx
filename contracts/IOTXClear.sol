@@ -63,7 +63,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     /**
      * ======================================================================================
      *
-     * CONFIGURATION FUNCTIONS
+     * SYSTEM SETTINGS
      *
      * ======================================================================================
      */
@@ -109,6 +109,14 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
             return this.onERC721Received.selector;
     }
 
+
+    /**
+     * @dev Return user reward which is available for future claim
+     */
+    function getReward(address acount) external returns (uint256) {
+        return userInfos[account].reward;
+    }
+
     /**
      * ======================================================================================
      *
@@ -146,14 +154,17 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     }
 
     /**
-     * @dev Account in new reward increments (if there are any), and accumulate reward rate to the latest value
+     * @dev This function accounts for new reward increments (if there are any),
+     * and accumulate reward rate to the latest value.
      */
     function updateReward() external {
         _updateReward();
     }
 
     /**
-     * @dev Return updated user reward which is available for future claim
+     * @dev This function accounts for new reward increments (if there are any),
+     * and accumulate reward rate to the latest value.
+     * Then it returns the updated claimable reward for the given account
      */
     function updateReward(address acount) external returns (uint256) {
         _updateReward(account);
