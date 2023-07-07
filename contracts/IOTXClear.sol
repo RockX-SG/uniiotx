@@ -156,14 +156,6 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     /**
      * @dev This function accounts for new reward increments (if there are any),
      * and accumulate reward rate to the latest value.
-     */
-    function updateReward() external {
-        _updateReward();
-    }
-
-    /**
-     * @dev This function accounts for new reward increments (if there are any),
-     * and accumulate reward rate to the latest value.
      * Then it returns the updated claimable reward for the given account
      */
     function updateReward(address acount) external returns (uint256) {
