@@ -24,6 +24,16 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     uint256 public defaultExchangeRatio = 1;
     uint256 public constant MULTIPLIER = 1e18;
 
+    // Type declarations
+
+    struct TokenQueue {
+        uint256 nextPushIndex;
+        uint256 nextRedeemIndex;
+        uint256 nextMergeIndex;
+        uint256 totalStakedCount;
+        uint256[] tokenIds;
+    }
+
     // State variables
 
     uint256 public accountedBalance; // TODO: Double check whether its value can be negative.
@@ -52,10 +62,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     uint256 public immutable stakeDuration;
 
-    // Token ids: Stake amount index => tokenIds
-    // Todo: Mode optimization
-    mapping(uint256 => uint256[]) public stakedTokenIds;
-    uint256[] public redeemedTokenIds;
+    // Token queue map: sequenceIndex => TokenQueue
+    mapping(uint256 => TokenQueue) public tokenQueues;
 
     // Events
     event DelegateStopped(uint256 stoppedCount);
@@ -116,7 +124,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         _unpause();
     }
 
-    // Todo: Tune it properly
+    // Todo: Tune it properly, including initialize token container
     /**
      * @dev Initialization address
      */
@@ -296,12 +304,19 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             // Call system stake service
             firstTokenId = systemStakeContract.stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
 
-            // Record minted & staked NFTs
-            // Todo: Optimization without looping push operation?
+            // Record minted & staked tokens
+            // Todo: Recheck the implement very carefully.
+            TokenQueue storage tq = tokenQueues[i];
             for (uint256 j = 0; j < count; j++) {
-                uint256 tokenId = firstTokenId+j;
-                stakedTokenIds[i].push(tokenId)
+                uint256 nextTokenId = firstTokenId+j;
+                tq.tokenIds[tq.nextPushIndex] = nextTokenId;
+                if (i == sequenceLength-1) {
+                    tq.nextPushIndex++ // The underlying array will expand automatically // Todo: make sure this works properly
+                } else {
+                    tq.nextPushIndex =（subTokens.nextPushIndex+1) % (commonRatio*2); // The underlying array contains limit number of elements
+                }
             }
+            tq.totalStakedCount += count;
 
             // Update fund status
             totalPending -= totalAmount;
@@ -315,31 +330,31 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     function _merge() internal {
-        for (uint256 i = 0; i < sequenceLength; i++) {
+        for (uint256 i = 0; i < sequenceLength-1; i++) {
             // Check merge condition
-            uint256 tokenCount = stakedTokenIds[i].length
-            if (tokenCount < commonRatio) break;
+            TokenQueue storage tq = tokenQueues[i];
+            if (tq.totalStakedCount < commonRatio) break;
 
-            // Determine tokens to merge
-            // Todo: Optimization maybe without loop?
+            // Extract tokens to merge
+            // Todo: Recheck the implement very carefully.
             uint256[] memory tokenIdsToMerge = new uint256[](commonRatio);
-            uint256[] memory tokenIdsUnmerge = new uint256[](tokenCount-commonRatio);
-            for (j = 0; j < tokenCount; j++) {
-                if (j < commonRatio) {
-                    tokenIdsToMerge[j] = stakedTokenIds[j];
-                } else {
-                    tokenIdsUnmerge[j-commonRatio] = stakedTokenIds[j];
-                }
+            uint256 counted;
+            for (uint256 i = 0; i < commonRatio; ;) {
+                tokenIdsToMerge[i] = tq.tokenIds[tq.nextMergeIndex];
+                tq.nextMergeIndex++;
             }
+            tq.totalStakedCount -= commonRatio;
 
             // Call system merge service
             // All tokens will be merged into the first token in tokenIdsToMerge
             // Reference: https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol#L302
             systemStake.merge(tokenIdsToMerge, stakeDuration);
 
-            // Update and shift token status
-            stakedTokenIds[i] = tokenIdsUnmerge;
-            stakedTokenIds[i+1].push(tokenIdsToMerge[0]);
+            // Record the merged token to upper queue
+            TokenQueue storage tqUpper = tokenQueues[i+1];
+            tqUpper.tokenIds[tqUpper.nextPushIndex] = tokenIdsToMerge[0];
+            tqUpper.nextPushIndex++;
+            tqUpper.totalStakedCount++;
 
             emit Merged(tokenIdsToMerge, targetAmount);
         }
@@ -349,8 +364,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function _redeem(uint256 iotxsToRedeem, uint256 maxToBurn) internal returns(uint256 burned) {
         // Check redeem condition
         // Todo: This condition is very picky and maybe needs a more flexible policy.
-        uint256 allowedAmount = startAmount * (commonRatio ** (sequenceLength-1));
-        if (iotxsToRedeem % allowedAmount != 0) revert InvalidRedeemAmount(iotxsToRedeem, allowedAmount);
+        uint256 allowedAmount = startAmount * (commonRatio ** (sequenceLength-1)); // Todo: This value can be calculated at contract initialization?
+        if (iotxsToRedeem < allowedAmount ||  iotxsToRedeem % allowedAmount != 0) revert InvalidRedeemAmount(iotxsToRedeem, allowedAmount);
 
         // Burn uniIOTXs
         toBurn = _convertIotxToUniIotx(msg.value);
@@ -360,22 +375,18 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         burned = toBurn;
         totalStaked -= iotxsToRedeem;
 
-        // Unlock staked tokens
-        // Todo: Optimization maybe without loop?
+        // Extract tokens to unlock
+        TokenQueue storage tq = tokenQueues[sequenceLength-1];
         uint256 count = iotxsToRedeem / allowedAmount;
-        uint256[] stakedTokenIds = stakedTokenIds[sequenceLength-1];
         uint256[] tokenIdsToUnlock = new uint256[](count);
-        uint256[] tokenIdsReserve = new uint256[](stakedTokenIds.length-count);
-        for (i = 0; i < stakedTokenIds.length; i++) { // Todo: Code reuse?
-            if (i < count) {
-                tokenIdsToUnlock[i] = stakedTokenIds[i];
-                redeemedTokenIds.push(stakedTokenIds[i]);
-            } else {
-                tokenIdsReserve[i-count] = stakedTokenIds[i];
-            }
+        for (uint256 i = 0; i < count; i++) {
+            tokenIdsToUnlock[i] = tq.tokenIds[tq.nextRedeemIndex];
+            tq.nextRedeemIndex++;
         }
+        tq.totalStakedCount -= count;
+
+        // Call system unlock service
         systemStake.unlock(tokenIdsToUnlock);
-        stakedTokenIds[sequenceLength-1] = tokenIdsReserve;
 
         // Transfer unlocked tokens to IOTXClear contract
         for (i = 0; i < count; i++) {
