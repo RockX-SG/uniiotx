@@ -26,16 +26,46 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // Type declarations
 
-    // Todo: Add explanatory comments
-    struct TokenQueue {
+    // TopTokenQueue contains a dynamic-size queue, designed for managing tokens of the highest staking amount.
+    // All tokens with less staking amount will be eventually merged into TopTokenQueue under proper conditions.
+    // Besides, TopTokenQueue is the only container that provides claimable tokens.
+    struct TopTokenQueue {
+        // Designates where the next staked token should reside.
+        // Its value increments continuously from 0.
         uint256 nextPushIndex;
+        // This field stands for the start token queued that should be applied for the next redeem/unlock request.
+        // Its value increments continuously from 0 and also equal to the total count of redeemed/unlocked tokens.
+        // Tokens which are indexed less than this value can be applied for later unstake and withdraw requests.
         uint256 nextRedeemIndex;
+        uint256 stakedCount;
+        uint256[] tokenIds;
+    }
+
+    // SubTokenQueue contains a fixed-size queue, designed for managing tokens with less staking amount that can be merged upward level by level.
+    // Its underlying array is actually a ring queue and only holds less than commonRatio*2 tokens because of the merging operation.
+   struct SubTokenQueue {
+        // Designates where the next staked token should reside.
+        // Its value increments continuously from 0 to (commonRatio*2 - 1) again and again.
+        uint256 nextPushIndex;
+        // This field stands for the start token queued that should be applied for the next merging operation.
+        // Its value increments continuously from 0 to (commonRatio*2 - 1) again and again.
         uint256 nextMergeIndex;
         uint256 stakedCount;
         uint256[] tokenIds;
     }
 
     // State variables
+
+    // The geometric sequence of the staking amount that can be staked onto the IoTeX network by our liquid staking protocol.
+    uint256 public immutable startAmount;
+    uint256 public immutable commonRatio;
+    uint256 public immutable sequenceLength;
+
+    uint256 public immutable stakeDuration;
+
+    // Token containers
+    TopTokenQueue public topTokenQueue; // implicitly sequenceIndex == sequenceLength-1
+    mapping(uint256 => SubTokenQueue) public subTokenQueues; // sequenceIndex => SubTokenQueue
 
     uint256 public accountedBalance; // TODO: Double check whether its value can be negative.
 
@@ -55,16 +85,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     uint256 public accountedUserRevenue;           // Accounted shared user revenue
     uint256 public accountedManagerRevenue;        // Accounted manager's revenue
     uint256 public rewardDebts;
-
-    // The geometric sequence of amount that can be staked onto IoTeX network by our liquid staking protocol
-    uint256 public immutable startAmount;
-    uint256 public immutable commonRatio;
-    uint256 public immutable sequenceLength;
-
-    uint256 public immutable stakeDuration;
-
-    // Token queue map: sequenceIndex => TokenQueue
-    mapping(uint256 => TokenQueue) public tokenQueues;
 
     // Events
     event DelegateStopped(uint256 stoppedCount);
@@ -200,7 +220,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * The token id index equal to this count stands for the start token that should be applied for the next redeem/unlock request.
      */
     function getTotalRedeemedTokenIdsCount() external view returns (uint256) {
-        return tokenQueues[sequenceLength-1].nextRedeemIndex;
+        return topTokenQueue.nextRedeemIndex;
     }
 
     /**
@@ -208,10 +228,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * These returned token ids can be applied for later unstake and withdraw requests.
      */
     function getRedeemedTokenIds(uint256 i, uint256 j) external view returns (uint256[] memory tokenIds) {
-        TokenQueue storage tq = tokenQueues[sequenceLength-1];
-        if (i < j && j <= tq.nextRedeemIndex) {
+        if (i < j && j <= topTokenQueue.nextRedeemIndex) {
             for (uint256 k := 0; k < j-i; k++) {
-                tokenIds[k] = tq.tokenIds[i+k];
+                tokenIds[k] = topTokenQueue.tokenIds[i+k];
             }
         }
     }
@@ -313,17 +332,23 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
             // Record minted & staked tokens
             // Todo: Recheck the implement very carefully.
-            TokenQueue storage tq = tokenQueues[i];
-            for (uint256 j = 0; j < count; j++) {
-                uint256 nextTokenId = firstTokenId+j;
-                tq.tokenIds[tq.nextPushIndex] = nextTokenId;
-                if (i == sequenceLength-1) {
-                    tq.nextPushIndex++ // The underlying array will expand automatically // Todo: make sure this works properly
-                } else {
-                    tq.nextPushIndex =（subTokens.nextPushIndex+1) % (commonRatio*2); // The underlying array contains limit number of elements
+            if (i == sequenceLenth-1) {
+                TopTokenQueue storage tq = topTokenQueue;
+                for (uint256 j = 0; j < count; j++) {
+                    uint256 nextTokenId = firstTokenId+j;
+                    tq.tokenIds[tq.nextPushIndex] = nextTokenId;
+                    tq.nextPushIndex++
                 }
+                tq.stakedCount += count;
+            } else {
+                SubTokenQueue storage tq = subTokenQueues[i];
+                for (uint256 j = 0; j < count; j++) {
+                    uint256 nextTokenId = firstTokenId+j;
+                    tq.tokenIds[tq.nextPushIndex] = nextTokenId;
+                    tq.nextPushIndex =（tq.nextPushIndex+1) % (commonRatio*2);
+                }
+                tq.stakedCount += count;
             }
-            tq.stakedCount += count;
 
             // Update fund status
             totalPending -= totalAmount;
@@ -339,7 +364,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function _merge() internal {
         for (uint256 i = 0; i < sequenceLength-1; i++) {
             // Check merge condition
-            TokenQueue storage tq = tokenQueues[i];
+            SubTokenQueue storage tq = subTokenQueues[i];
             if (tq.stakedCount < commonRatio) break;
 
             // Extract tokens to merge
@@ -348,7 +373,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             uint256 counted;
             for (uint256 i = 0; i < commonRatio; ;) {
                 tokenIdsToMerge[i] = tq.tokenIds[tq.nextMergeIndex];
-                tq.nextMergeIndex++;
+                tq.nextMergeIndex =（tq.nextMergeIndex+1) % (commonRatio*2);
             }
             tq.stakedCount -= commonRatio;
 
@@ -358,16 +383,16 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             systemStake.merge(tokenIdsToMerge, stakeDuration);
 
             // Record the merged token to upper queue
-            TokenQueue storage tqUpper = tokenQueues[i+1];
+            SubTokenQueue storage tqUpper = tokenQueues[i+1];
             tqUpper.tokenIds[tqUpper.nextPushIndex] = tokenIdsToMerge[0];
-            tqUpper.nextPushIndex++;
+            tqUpper.nextPushIndex =（tqUpper.nextPushIndex+1) % (commonRatio*2);
             tqUpper.stakedCount++;
 
             emit Merged(tokenIdsToMerge, targetAmount);
         }
     }
 
-    // Todo: Optimization is needed?
+    // Todo: Recheck the implement very carefully.
     function _redeem(uint256 iotxsToRedeem, uint256 maxToBurn) internal returns(uint256 burned) {
         // Check redeem condition
         // Todo: This condition is very picky and maybe needs a more flexible policy.
@@ -383,7 +408,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         totalStaked -= iotxsToRedeem;
 
         // Extract tokens to unlock
-        TokenQueue storage tq = tokenQueues[sequenceLength-1];
+        TopTokenQueue storage tq = topTokenQueue;
         uint256 count = iotxsToRedeem / allowedAmount;
         uint256[] tokenIdsToUnlock = new uint256[](count);
         for (uint256 i = 0; i < count; i++) {
