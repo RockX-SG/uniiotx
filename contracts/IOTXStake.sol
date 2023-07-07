@@ -31,7 +31,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         uint256 nextPushIndex;
         uint256 nextRedeemIndex;
         uint256 nextMergeIndex;
-        uint256 stakeCount;
+        uint256 stakedCount;
         uint256[] tokenIds;
     }
 
@@ -188,25 +188,31 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev Returns current reserve of ethers
-         */
+     * @dev Returns current reserve of IOTXs
+     */
     function currentReserve() public view returns(uint256) {
         return totalPending + totalStaked + accountedUserRevenue - rewardDebts; // Todo: Second thought of the correctness, including potential total debts.
     }
 
     /**
-     * @dev Return the length of redeemedTokenIds
+     * @dev This is a handy function to return the total redeemed token ids count.
+     * All already redeemed/unlocked token ids are indexed less than this count and can be applied for later unstake and withdraw requests.
+     * The token id index equal to this count stands for the start token that should be applied for the next redeem/unlock request.
      */
-    function getRedeemedTokensCount() external view returns (uint256) {
-        return redeemedTokenIds.length;
+    function getTotalRedeemedTokenIdsCount() external view returns (uint256) {
+        return tokenQueues[sequenceLength-1].nextRedeemIndex;
     }
 
     /**
-     * @dev Return the [i, j) slice of redeemedTokenIds
+     * @dev Return [i, j) slice of already redeemed/unlocked token id.
+     * These returned token ids can be applied for later unstake and withdraw requests.
      */
     function getRedeemedTokenIds(uint256 i, uint256 j) external view returns (uint256[] memory tokenIds) {
-        for (uint256 k := i; k < j; k++) {
-            tokenIds.push(redeemedTokenIds[k])
+        TokenQueue storage tq = tokenQueues[sequenceLength-1];
+        if (i < j && j <= tq.nextRedeemIndex) {
+            for (uint256 k := 0; k < j-i; k++) {
+                tokenIds[k] = tq.tokenIds[i+k];
+            }
         }
     }
 
@@ -317,7 +323,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
                     tq.nextPushIndex =（subTokens.nextPushIndex+1) % (commonRatio*2); // The underlying array contains limit number of elements
                 }
             }
-            tq.stakeCount += count;
+            tq.stakedCount += count;
 
             // Update fund status
             totalPending -= totalAmount;
@@ -334,7 +340,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         for (uint256 i = 0; i < sequenceLength-1; i++) {
             // Check merge condition
             TokenQueue storage tq = tokenQueues[i];
-            if (tq.stakeCount < commonRatio) break;
+            if (tq.stakedCount < commonRatio) break;
 
             // Extract tokens to merge
             // Todo: Recheck the implement very carefully.
@@ -344,7 +350,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
                 tokenIdsToMerge[i] = tq.tokenIds[tq.nextMergeIndex];
                 tq.nextMergeIndex++;
             }
-            tq.stakeCount -= commonRatio;
+            tq.stakedCount -= commonRatio;
 
             // Call system merge service
             // All tokens will be merged into the first token in tokenIdsToMerge
@@ -355,7 +361,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             TokenQueue storage tqUpper = tokenQueues[i+1];
             tqUpper.tokenIds[tqUpper.nextPushIndex] = tokenIdsToMerge[0];
             tqUpper.nextPushIndex++;
-            tqUpper.stakeCount++;
+            tqUpper.stakedCount++;
 
             emit Merged(tokenIdsToMerge, targetAmount);
         }
@@ -384,7 +390,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             tokenIdsToUnlock[i] = tq.tokenIds[tq.nextRedeemIndex];
             tq.nextRedeemIndex++;
         }
-        tq.stakeCount -= count;
+        tq.stakedCount -= count;
 
         // Call system unlock service
         systemStake.unlock(tokenIdsToUnlock);
