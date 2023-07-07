@@ -26,11 +26,12 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // Type declarations
 
+    // Todo: Add explanatory comments
     struct TokenQueue {
         uint256 nextPushIndex;
         uint256 nextRedeemIndex;
         uint256 nextMergeIndex;
-        uint256 totalStakedCount;
+        uint256 stakeCount;
         uint256[] tokenIds;
     }
 
@@ -316,7 +317,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
                     tq.nextPushIndex =（subTokens.nextPushIndex+1) % (commonRatio*2); // The underlying array contains limit number of elements
                 }
             }
-            tq.totalStakedCount += count;
+            tq.stakeCount += count;
 
             // Update fund status
             totalPending -= totalAmount;
@@ -333,7 +334,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         for (uint256 i = 0; i < sequenceLength-1; i++) {
             // Check merge condition
             TokenQueue storage tq = tokenQueues[i];
-            if (tq.totalStakedCount < commonRatio) break;
+            if (tq.stakeCount < commonRatio) break;
 
             // Extract tokens to merge
             // Todo: Recheck the implement very carefully.
@@ -343,7 +344,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
                 tokenIdsToMerge[i] = tq.tokenIds[tq.nextMergeIndex];
                 tq.nextMergeIndex++;
             }
-            tq.totalStakedCount -= commonRatio;
+            tq.stakeCount -= commonRatio;
 
             // Call system merge service
             // All tokens will be merged into the first token in tokenIdsToMerge
@@ -354,7 +355,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             TokenQueue storage tqUpper = tokenQueues[i+1];
             tqUpper.tokenIds[tqUpper.nextPushIndex] = tokenIdsToMerge[0];
             tqUpper.nextPushIndex++;
-            tqUpper.totalStakedCount++;
+            tqUpper.stakeCount++;
 
             emit Merged(tokenIdsToMerge, targetAmount);
         }
@@ -383,7 +384,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             tokenIdsToUnlock[i] = tq.tokenIds[tq.nextRedeemIndex];
             tq.nextRedeemIndex++;
         }
-        tq.totalStakedCount -= count;
+        tq.stakeCount -= count;
 
         // Call system unlock service
         systemStake.unlock(tokenIdsToUnlock);
