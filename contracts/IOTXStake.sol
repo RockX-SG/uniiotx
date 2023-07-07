@@ -268,7 +268,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // Todo: reconsideration on economic params.
-    functon updateReward() external onlyRole(ORACLE_ROLE) { // Todo: Disable onlyRole check?
+    function updateReward() external onlyRole(ORACLE_ROLE) { // Todo: Disable onlyRole check?
         if (_syncBalance()) {
             uint256 rewards = _calculateRewards();
             _distributeRewards(rewards);
@@ -486,5 +486,4 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         totalPending += amount;
         rewardDebts += amount;
     }
-
 }
