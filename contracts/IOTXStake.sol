@@ -215,17 +215,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev This is a handy function to return the total redeemed token ids count.
-     * All already redeemed/unlocked token ids are indexed less than this count and can be applied for later unstake and withdraw requests.
-     * The token id index equal to this count stands for the start token that should be applied for the next redeem/unlock request.
-     */
-    function getTotalRedeemedTokenIdsCount() external view returns (uint256) {
-        return topTokenQueue.nextRedeemIndex;
-    }
-
-    /**
      * @dev Return [i, j) slice of already redeemed/unlocked token id.
-     * These returned token ids can be applied for later unstake and withdraw requests.
      */
     function getRedeemedTokenIds(uint256 i, uint256 j) external view returns (uint256[] memory tokenIds) {
         if (i < j && j <= topTokenQueue.nextRedeemIndex) {
