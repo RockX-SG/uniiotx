@@ -16,9 +16,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     using SafeERC20 for IERC20;
 
     // External dependencies
-    ISystemStake public systemStakeContract;
-    IUniIOTX public uniIOTXContract;
-    IIOTXClear public iotxClearContract;
+    ISystemStake public systemStake;
+    IUniIOTX public uniIOTX;
+    IIOTXClear public iotxClear;
 
     // Constants
     uint256 public defaultExchangeRatio = 1;
@@ -55,6 +55,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // State variables
+
+    address public globalDelegate;
 
     // The geometric sequence of the staking amount that can be staked onto the IoTeX network by our liquid staking protocol.
     uint256 public immutable startAmount;
@@ -233,6 +235,14 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
+    function setGlobalDelegate(address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
+        globalDelegate = delegate;
+    }
+
+    function updateDelegates(uint256[] tokenIds, address delegate) external pure whenNotPaused onlyRole(ORACLE_ROLE) {
+        systemStake.changeDelegates(tokenIds, delegate);
+    }
+
     // Todo: Give an explanation of param minToMint
     // Todo: Prove that
     /**
@@ -318,7 +328,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             uint256 totalAmount = amount * count;
 
             // Call system stake service
-            firstTokenId = systemStakeContract.stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
+            firstTokenId = systemStake.stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
 
             // Record minted & staked tokens
             // Todo: Recheck the implement very carefully.
