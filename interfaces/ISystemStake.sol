@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
 // @notice This is the IoTeX system contract interface. It issues an NFT token for each bucket creation.
