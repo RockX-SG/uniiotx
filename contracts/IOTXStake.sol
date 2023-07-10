@@ -157,7 +157,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         address _iotxClear,
         uint[] _stakeAmountSequence,
         uint _globalStakeDuration
-    ) initializer public {
+    ) public initializer {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
 

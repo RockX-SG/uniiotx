@@ -75,7 +75,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     function initialize(
         address _iotxStakeAddress,
         address _systemStakeAddress,
-    ) initializer public {
+    ) public initializer  {
         __Ownable_init();
         __Pausable_init();
         __ReentrancyGuard_init();

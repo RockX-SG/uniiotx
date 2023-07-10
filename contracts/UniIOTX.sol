@@ -11,7 +11,7 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, ERC20SnapshotUpgradeable, PausableUpgradeable, AccessControlUpgradeable {
     function initialize(
         address iotxStakeAddress
-    ) initializer public {
+    ) public initializer {
         __ERC20_init("Universal IOTX", "uniIOTX");
         __ERC20Burnable_init();
         __ERC20Snapshot_init();
