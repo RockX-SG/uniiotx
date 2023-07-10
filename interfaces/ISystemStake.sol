@@ -9,7 +9,7 @@ interface ISystemStake {
     function stake(uint _amount, uint _duration, address _delegate, uint _count) external payable returns (uint firstTokenId_);
     function unlock(uint[] calldata _tokenIds) external;
     function unstake(uint[] calldata _tokenIds) external;
-    function withdraw( uint _tokenId, address payable _recipient) external whenNotPaused onlyTokenOwner(_tokenId);
+    function withdraw( uint _tokenId, address payable _recipient) external;
 
     function merge(uint[] calldata tokenIds, uint _newDuration) external payable;
 

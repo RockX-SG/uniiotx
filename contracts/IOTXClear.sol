@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "interfaces/IUniIOTX.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-import "interfaces/IIOTXStake.sol";
+import "./interfaces/IUniIOTX.sol";
+import "./interfaces/IIOTXStake.sol";
+import "./interfaces/IIOTXClear.sol";
 import "../interfaces/ISystemStake.sol";
 
-contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, ReentrancyGuardUpgradeable, OwnableUpgradeable, IERC721Receiver {
+contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable, IERC721Receiver {
     using SafeERC20 for IERC20;
     using Address for address payable;
 
@@ -73,8 +74,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
      * @dev initialization
      */
     function initialize(
-        address _iotxStakeAddress,
-        address _systemStakeAddress,
+//        address _iotxStakeAddress,
+//        address _systemStakeAddress,
     ) public initializer  {
         __Ownable_init();
         __Pausable_init();
@@ -83,7 +84,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
         _grantRole(IOTX_STAKE_ROLE, _iotxStakeAddress);
 
         systemStake = _systemStakeAddress;
-        iotxStake = _ _iotxStakeAddress;
+//        iotxStake = _ _iotxStakeAddress;
 
         firstIndex = 1;
         lastIndex = 0;
@@ -129,7 +130,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
      * @dev IOTXStake contract calls this function upon the user's redeeming request.
      * This function queues the redeemed amount as debt, which can be paid by withdrawal in FIFO order.
      */
-    function joinDebt(address account, uint amount) public shenNotPaused onlyRole(IOTX_STAKE_ROLE) {
+    function joinDebt(address account, uint amount) public whenNotPaused onlyRole(IOTX_STAKE_ROLE) {
         // Update current user reward
         _updateReward(account);
 
@@ -147,7 +148,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
 
     // Todo: Maybe optimize the implementation, including introducing necessary validations.
     function withdraw(uint[] tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
-        for (uint i = 0; i < tokenIds.length); i++ {
+        for (uint i = 0; i < tokenIds.length; i++) {
             address account = _payDebt(tokenIds[i]);
             _updateReward(account);
         }
@@ -217,7 +218,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
         delete iotxDebts[firstIndex];
         firstIndex += 1;
 
-        event DebtPaid(account, amount);
+        emit DebtPaid(account, amount);
     }
 
     function _updateReward(address acount) internal {

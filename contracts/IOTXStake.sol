@@ -7,10 +7,9 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-import "interfaces/IIOTXClear.sol";
-import "interfaces/IUniIOTX.sol";
+import "./interfaces/IIOTXClear.sol";
+import "./interfaces/IUniIOTX.sol";
 import "../interfaces/ISystemStake.sol";
-import "./DelegateManager.sol"
 
 contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, DelegateManager {
     // Libraries
@@ -164,8 +163,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         systemStake = _systemStake;
         iotxClear = _iotxClear;
 
-        stakeAmountSequence = _stakeAmountSequence // Todo: Validate amount
-        globalStakeDuration = _globalStakeDuration
+        stakeAmountSequence = _stakeAmountSequence; // Todo: Validate amount
+        globalStakeDuration = _globalStakeDuration;
     }
 
     /**
@@ -222,7 +221,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
     function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory tokenIds) {
         if (i < j && j <= topTokenQueue.nextRedeemIndex) {
-            for (uint k := 0; k < j-i; k++) {
+            for (uint k = 0; k < j-i; k++) {
                 tokenIds[k] = topTokenQueue.tokenIds[i+k];
             }
         }
@@ -326,7 +325,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             uint amount = startAmount * (commonRatio**i);
             uint count = totalPending / amount;
 
-            if (count == 0) continue
+            if (count == 0) continue;
 
             uint totalAmount = amount * count;
 
@@ -340,7 +339,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
                 for (uint j = 0; j < count; j++) {
                     uint nextTokenId = firstTokenId+j;
                     tq.tokenIds[tq.nextPushIndex] = nextTokenId;
-                    tq.nextPushIndex++
+                    tq.nextPushIndex++;
                 }
                 tq.stakedCount += count;
             } else {
@@ -348,7 +347,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
                 for (uint j = 0; j < count; j++) {
                     uint nextTokenId = firstTokenId+j;
                     tq.tokenIds[tq.nextPushIndex] = nextTokenId;
-                    tq.nextPushIndex =（tq.nextPushIndex+1) % (commonRatio*2);
+                    tq.nextPushIndex = (tq.nextPushIndex+1) % (commonRatio*2);
                 }
                 tq.stakedCount += count;
             }
@@ -374,9 +373,10 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             // Todo: Recheck the implement very carefully.
             uint[] memory tokenIdsToMerge = new uint[](commonRatio);
             uint counted;
-            for (uint i = 0; i < commonRatio; ;) {
-                tokenIdsToMerge[i] = tq.tokenIds[tq.nextMergeIndex];
-                tq.nextMergeIndex =（tq.nextMergeIndex+1) % (commonRatio*2);
+            for (uint j = 0; j < commonRatio; j++) {
+                tokenIdsToMerge[j] = tq.tokenIds[tq.nextMergeIndex];
+                uint orNextMergeIndex = tq.nextMergeIndex+1;
+                tq.nextMergeIndex = orNextMergeIndex % (commonRatio*2);
             }
             tq.stakedCount -= commonRatio;
 
@@ -394,7 +394,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             } else {
                 SubTokenQueue storage tqUpper = tokenQueues[i+1];
                 tqUpper.tokenIds[tqUpper.nextPushIndex] = tokenIdsToMerge[0];
-                tqUpper.nextPushIndex =（tqUpper.nextPushIndex+1) % (commonRatio*2);
+                uint orNextPushIndex = tqUpper.nextPushIndex+1;
+                tqUpper.nextPushIndex =orNextPushIndex % (commonRatio*2);
                 tqUpper.stakedCount++;
             }
 
@@ -448,16 +449,16 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
     function _convertIotxToUniIotx(uint amountIOTX) internal pure returns (uint amountUniIOTX) {
         uint totalSupply = uniIOTX.totalSupply();
-        uint currentReserve = currentReserve();
-        amountUniIOTX = defaultExchangeRatio * amountIOTX
+        uint _currentReserve = currentReserve();
+        amountUniIOTX = defaultExchangeRatio * amountIOTX;
 
-        if (currentReserve > 0) { // avert division overflow
-            amountUniIOTX = totalSupply * amountIOTX / currentReserve; // TODO: further consideration on the fractional part
+        if (_currentReserve > 0) { // avert division overflow
+            amountUniIOTX = totalSupply * amountIOTX / _currentReserve; // TODO: further consideration on the fractional part
         }
     }
 
     function _syncBalance() internal returns (bool changed) {
-        uint thisBalance = address(this).balance
+        uint thisBalance = address(this).balance;
         if (thisBalance > accountedBalance) {
             uint diff = thisBalance - accountedBalance;
             accountedBalance = thisBalance;
