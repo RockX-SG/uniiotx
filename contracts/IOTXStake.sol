@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 import "./Roles.sol";
 import "./interfaces/IIOTXClear.sol";
-import "./interfaces/IuniIOTX.sol";
+import "./interfaces/IUniIOTX.sol";
 import "../interfaces/ISystemStake.sol";
 
 contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, ReentrancyGuardUpgradeable {
@@ -20,7 +20,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // External dependencies
     ISystemStake public systemStake;
-    IuniIOTX public uniIOTX;
+    IUniIOTX public uniIOTX;
     IIOTXClear public iotxClear;
 
     // Constants
@@ -301,7 +301,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * 2. Shift the corresponding amount of accountedManagerRevenue to totalPending.
      */
     function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
-        if (amount > accountedManagerRevenue) revert InsufficientManagerRevenue();
+        if (amount > accountedManagerRevenue) revert InsufficientManagerRevenue(amount, accountedManagerRevenue);
 
         uint toMint = _convertIotxTouniIOTX(amount);
         uniIOTX.mint(recipient, toMint);

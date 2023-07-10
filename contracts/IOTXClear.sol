@@ -9,7 +9,7 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 import "./Roles.sol";
-import "./interfaces/IuniIOTX.sol";
+import "./interfaces/IUniIOTX.sol";
 import "./interfaces/IIOTXStake.sol";
 import "./interfaces/IIOTXClear.sol";
 import "../interfaces/ISystemStake.sol";
