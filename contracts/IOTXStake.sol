@@ -250,11 +250,13 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
     function deposit(uint256 minToMint, uint256 deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint256 minted) {
         minted = _mint(minToMint);
-        if (_stake()) _merge();
+        uint256 fromAmountIndex = _stake();
+        if (fromAmountIndex < sequenceLength-1) _merge(fromAmountIndex);
     }
 
     function stake() external whenNotPaused onlyRole(ORACLE_ROLE) {
-        if (_stake()) _merge();
+        uint256 fromAmountIndex = _stake();
+        if (fromAmountIndex < sequenceLength-1) _merge(fromAmountIndex);
     }
 
     // Todo: to be optimized
@@ -317,8 +319,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         emit Minted(msg.sender, minted);
     }
 
-    function _stake() internal returns (bool staked) {
-        for (uint256 i = sequenceLength-1; i >= 0 && totalPending >= startAmount; i--) {
+    function _stake() internal returns (uint256 fromAmountIndex) {
+        for (fromAmountIndex = sequenceLength-1; fromAmountIndex >= 0 && totalPending >= startAmount; fromAmountIndex--) {
             // Determine stake amount
             uint256 amount = startAmount * (commonRatio**i);
             uint256 count = totalPending / amount;
@@ -361,11 +363,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         }
     }
 
-    function _merge() internal {
-        for (uint256 i = 0; i < sequenceLength-1; i++) {
+    function _merge(uint256 fromAmountIndex) internal {
+        for (uint256 i = fromAmountIndex; i < sequenceLength-1; i++) {
             // Check merge condition
             SubTokenQueue storage tq = subTokenQueues[i];
-            if (tq.stakedCount < commonRatio) break;
+            if (tq.stakedCount < commonRatio) continue;
 
             // Extract tokens to merge
             // Todo: Recheck the implement very carefully.
