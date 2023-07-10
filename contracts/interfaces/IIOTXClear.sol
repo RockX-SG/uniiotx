@@ -3,7 +3,7 @@ pragma solidity ^0.8.9;
 
 interface IIOTXClear {
     function onERC721Received(address, address, uint, bytes calldata) external pure override returns (bytes4);
-    function updateDelegates(uint[] tokenIds, address delegate) external;
+    function updateDelegates(uint[] calldata tokenIds, address delegate) external;
     function getReward(address acount) external returns (uint);
     function joinDebt(address claimAddr, uint amount) public;
     function unstake(uint[] calldata tokenIds) external;

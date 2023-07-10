@@ -157,19 +157,29 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function initialize(
         address _systemStake,
         address _iotxClear,
-        address oracleAddress,
-        uint[] _stakeAmountSequence,
-        uint _globalStakeDuration
+        address _oracleAddress,
+        uint[] calldata _stakeAmountSequence,
+        uint _startAmount,
+        uint _commonRatio,
+        uint _sequenceLength,
+        address  _globalDelegate
     ) public initializer {
+        // Roles
         _grantRole(ROLE_FEE_MANAGER, msg.sender);
         _grantRole(ROLE_PAUSE, msg.sender);
-        _grantRole(ROLE_ORACLE, oracleAddress);
+        _grantRole(ROLE_ORACLE, _oracleAddress);
 
+        // Collaborative contracts
         systemStake = _systemStake;
         iotxClear = _iotxClear;
 
-        stakeAmountSequence = _stakeAmountSequence; // Todo: Validate amount
-        globalStakeDuration = _globalStakeDuration;
+        // Immutable staking variables
+        startAmount = _startAmount;
+        commonRatio = _commonRatio;
+        sequenceLength = _sequenceLength;
+
+        // Initial global delegate
+        globalDelegate = _globalDelegate;
     }
 
     /**
@@ -244,7 +254,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         globalDelegate = delegate;
     }
 
-    function updateDelegates(uint[] tokenIds, address delegate) external pure whenNotPaused onlyRole(ROLE_ORACLE) {
+    function updateDelegates(uint[] calldata tokenIds, address delegate) external pure whenNotPaused onlyRole(ROLE_ORACLE) {
         systemStake.changeDelegates(tokenIds, delegate);
     }
 
@@ -279,7 +289,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (_syncBalance()) {
             uint rewards = _calculateRewards();
             _distributeRewards(rewards);
-            _autoCompoud();
+            _autoCompound();
             recentReceived = 0;
         }
     }
@@ -293,7 +303,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
         if (amount > accountedManagerRevenue) revert InsufficientManagerRevenue();
 
-        toMint = _convertIotxTouniIOTX(amount);
+        uint toMint = _convertIotxTouniIOTX(amount);
         uniIOTX.mint(recipient, toMint);
 
         accountedManagerRevenue -= amount;
@@ -314,7 +324,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function _mint(uint minToMint) internal notZeroMint returns (uint minted) {
         accountedBalance += msg.value;
 
-        toMint = _convertIotxTouniIOTX(msg.value);
+        uint toMint = _convertIotxTouniIOTX(msg.value);
         if (toMint < minToMint) revert ExchangeRatioMismatch(minToMint, toMint);
         uniIOTX.mint(msg.sender, toMint);
         minted = toMint;
@@ -327,7 +337,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function _stake() internal returns (uint fromAmountIndex) {
         for (fromAmountIndex = sequenceLength-1; fromAmountIndex >= 0 && totalPending >= startAmount; fromAmountIndex--) {
             // Determine stake amount
-            uint amount = startAmount * (commonRatio**i);
+            uint amount = startAmount * (commonRatio**fromAmountIndex);
             uint count = totalPending / amount;
 
             if (count == 0) continue;
@@ -335,11 +345,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             uint totalAmount = amount * count;
 
             // Call system stake service
-            firstTokenId = systemStake.stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
+            uint firstTokenId = systemStake.stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
 
             // Record minted & staked tokens
             // Todo: Recheck the implement very carefully.
-            if (i == sequenceLenth-1) {
+            if (fromAmountIndex == sequenceLength-1) {
                 TopTokenQueue storage tq = topTokenQueue;
                 for (uint j = 0; j < count; j++) {
                     uint nextTokenId = firstTokenId+j;
@@ -348,7 +358,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
                 }
                 tq.stakedCount += count;
             } else {
-                SubTokenQueue storage tq = subTokenQueues[i];
+                SubTokenQueue storage tq = subTokenQueues[fromAmountIndex];
                 for (uint j = 0; j < count; j++) {
                     uint nextTokenId = firstTokenId+j;
                     tq.tokenIds[tq.nextPushIndex] = nextTokenId;
@@ -361,8 +371,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             totalPending -= totalAmount;
             totalStaked  += totalAmount;
             accountedBalance -= totalAmount;
-
-            staked = true;
 
             emit Staked(firstTokenId, amount, globalDelegate, count);
         }
@@ -391,20 +399,21 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             systemStake.merge(tokenIdsToMerge, stakeDuration);
 
             // Record the merged token to upper queue
-            if (i+1 == sequenceLengh-1) {
+            if (i+1 == sequenceLength-1) {
                 TopTokenQueue storage tqUpper = topTokenQueue;
                 tqUpper.tokenIds[tqUpper.nextPushIndex] = tokenIdsToMerge[0];
                 tqUpper.nextPushIndex++;
                 tqUpper.stakedCount++;
             } else {
-                SubTokenQueue storage tqUpper = tokenQueues[i+1];
+                SubTokenQueue storage tqUpper = subTokenQueues[i+1];
                 tqUpper.tokenIds[tqUpper.nextPushIndex] = tokenIdsToMerge[0];
                 uint orNextPushIndex = tqUpper.nextPushIndex+1;
                 tqUpper.nextPushIndex =orNextPushIndex % (commonRatio*2);
                 tqUpper.stakedCount++;
             }
 
-            emit Merged(tokenIdsToMerge, targetAmount);
+            uint amountUpper = startAmount * (commonRatio**(i+1));
+            emit Merged(tokenIdsToMerge, amountUpper);
         }
     }
 
@@ -416,8 +425,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (iotxsToRedeem < allowedAmount ||  iotxsToRedeem % allowedAmount != 0) revert InvalidRedeemAmount(iotxsToRedeem, allowedAmount);
 
         // Burn uniIOTXs
-        toBurn = _convertIotxTouniIOTX(msg.value);
-        if (toBurn > maxToBurn) revert ExchangeRatioMismatch(minToMint, toMint);
+        uint toBurn = _convertIotxTouniIOTX(msg.value);
+        if (toBurn > maxToBurn) revert ExchangeRatioMismatch(maxToBurn, toBurn);
         uniIOTX.safeTransferFrom(msg.sender, address(this), toBurn); // Todo: Why transfer and burn, but not just burn?
         uniIOTX.burn(toBurn);
         burned = toBurn;
@@ -426,7 +435,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         // Extract tokens to unlock
         TopTokenQueue storage tq = topTokenQueue;
         uint count = iotxsToRedeem / allowedAmount;
-        uint[] tokenIdsToUnlock = new uint[](count);
+        uint[] memory tokenIdsToUnlock = new uint[](count);
         for (uint i = 0; i < count; i++) {
             tokenIdsToUnlock[i] = tq.tokenIds[tq.nextRedeemIndex];
             tq.nextRedeemIndex++;
@@ -437,8 +446,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         systemStake.unlock(tokenIdsToUnlock);
 
         // Transfer unlocked tokens to IOTXClear contract
-        for (i = 0; i < count; i++) {
-            systemStake.safeTransferFrom(address(this), address(iotxClear), tokenIds[i]);
+        for (uint i = 0; i < count; i++) {
+            systemStake.safeTransferFrom(address(this), address(iotxClear), tokenIdsToUnlock[i]);
         }
 
         // Record corresponding amount of debt with IOTXClear contract

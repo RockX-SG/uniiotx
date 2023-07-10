@@ -140,7 +140,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         _addDebt(account, amount);
     }
 
-    function updateDelegates(uint[] tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
+    function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
         systemStake.changeDelegates(tokenIds, delegate);
     }
 
@@ -149,7 +149,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     // Todo: Maybe optimize the implementation, including introducing necessary validations.
-    function withdraw(uint[] tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
+    function withdraw(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
         for (uint i = 0; i < tokenIds.length; i++) {
             address account = _payDebt(tokenIds[i]);
             _updateReward(account);
@@ -171,7 +171,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         _updateReward(msg.sender);
 
         // Check reward
-        UserInfo info = userInfos[msg.sender];
+        UserInfo storage info = userInfos[msg.sender];
         if (info.reward < amount) revert InsufficientReward(amount, info.reward);
 
         // Transfer reward

@@ -7,7 +7,7 @@ interface IIOTXStake {
     function currentReserve() public view returns(uint);
     function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory tokenIds);
     function setGlobalDelegate(address delegate) external;
-    function updateDelegates(uint[] tokenIds, address delegate) external;
+    function updateDelegates(uint[] calldata tokenIds, address delegate) external;
     function deposit(uint minToMint, uint deadline) external payable returns (uint minted);
     function stake() external;
     function redeem(uint iotxsToRedeem, uint maxToBurn, uint deadline) external returns (uint burned);
