@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 import "./Roles.sol";
 import "./interfaces/IIOTXClear.sol";
-import "./interfaces/IUniIOTX.sol";
+import "./interfaces/IuniIOTX.sol";
 import "../interfaces/ISystemStake.sol";
 
 contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, ReentrancyGuardUpgradeable {
@@ -20,7 +20,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // External dependencies
     ISystemStake public systemStake;
-    IUniIOTX public uniIOTX;
+    IuniIOTX public uniIOTX;
     IIOTXClear public iotxClear;
 
     // Constants
@@ -293,7 +293,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
         if (amount > accountedManagerRevenue) revert InsufficientManagerRevenue();
 
-        toMint = _convertIotxToUniIotx(amount);
+        toMint = _convertIotxTouniIOTX(amount);
         uniIOTX.mint(recipient, toMint);
 
         accountedManagerRevenue -= amount;
@@ -314,7 +314,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function _mint(uint minToMint) internal notZeroMint returns (uint minted) {
         accountedBalance += msg.value;
 
-        toMint = _convertIotxToUniIotx(msg.value);
+        toMint = _convertIotxTouniIOTX(msg.value);
         if (toMint < minToMint) revert ExchangeRatioMismatch(minToMint, toMint);
         uniIOTX.mint(msg.sender, toMint);
         minted = toMint;
@@ -416,7 +416,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (iotxsToRedeem < allowedAmount ||  iotxsToRedeem % allowedAmount != 0) revert InvalidRedeemAmount(iotxsToRedeem, allowedAmount);
 
         // Burn uniIOTXs
-        toBurn = _convertIotxToUniIotx(msg.value);
+        toBurn = _convertIotxTouniIOTX(msg.value);
         if (toBurn > maxToBurn) revert ExchangeRatioMismatch(minToMint, toMint);
         uniIOTX.safeTransferFrom(msg.sender, address(this), toBurn); // Todo: Why transfer and burn, but not just burn?
         uniIOTX.burn(toBurn);
@@ -452,13 +452,13 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * aiming to keep the exchange ratio invariant to avoid user arbitrage.
      * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
      */
-    function _convertIotxToUniIotx(uint amountIOTX) internal pure returns (uint amountUniIOTX) {
+    function _convertIotxTouniIOTX(uint amountIOTX) internal pure returns (uint amountuniIOTX) {
         uint totalSupply = uniIOTX.totalSupply();
         uint _currentReserve = currentReserve();
-        amountUniIOTX = defaultExchangeRatio * amountIOTX;
+        amountuniIOTX = defaultExchangeRatio * amountIOTX;
 
         if (_currentReserve > 0) { // avert division overflow
-            amountUniIOTX = totalSupply * amountIOTX / _currentReserve; // TODO: further consideration on the fractional part
+            amountuniIOTX = totalSupply * amountIOTX / _currentReserve; // TODO: further consideration on the fractional part
         }
     }
 
