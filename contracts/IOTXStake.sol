@@ -4,14 +4,17 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
+
+import "./Roles.sol";
 import "./interfaces/IIOTXClear.sol";
 import "./interfaces/IUniIOTX.sol";
 import "../interfaces/ISystemStake.sol";
 
-contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, DelegateManager {
+contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, ReentrancyGuardUpgradeable {
     // Libraries
     using SafeERC20 for IERC20;
 
@@ -136,14 +139,14 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     /**
      * @dev Pause the contract
      */
-    function pause() public onlyRole(PAUSER_ROLE) {
+    function pause() public onlyRole(ROLE_PAUSE) {
         _pause();
     }
 
     /**
      * @dev Unpause the contract
      */
-    function unpause() public onlyRole(PAUSER_ROLE) {
+    function unpause() public onlyRole(ROLE_PAUSE) {
         _unpause();
     }
 
@@ -154,11 +157,13 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function initialize(
         address _systemStake,
         address _iotxClear,
+        address oracleAddress,
         uint[] _stakeAmountSequence,
         uint _globalStakeDuration
     ) public initializer {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(PAUSER_ROLE, msg.sender);
+        _grantRole(ROLE_FEE_MANAGER, msg.sender);
+        _grantRole(ROLE_PAUSE, msg.sender);
+        _grantRole(ROLE_ORACLE, oracleAddress);
 
         systemStake = _systemStake;
         iotxClear = _iotxClear;
@@ -170,7 +175,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     /**
      * @dev Set Manager's fee in range [0, 1000]
      */
-    function setManagerFeeShares(uint shares) external onlyRole(DEFAULT_ADMIN_ROLE)  {
+    function setManagerFeeShares(uint shares) external onlyRole(ROLE_FEE_MANAGER)  {
         if (shares > 1000) revert ManagerFeeSharesOutOfRange();
         managerFeeShares = shares;
 
@@ -235,11 +240,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
-    function setGlobalDelegate(address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
+    function setGlobalDelegate(address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
         globalDelegate = delegate;
     }
 
-    function updateDelegates(uint[] tokenIds, address delegate) external pure whenNotPaused onlyRole(ORACLE_ROLE) {
+    function updateDelegates(uint[] tokenIds, address delegate) external pure whenNotPaused onlyRole(ROLE_ORACLE) {
         systemStake.changeDelegates(tokenIds, delegate);
     }
 
@@ -254,7 +259,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (fromAmountIndex < sequenceLength-1) _merge(fromAmountIndex);
     }
 
-    function stake() external whenNotPaused onlyRole(ORACLE_ROLE) {
+    function stake() external whenNotPaused onlyRole(ROLE_PROTOCOL_MANAGER) {
         uint fromAmountIndex = _stake();
         if (fromAmountIndex < sequenceLength-1) _merge(fromAmountIndex);
     }
@@ -270,7 +275,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // Todo: reconsideration on economic params.
-    function updateReward() external onlyRole(ORACLE_ROLE) { // Todo: Disable onlyRole check?
+    function updateReward() external onlyRole(ROLE_ORACLE) { // Todo: Disable onlyRole check?
         if (_syncBalance()) {
             uint rewards = _calculateRewards();
             _distributeRewards(rewards);
@@ -285,7 +290,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * 1. Mint uniIOTXs to the given recipient based on the given IOTX amount;
      * 2. Shift the corresponding amount of accountedManagerRevenue to totalPending.
      */
-    function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(MANAGER_ROLE)  {
+    function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
         if (amount > accountedManagerRevenue) revert InsufficientManagerRevenue();
 
         toMint = _convertIotxToUniIotx(amount);

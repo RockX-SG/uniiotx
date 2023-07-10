@@ -8,6 +8,7 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
+import "./Roles.sol";
 import "./interfaces/IUniIOTX.sol";
 import "./interfaces/IIOTXStake.sol";
 import "./interfaces/IIOTXClear.sol";
@@ -74,17 +75,18 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * @dev initialization
      */
     function initialize(
-//        address _iotxStakeAddress,
-//        address _systemStakeAddress,
+        address systemStakeAddress,
+        address iotxStakeAddress,
+        address oracleAddress
     ) public initializer  {
-        __Ownable_init();
         __Pausable_init();
         __ReentrancyGuard_init();
 
-        _grantRole(IOTX_STAKE_ROLE, _iotxStakeAddress);
+        _grantRole(ROLE_STAKE, iotxStakeAddress);
+        _grantRole(ROLE_ORACLE, oracleAddress);
 
-        systemStake = _systemStakeAddress;
-//        iotxStake = _ _iotxStakeAddress;
+        systemStake = systemStakeAddress;
+        iotxStake = iotxStakeAddress;
 
         firstIndex = 1;
         lastIndex = 0;
@@ -114,7 +116,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     /**
      * @dev Return user reward which is available for future claim
      */
-    function getReward(address acount) external returns (uint) {
+    function getReward(address account) external returns (uint) {
         return userInfos[account].reward;
     }
 
@@ -130,7 +132,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * @dev IOTXStake contract calls this function upon the user's redeeming request.
      * This function queues the redeemed amount as debt, which can be paid by withdrawal in FIFO order.
      */
-    function joinDebt(address account, uint amount) public whenNotPaused onlyRole(IOTX_STAKE_ROLE) {
+    function joinDebt(address account, uint amount) public whenNotPaused onlyRole(ROLE_STAKE) {
         // Update current user reward
         _updateReward(account);
 
@@ -138,16 +140,16 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         _addDebt(account, amount);
     }
 
-    function updateDelegates(uint[] tokenIds, address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
+    function updateDelegates(uint[] tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
         systemStake.changeDelegates(tokenIds, delegate);
     }
 
-    function unstake(uint[] calldata tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
+    function unstake(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
         if (tokenIds.length > 0) systemStake.unstake(tokenIds);
     }
 
     // Todo: Maybe optimize the implementation, including introducing necessary validations.
-    function withdraw(uint[] tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
+    function withdraw(uint[] tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
         for (uint i = 0; i < tokenIds.length; i++) {
             address account = _payDebt(tokenIds[i]);
             _updateReward(account);
@@ -159,7 +161,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * and accumulate reward rate to the latest value.
      * Then it returns the updated claimable reward for the given account
      */
-    function updateReward(address acount) external returns (uint) {
+    function updateReward(address account) external returns (uint) {
         _updateReward(account);
         return userInfos[account].reward;
     }
@@ -206,8 +208,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         account = firstDebt.account;
 
         // Validate NFT amount
-        (amount, _, _, _, _,) = systemStake.bucketOf(tokenId);
-        if (amount != firstDebt.amount) revert DebtAmountMismathced(amount, firstDebt.amount);
+        uint amount;
+        (amount, , , , ,) = systemStake.bucketOf(tokenId);
+        if (amount != firstDebt.amount) revert DebtAmountMismatched(amount, firstDebt.amount);
 
         // Withdraw NFT to user account
         systemStake.withdraw(tokenId, account);
@@ -221,7 +224,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         emit DebtPaid(account, amount);
     }
 
-    function _updateReward(address acount) internal {
+    function _updateReward(address account) internal {
         _updateReward();
         UserInfo storage info = userInfos[account];
         info.reward += (rewardRate - info.rewardRate) * info.debt / MULTIPLIER;

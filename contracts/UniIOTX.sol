@@ -17,27 +17,27 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
         __ERC20Snapshot_init();
         __Pausable_init();
 
-        _grantRole(MINTER_ROLE, iotxStakeAddress);
-        _grantRole(PAUSE_ROLE, iotxStakeAddress);
+        _grantRole(ROLE_PAUSE, iotxStakeAddress);
+        _grantRole(ROLE_MINT, iotxStakeAddress);
     }
 
-    function burn(uint amount) public override onlyRole(MINTER_ROLE) {
+    function burn(uint amount) public override onlyRole(ROLE_MINT) {
         _burn(_msgSender(), amount);
     }
 
-    function mint(address to, uint amount) public onlyRole(MINTER_ROLE) {
+    function mint(address to, uint amount) public onlyRole(ROLE_MINT) {
         _mint(to, amount);
     }
 
-    function snapshot() public onlyRole(MINTER_ROLE) {
+    function snapshot() public onlyRole(ROLE_MINT) {
         _snapshot();
     }
 
-    function pause() public onlyRole(PAUSE_ROLE) {
+    function pause() public onlyRole(ROLE_PAUSE) {
         _pause();
     }
 
-    function unpause() public onlyRole(PAUSE_ROLE) {
+    function unpause() public onlyRole(ROLE_PAUSE) {
         _unpause();
     }
 
