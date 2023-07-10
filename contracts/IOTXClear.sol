@@ -21,44 +21,44 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     IIOTXStake public iotxStake;
 
     // Constants
-    uint256 public constant MULTIPLIER = 1e18;
+    uint public constant MULTIPLIER = 1e18;
 
     // Type declarations
 
     struct UserInfo {
-        uint256 debt;   // IOTX value a user requests to redeem but hasn't been withdrawn
-        uint256 reward;  // The claimable reward which is distributed after redeeming requested
-        uint256 rewardRate; // Latest rewardRate assigned upon reward update
+        uint debt;   // IOTX value a user requests to redeem but hasn't been withdrawn
+        uint reward;  // The claimable reward which is distributed after redeeming requested
+        uint rewardRate; // Latest rewardRate assigned upon reward update
     }
 
     struct Debt {
         address account;
-        uint256 amount;
+        uint amount;
     }
 
     // State variables
-    uint256 public accountedBalance;
+    uint public accountedBalance;
 
-    uint256 public totalDebts;  // Current total unpaid debts caused by redeeming requests
-    uint256 public rewardRate;    // Accumulated reward rate calculated against totalDebts, multiplied by MULTIPLIER
+    uint public totalDebts;  // Current total unpaid debts caused by redeeming requests
+    uint public rewardRate;    // Accumulated reward rate calculated against totalDebts, multiplied by MULTIPLIER
 
 
     // Simulating a FIFO queue of debts
-    mapping(uint256=>Debt) public iotxDebts;   // Index -> Debt
-    uint256 public firstIndex;
-    uint256 public lastIndex;
+    mapping(uint=>Debt) public iotxDebts;   // Index -> Debt
+    uint public firstIndex;
+    uint public lastIndex;
 
     // User infos
     mapping(address => UserInfo) public userInfos; // account -> info
 
     // Events
-    event DebtAdded(address account, uint256 amount);
-    event DebtPaid(address account, uint256 amount);
-    event RewardClaimed(address claimer, address recipient, uint256 amount);
+    event DebtAdded(address account, uint amount);
+    event DebtPaid(address account, uint amount);
+    event RewardClaimed(address claimer, address recipient, uint amount);
 
     // Errors
-    error InsufficientReward(uint256 expected, uint256 available);
-    error DebtAmountMismatched(uint256 toPayAmount, uint256 queuedAmount);
+    error InsufficientReward(uint expected, uint available);
+    error DebtAmountMismatched(uint toPayAmount, uint queuedAmount);
 
     /**
      * ======================================================================================
@@ -103,7 +103,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     function onERC721Received(
         address, // operator
         address, // from
-        uint256, // tokenId
+        uint, // tokenId
         bytes calldata // data
     ) external pure override returns (bytes4) {
             return this.onERC721Received.selector;
@@ -113,7 +113,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     /**
      * @dev Return user reward which is available for future claim
      */
-    function getReward(address acount) external returns (uint256) {
+    function getReward(address acount) external returns (uint) {
         return userInfos[account].reward;
     }
 
@@ -129,7 +129,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
      * @dev IOTXStake contract calls this function upon the user's redeeming request.
      * This function queues the redeemed amount as debt, which can be paid by withdrawal in FIFO order.
      */
-    function joinDebt(address account, uint256 amount) public shenNotPaused onlyRole(IOTX_STAKE_ROLE) {
+    function joinDebt(address account, uint amount) public shenNotPaused onlyRole(IOTX_STAKE_ROLE) {
         // Update current user reward
         _updateReward(account);
 
@@ -137,17 +137,17 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
         _addDebt(account, amount);
     }
 
-    function updateDelegates(uint256[] tokenIds, address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
+    function updateDelegates(uint[] tokenIds, address delegate) external whenNotPaused onlyRole(ORACLE_ROLE) {
         systemStake.changeDelegates(tokenIds, delegate);
     }
 
-    function unstake(uint256[] calldata tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
+    function unstake(uint[] calldata tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
         if (tokenIds.length > 0) systemStake.unstake(tokenIds);
     }
 
     // Todo: Maybe optimize the implementation, including introducing necessary validations.
-    function withdraw(uint256[] tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
-        for (uint256 i = 0; i < tokenIds.length); i++ {
+    function withdraw(uint[] tokenIds) external whenNotPaused onlyRole(ORACLE_ROLE) {
+        for (uint i = 0; i < tokenIds.length); i++ {
             address account = _payDebt(tokenIds[i]);
             _updateReward(account);
         }
@@ -158,12 +158,12 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
      * and accumulate reward rate to the latest value.
      * Then it returns the updated claimable reward for the given account
      */
-    function updateReward(address acount) external returns (uint256) {
+    function updateReward(address acount) external returns (uint) {
         _updateReward(account);
         return userInfos[account].reward;
     }
 
-    function claimRewards(uint256 amount, address recipient) external nonReentrant whenNotPaused {
+    function claimRewards(uint amount, address recipient) external nonReentrant whenNotPaused {
          // Update reward
         _updateReward(msg.sender);
 
@@ -187,7 +187,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     * ======================================================================================
     */
 
-    function _addDebt(address account, uint256 amount) internal {
+    function _addDebt(address account, uint amount) internal {
         // Add a debt in FIFO order
         lastIndex += 1;
         iotxDebts[lastIndex] = Debt({account:account, amount:amount});
@@ -199,7 +199,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
         emit DebtAdded(account, amount);
     }
 
-    function _payDebt(uint256 tokenId) internal returns (address account) {
+    function _payDebt(uint tokenId) internal returns (address account) {
         // Pick a debt in FIFO order
         Debt storage firstDebt = iotxDebts[firstIndex];
         account = firstDebt.account;
@@ -230,7 +230,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, Reentrancy
     // Todo: Confirm whether consider an extra manager fee in IOTXClear contract (We also count it in IOTXStake contract).
     function _updateReward() internal {
         if (address(this).balance > accountedBalance && totalDebts > 0) {
-            uint256 incrReward = address(this).balance - accountedBalance;
+            uint incrReward = address(this).balance - accountedBalance;
             rewardRate += incrReward * MULTIPLIER / totalDebts;
             accountedBalance = address(this).balance;
         }

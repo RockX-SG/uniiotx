@@ -20,11 +20,11 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
         _grantRole(MINTER_ROLE, iotxStakeAddress);
     }
 
-    function burn(uint256 amount) public override onlyRole(MINTER_ROLE) {
+    function burn(uint amount) public override onlyRole(MINTER_ROLE) {
         _burn(_msgSender(), amount);
     }
 
-    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
+    function mint(address to, uint amount) public onlyRole(MINTER_ROLE) {
         _mint(to, amount);
     }
 
@@ -40,7 +40,7 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
         _unpause();
     }
 
-    function _beforeTokenTransfer(address from, address to, uint256 amount)
+    function _beforeTokenTransfer(address from, address to, uint amount)
         internal
         whenNotPaused
         override(ERC20Upgradeable, ERC20SnapshotUpgradeable)

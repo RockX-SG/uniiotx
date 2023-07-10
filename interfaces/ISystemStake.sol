@@ -3,16 +3,16 @@ pragma solidity ^0.8.9;
 // @notice This is the IoTeX system contract interface. It issues an NFT token for each bucket creation.
 // For more information see https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol
 interface ISystemStake {
-    function bucketOf(uint256 _tokenId) external view returns ( uint256 amount_, uint256 duration_, uint256 unlockedAt_, uint256 unstakedAt_, address delegate_);
+    function bucketOf(uint _tokenId) external view returns ( uint amount_, uint duration_, uint unlockedAt_, uint unstakedAt_, address delegate_);
 
-    function stake(uint256 _amount, uint256 _duration, address _delegate, uint256 _count) external payable returns (uint256 firstTokenId_);
-    function unlock(uint256[] calldata _tokenIds) external;
-    function unstake(uint256[] calldata _tokenIds) external;
-    function withdraw( uint256 _tokenId, address payable _recipient) external whenNotPaused onlyTokenOwner(_tokenId);
+    function stake(uint _amount, uint _duration, address _delegate, uint _count) external payable returns (uint firstTokenId_);
+    function unlock(uint[] calldata _tokenIds) external;
+    function unstake(uint[] calldata _tokenIds) external;
+    function withdraw( uint _tokenId, address payable _recipient) external whenNotPaused onlyTokenOwner(_tokenId);
 
-    function merge(uint256[] calldata tokenIds, uint256 _newDuration) external payable;
+    function merge(uint[] calldata tokenIds, uint _newDuration) external payable;
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) public;
+    function safeTransferFrom(address from, address to, uint tokenId) public;
 
-    function changeDelegates(uint256[] calldata _tokenIds, address _delegate) external;
+    function changeDelegates(uint[] calldata _tokenIds, address _delegate) external;
 }
