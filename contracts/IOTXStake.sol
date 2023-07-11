@@ -340,7 +340,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             if (count+stakedCount == commonRatio) _merge(level);
 
             // Handle remained amount
-            (, uint count) = _getStakeAmountAndCount(level);
+            (, count) = _getStakeAmountAndCount(level);
             if (count == 0) level--;
         }
     }
@@ -353,7 +353,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         uint firstTokenId = systemStake.stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
 
         // Record minted & staked tokens
-        int[] tq = tokenQueues[level];
+        uint[] storage tq = tokenQueues[level];
         for (uint j = 0; j < count; j++) {
             tq.push(firstTokenId+j);
         }
