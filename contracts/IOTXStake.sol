@@ -29,48 +29,25 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // Type declarations
 
-    // TopTokenQueue contains a dynamic-size queue, designed for managing tokens of the highest staking amount.
-    // All tokens with less staking amount will be eventually merged into TopTokenQueue under proper conditions.
-    // Besides, TopTokenQueue is the only container that provides claimable tokens.
-    struct TopTokenQueue {
-        // Designates where the next staked token should reside.
-        // Its value increments continuously from 0.
-        uint nextPushIndex;
-        // This field stands for the start token queued that should be applied for the next redeem/unlock request.
-        // Its value increments continuously from 0 and also equal to the total count of redeemed/unlocked tokens.
-        // Tokens which are indexed less than this value can be applied for later unstake and withdraw requests.
-        uint nextRedeemIndex;
-        uint stakedCount;
-        uint[] tokenIds;
-    }
-
-    // SubTokenQueue contains a fixed-size queue, designed for managing tokens with less staking amount that can be merged upward level by level.
-    // Its underlying array is actually a ring queue and only holds less than commonRatio*2 tokens because of the merging operation.
-   struct SubTokenQueue {
-        // Designates where the next staked token should reside.
-        // Its value increments continuously from 0 to (commonRatio*2 - 1) again and again.
-        uint nextPushIndex;
-        // This field stands for the start token queued that should be applied for the next merging operation.
-        // Its value increments continuously from 0 to (commonRatio*2 - 1) again and again.
-        uint nextMergeIndex;
-        uint stakedCount;
-        uint[] tokenIds;
-    }
-
     // State variables
 
     address public globalDelegate;
 
     // The geometric sequence of the staking amount that can be staked onto the IoTeX network by our liquid staking protocol.
+    // Every value populated in this sequence must be a valid bucket amount predefined by the IoTeX network.
+    // Every value in this sequence corresponds to a unique indexed level in the range of [0, sequenceLength-1]
     uint public immutable startAmount;
     uint public immutable commonRatio;
     uint public immutable sequenceLength;
 
     uint public immutable stakeDuration;
 
-    // Token containers
-    TopTokenQueue public topTokenQueue; // implicitly sequenceIndex == sequenceLength-1
-    mapping(uint => SubTokenQueue) public subTokenQueues; // sequenceIndex => SubTokenQueue
+    // Token queue map: The KEY corresponds to the bucket amount level defined as above;  the VALUE is a dynamic array of token IDs.
+    mapping(uint => uint[]) public tokenQueues;
+
+    // Redeemed token count. It can change only when redeeming operation performed.
+    // Note: The staked token count at top staking level is: tokenQueues[sequenceLength-1].length - redeemedTokenCount
+    uint public redeemedTokenCount;
 
     uint public accountedBalance; // TODO: Double check whether its value can be negative.
 
@@ -235,9 +212,10 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @dev Return [i, j) slice of already redeemed/unlocked token id.
      */
     function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory tokenIds) {
-        if (i < j && j <= topTokenQueue.nextRedeemIndex) {
+        if (i < j && j <= redeemedTokenCount) {
+            uint[] memory tq = tokenQueues[sequenceLength-1];
             for (uint k = 0; k < j-i; k++) {
-                tokenIds[k] = topTokenQueue.tokenIds[i+k];
+                tokenIds[k] = tq[i+k];
             }
         }
     }
@@ -265,13 +243,13 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
     function deposit(uint minToMint, uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
         minted = _mint(minToMint);
-        uint fromAmountIndex = _stake();
-        if (fromAmountIndex < sequenceLength-1) _merge(fromAmountIndex);
+        _stakeAtTopLevel();
+        _stakeAndMergeAtSubLevel();
     }
 
     function stake() external whenNotPaused onlyRole(ROLE_PROTOCOL_MANAGER) {
-        uint fromAmountIndex = _stake();
-        if (fromAmountIndex < sequenceLength-1) _merge(fromAmountIndex);
+        _stakeAtTopLevel();
+        _stakeAndMergeAtSubLevel();
     }
 
     // Todo: to be optimized
@@ -334,86 +312,81 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         emit Minted(msg.sender, minted);
     }
 
-    function _stake() internal returns (uint fromAmountIndex) {
-        for (fromAmountIndex = sequenceLength-1; fromAmountIndex >= 0 && totalPending >= startAmount; fromAmountIndex--) {
-            // Determine stake amount
-            uint amount = startAmount * (commonRatio**fromAmountIndex);
-            uint count = totalPending / amount;
+    function _stakeAtTopLevel() internal {
+        // Determine values of stake params
+        uint level = sequenceLength-1;
+        (uint amount, uint count) = _getStakeAmountAndCount(level);
+        if (count == 0) return;
 
+        // Perform stake
+        _doStake(level, amount, count);
+    }
+
+    function _stakeAndMergeAtSubLevel() internal {
+        for (uint level = sequenceLength-2; level >= 0;  ) {
+            // Determine values of stake params
+            (uint amount, uint count) = _getStakeAmountAndCount(level);
             if (count == 0) continue;
 
-            uint totalAmount = amount * count;
-
-            // Call system stake service
-            uint firstTokenId = systemStake.stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
-
-            // Record minted & staked tokens
-            // Todo: Recheck the implement very carefully.
-            if (fromAmountIndex == sequenceLength-1) {
-                TopTokenQueue storage tq = topTokenQueue;
-                for (uint j = 0; j < count; j++) {
-                    uint nextTokenId = firstTokenId+j;
-                    tq.tokenIds[tq.nextPushIndex] = nextTokenId;
-                    tq.nextPushIndex++;
-                }
-                tq.stakedCount += count;
-            } else {
-                SubTokenQueue storage tq = subTokenQueues[fromAmountIndex];
-                for (uint j = 0; j < count; j++) {
-                    uint nextTokenId = firstTokenId+j;
-                    tq.tokenIds[tq.nextPushIndex] = nextTokenId;
-                    tq.nextPushIndex = (tq.nextPushIndex+1) % (commonRatio*2);
-                }
-                tq.stakedCount += count;
+            uint stakedCount = tokenQueues[level].length;
+            if ((count+stakedCount) >= commonRatio) {
+                count = commonRatio-stakedCount;
             }
 
-            // Update fund status
-            totalPending -= totalAmount;
-            totalStaked  += totalAmount;
-            accountedBalance -= totalAmount;
+            // Perform stake
+            _doStake(level, amount, count);
 
-            emit Staked(firstTokenId, amount, globalDelegate, count);
+            // Merge tokens if possible
+            if (count+stakedCount == commonRatio) _merge(level);
+
+            // Handle remained amount
+            (, uint count) = _getStakeAmountAndCount(level);
+            if (count == 0) level--;
         }
     }
 
-    function _merge(uint fromAmountIndex) internal {
-        for (uint i = fromAmountIndex; i < sequenceLength-1; i++) {
-            // Check merge condition
-            SubTokenQueue storage tq = subTokenQueues[i];
-            if (tq.stakedCount < commonRatio) continue;
+    function _doStake(uint level, uint amount, uint count) internal {
+        // Calculate total amount
+        uint totalAmount = amount * count;
 
-            // Extract tokens to merge
-            // Todo: Recheck the implement very carefully.
-            uint[] memory tokenIdsToMerge = new uint[](commonRatio);
-            uint counted;
-            for (uint j = 0; j < commonRatio; j++) {
-                tokenIdsToMerge[j] = tq.tokenIds[tq.nextMergeIndex];
-                uint orNextMergeIndex = tq.nextMergeIndex+1;
-                tq.nextMergeIndex = orNextMergeIndex % (commonRatio*2);
-            }
-            tq.stakedCount -= commonRatio;
+        // Call system stake service
+        uint firstTokenId = systemStake.stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
+
+        // Record minted & staked tokens
+        int[] tq = tokenQueues[level];
+        for (uint j = 0; j < count; j++) {
+            tq.push(firstTokenId+j);
+        }
+
+        // Update fund status
+        totalPending -= totalAmount;
+        totalStaked  += totalAmount;
+        accountedBalance -= totalAmount;
+
+        emit Staked(firstTokenId, amount, globalDelegate, count);
+    }
+
+    function _getStakeAmountAndCount(uint level) internal returns(uint amount, uint count) {
+        amount = startAmount * (commonRatio**level);
+        count = totalPending / amount;
+    }
+
+    function _merge(uint fromLevel) internal {
+        for (uint i = fromLevel; i < sequenceLength-1; i++) {
+            // Check merge condition
+            int[] storage tq = tokenQueues[i];
+            if (tq.length < commonRatio) continue;
 
             // Call system merge service
             // All tokens will be merged into the first token in tokenIdsToMerge
             // Reference: https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol#L302
-            systemStake.merge(tokenIdsToMerge, stakeDuration);
+            systemStake.merge(tq, stakeDuration);
 
-            // Record the merged token to upper queue
-            if (i+1 == sequenceLength-1) {
-                TopTokenQueue storage tqUpper = topTokenQueue;
-                tqUpper.tokenIds[tqUpper.nextPushIndex] = tokenIdsToMerge[0];
-                tqUpper.nextPushIndex++;
-                tqUpper.stakedCount++;
-            } else {
-                SubTokenQueue storage tqUpper = subTokenQueues[i+1];
-                tqUpper.tokenIds[tqUpper.nextPushIndex] = tokenIdsToMerge[0];
-                uint orNextPushIndex = tqUpper.nextPushIndex+1;
-                tqUpper.nextPushIndex =orNextPushIndex % (commonRatio*2);
-                tqUpper.stakedCount++;
-            }
+            // Move the merged tokens to upper queue
+            delete(tokenQueues, i);
+            tokenQueues[i+1].push(tq[0]);
 
-            uint amountUpper = startAmount * (commonRatio**(i+1));
-            emit Merged(tokenIdsToMerge, amountUpper);
+            emit Merged(tq, startAmount * (commonRatio**(i+1)));
         }
     }
 
@@ -433,14 +406,13 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         totalStaked -= iotxsToRedeem;
 
         // Extract tokens to unlock
-        TopTokenQueue storage tq = topTokenQueue;
+        uint [] memory tq = tokenQueues[sequenceLength-1];
         uint count = iotxsToRedeem / allowedAmount;
         uint[] memory tokenIdsToUnlock = new uint[](count);
         for (uint i = 0; i < count; i++) {
-            tokenIdsToUnlock[i] = tq.tokenIds[tq.nextRedeemIndex];
-            tq.nextRedeemIndex++;
+            tokenIdsToUnlock[i] = tq[redeemedTokenCount];
+            redeemedTokenCount++;
         }
-        tq.stakedCount -= count;
 
         // Call system unlock service
         systemStake.unlock(tokenIdsToUnlock);
