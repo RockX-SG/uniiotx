@@ -374,7 +374,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function _merge(uint fromLevel) internal {
         for (uint i = fromLevel; i < sequenceLength-1; i++) {
             // Check merge condition
-            int[] storage tq = tokenQueues[i];
+            uint[] storage tq = tokenQueues[i];
             if (tq.length < commonRatio) continue;
 
             // Call system merge service
@@ -383,8 +383,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             systemStake.merge(tq, stakeDuration);
 
             // Move the merged tokens to upper queue
-            delete(tokenQueues, i);
-            tokenQueues[i+1].push(tq[0]);
+            delete tokenQueues[i];
+            uint[] storage tqUpper = tokenQueues[i+1];
+            tqUpper.push(tq[0]);
 
             emit Merged(tq, startAmount * (commonRatio**(i+1)));
         }
