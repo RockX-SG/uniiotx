@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 interface IIOTXStake {
     function onERC721Received(address, address, uint, bytes calldata) external pure returns (bytes4);
     function exchangeRatio() external returns (uint ratio);
-    function currentReserve() public view returns(uint);
+    function currentReserve() external view returns(uint); // Todo: public?
     function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory tokenIds);
     function setGlobalDelegate(address delegate) external;
     function updateDelegates(uint[] calldata tokenIds, address delegate) external;

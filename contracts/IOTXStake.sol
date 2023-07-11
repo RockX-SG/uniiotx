@@ -5,8 +5,8 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 
 import "./Roles.sol";
@@ -15,9 +15,6 @@ import "./interfaces/IUniIOTX.sol";
 import "../interfaces/ISystemStake.sol";
 
 contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, ReentrancyGuardUpgradeable {
-    // Libraries
-    using SafeERC20 for IERC20;
-
     // External dependencies
     ISystemStake public systemStake;
     IUniIOTX public uniIOTX;
@@ -36,11 +33,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     // The geometric sequence of the staking amount that can be staked onto the IoTeX network by our liquid staking protocol.
     // Every value populated in this sequence must be a valid bucket amount predefined by the IoTeX network.
     // Every value in this sequence corresponds to a unique indexed level in the range of [0, sequenceLength-1]
-    uint public immutable startAmount;
-    uint public immutable commonRatio;
-    uint public immutable sequenceLength;
+    uint public startAmount;
+    uint public commonRatio;
+    uint public sequenceLength;
 
-    uint public immutable stakeDuration;
+    uint public stakeDuration;
 
     // Token queue map: The KEY corresponds to the bucket amount level defined as above;  the VALUE is a dynamic array of token IDs.
     mapping(uint => uint[]) public tokenQueues;
@@ -132,10 +129,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @dev Initialization address
      */
     function initialize(
-        address _systemStake,
+        address _systemStakeAddress,
         address _iotxClear,
         address _oracleAddress,
-        uint[] calldata _stakeAmountSequence,
         uint _startAmount,
         uint _commonRatio,
         uint _sequenceLength,
@@ -147,8 +143,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         _grantRole(ROLE_ORACLE, _oracleAddress);
 
         // Collaborative contracts
-        systemStake = _systemStake;
-        iotxClear = _iotxClear;
+        systemStake = ISystemStake(_systemStakeAddress);
+        iotxClear = IIOTXClear(_iotxClear);
 
         // Immutable staking variables
         startAmount = _startAmount;
@@ -232,7 +228,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         globalDelegate = delegate;
     }
 
-    function updateDelegates(uint[] calldata tokenIds, address delegate) external pure whenNotPaused onlyRole(ROLE_ORACLE) {
+    function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
         systemStake.changeDelegates(tokenIds, delegate);
     }
 
@@ -366,7 +362,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         emit Staked(firstTokenId, amount, globalDelegate, count);
     }
 
-    function _getStakeAmountAndCount(uint level) internal returns(uint amount, uint count) {
+    function _getStakeAmountAndCount(uint level) internal view returns(uint amount, uint count) {
         amount = startAmount * (commonRatio**level);
         count = totalPending / amount;
     }
@@ -401,7 +397,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         // Burn uniIOTXs
         uint toBurn = _convertIotxTouniIOTX(msg.value);
         if (toBurn > maxToBurn) revert ExchangeRatioMismatch(maxToBurn, toBurn);
-        uniIOTX.safeTransferFrom(msg.sender, address(this), toBurn); // Todo: Why transfer and burn, but not just burn?
         uniIOTX.burn(toBurn);
         burned = toBurn;
         totalStaked -= iotxsToRedeem;
@@ -434,7 +429,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * aiming to keep the exchange ratio invariant to avoid user arbitrage.
      * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
      */
-    function _convertIotxTouniIOTX(uint amountIOTX) internal pure returns (uint amountuniIOTX) {
+    function _convertIotxTouniIOTX(uint amountIOTX) internal view returns (uint amountuniIOTX) {
         uint totalSupply = uniIOTX.totalSupply();
         uint _currentReserve = currentReserve();
         amountuniIOTX = defaultExchangeRatio * amountIOTX;
@@ -458,7 +453,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     // Todo: Reconsider the rules for calculating rewards.
-    function _calculateRewards() internal returns (uint) {
+    function _calculateRewards() internal view returns (uint) {
         // Todo: Check whether to account in slash
         return recentReceived;
     }
