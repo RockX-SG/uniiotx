@@ -10,8 +10,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 
 import "./Roles.sol";
-import "./interfaces/IIOTXClear.sol";
-import "./interfaces/IUniIOTX.sol";
+import "../interfaces/IIOTXClear.sol";
+import "../interfaces/IUniIOTX.sol";
 import "../interfaces/ISystemStake.sol";
 
 contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, ReentrancyGuardUpgradeable {
