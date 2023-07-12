@@ -30,7 +30,7 @@ var (
 
 // IOTXStakeMetaData contains all meta data concerning the IOTXStake contract.
 var IOTXStakeMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"expectedAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"gotAmount\",\"type\":\"uint256\"}],\"name\":\"ExchangeRatioMismatch\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"withdrawAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"availableAmount\",\"type\":\"uint256\"}],\"name\":\"InsufficientManagerRevenue\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"expectedAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"allowedAmount\",\"type\":\"uint256\"}],\"name\":\"InvalidRedeemAmount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ManagerFeeSharesOutOfRange\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"now\",\"type\":\"uint256\"}],\"name\":\"TransactionExpired\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ZeroDelegates\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"diff\",\"type\":\"uint256\"}],\"name\":\"BalanceSynced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"stoppedCount\",\"type\":\"uint256\"}],\"name\":\"DelegateStopped\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"shares\",\"type\":\"uint256\"}],\"name\":\"ManagerFeeSharesSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"minted\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"ManagerFeeWithdrawed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Merged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"minted\",\"type\":\"uint256\"}],\"name\":\"Minted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"burned\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"Redeemed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"RevenueAccounted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"firstTokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"Staked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MULTIPLIER\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedManagerRevenue\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedUserRevenue\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"commonRatio\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"currentReserve\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defaultExchangeRatio\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"minToMint\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"minted\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"exchangeRatio\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"ratio\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"i\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"j\",\"type\":\"uint256\"}],\"name\":\"getRedeemedTokenIds\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"globalDelegate\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_systemStakeAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_iotxClear\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_oracleAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_startAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_commonRatio\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_sequenceLength\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_globalDelegate\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"iotxClear\",\"outputs\":[{\"internalType\":\"contractIIOTXClear\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"managerFeeShares\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC721Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"recentReceived\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"iotxsToRedeem\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxToBurn\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"}],\"name\":\"redeem\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"burned\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"redeemedTokenCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rewardDebts\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"sequenceLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"setGlobalDelegate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"shares\",\"type\":\"uint256\"}],\"name\":\"setManagerFeeShares\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"stake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"stakeDuration\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"startAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"systemStake\",\"outputs\":[{\"internalType\":\"contractISystemStake\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"tokenQueues\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalPending\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalStaked\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"uniIOTX\",\"outputs\":[{\"internalType\":\"contractIUniIOTX\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unpause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"updateDelegates\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"updateReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"withdrawManagerFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"toPayAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"queuedAmount\",\"type\":\"uint256\"}],\"name\":\"DebtAmountMismatched\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"expected\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"available\",\"type\":\"uint256\"}],\"name\":\"InsufficientReward\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"DebtAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"DebtPaid\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"claimer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"RewardClaimed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MULTIPLIER\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"claimRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"firstIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_systemStakeAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_iotxStakeAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_oracleAddress\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"iotxDebts\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"joinDebt\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"lastIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC721Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rewardRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"systemStake\",\"outputs\":[{\"internalType\":\"contractISystemStake\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalDebts\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"unstake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"updateDelegates\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"updateReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"userInfos\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"debt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"reward\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rewardRate\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
 }
 
 // IOTXStakeABI is the input ABI used to generate the binding from.
@@ -272,12 +272,12 @@ func (_IOTXStake *IOTXStakeCallerSession) AccountedBalance() (*big.Int, error) {
 	return _IOTXStake.Contract.AccountedBalance(&_IOTXStake.CallOpts)
 }
 
-// AccountedManagerRevenue is a free data retrieval call binding the contract method 0x7d8dd3c4.
+// FirstIndex is a free data retrieval call binding the contract method 0x6b4f2c0f.
 //
-// Solidity: function accountedManagerRevenue() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) AccountedManagerRevenue(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function firstIndex() view returns(uint256)
+func (_IOTXStake *IOTXStakeCaller) FirstIndex(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "accountedManagerRevenue")
+	err := _IOTXStake.contract.Call(opts, &out, "firstIndex")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -289,26 +289,26 @@ func (_IOTXStake *IOTXStakeCaller) AccountedManagerRevenue(opts *bind.CallOpts) 
 
 }
 
-// AccountedManagerRevenue is a free data retrieval call binding the contract method 0x7d8dd3c4.
+// FirstIndex is a free data retrieval call binding the contract method 0x6b4f2c0f.
 //
-// Solidity: function accountedManagerRevenue() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) AccountedManagerRevenue() (*big.Int, error) {
-	return _IOTXStake.Contract.AccountedManagerRevenue(&_IOTXStake.CallOpts)
+// Solidity: function firstIndex() view returns(uint256)
+func (_IOTXStake *IOTXStakeSession) FirstIndex() (*big.Int, error) {
+	return _IOTXStake.Contract.FirstIndex(&_IOTXStake.CallOpts)
 }
 
-// AccountedManagerRevenue is a free data retrieval call binding the contract method 0x7d8dd3c4.
+// FirstIndex is a free data retrieval call binding the contract method 0x6b4f2c0f.
 //
-// Solidity: function accountedManagerRevenue() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) AccountedManagerRevenue() (*big.Int, error) {
-	return _IOTXStake.Contract.AccountedManagerRevenue(&_IOTXStake.CallOpts)
+// Solidity: function firstIndex() view returns(uint256)
+func (_IOTXStake *IOTXStakeCallerSession) FirstIndex() (*big.Int, error) {
+	return _IOTXStake.Contract.FirstIndex(&_IOTXStake.CallOpts)
 }
 
-// AccountedUserRevenue is a free data retrieval call binding the contract method 0x18957bec.
+// GetReward is a free data retrieval call binding the contract method 0xc00007b0.
 //
-// Solidity: function accountedUserRevenue() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) AccountedUserRevenue(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function getReward(address account) view returns(uint256)
+func (_IOTXStake *IOTXStakeCaller) GetReward(opts *bind.CallOpts, account common.Address) (*big.Int, error) {
 	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "accountedUserRevenue")
+	err := _IOTXStake.contract.Call(opts, &out, "getReward", account)
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -320,173 +320,18 @@ func (_IOTXStake *IOTXStakeCaller) AccountedUserRevenue(opts *bind.CallOpts) (*b
 
 }
 
-// AccountedUserRevenue is a free data retrieval call binding the contract method 0x18957bec.
+// GetReward is a free data retrieval call binding the contract method 0xc00007b0.
 //
-// Solidity: function accountedUserRevenue() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) AccountedUserRevenue() (*big.Int, error) {
-	return _IOTXStake.Contract.AccountedUserRevenue(&_IOTXStake.CallOpts)
+// Solidity: function getReward(address account) view returns(uint256)
+func (_IOTXStake *IOTXStakeSession) GetReward(account common.Address) (*big.Int, error) {
+	return _IOTXStake.Contract.GetReward(&_IOTXStake.CallOpts, account)
 }
 
-// AccountedUserRevenue is a free data retrieval call binding the contract method 0x18957bec.
+// GetReward is a free data retrieval call binding the contract method 0xc00007b0.
 //
-// Solidity: function accountedUserRevenue() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) AccountedUserRevenue() (*big.Int, error) {
-	return _IOTXStake.Contract.AccountedUserRevenue(&_IOTXStake.CallOpts)
-}
-
-// CommonRatio is a free data retrieval call binding the contract method 0x3dd419d0.
-//
-// Solidity: function commonRatio() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) CommonRatio(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "commonRatio")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// CommonRatio is a free data retrieval call binding the contract method 0x3dd419d0.
-//
-// Solidity: function commonRatio() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) CommonRatio() (*big.Int, error) {
-	return _IOTXStake.Contract.CommonRatio(&_IOTXStake.CallOpts)
-}
-
-// CommonRatio is a free data retrieval call binding the contract method 0x3dd419d0.
-//
-// Solidity: function commonRatio() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) CommonRatio() (*big.Int, error) {
-	return _IOTXStake.Contract.CommonRatio(&_IOTXStake.CallOpts)
-}
-
-// CurrentReserve is a free data retrieval call binding the contract method 0x2e12007c.
-//
-// Solidity: function currentReserve() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) CurrentReserve(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "currentReserve")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// CurrentReserve is a free data retrieval call binding the contract method 0x2e12007c.
-//
-// Solidity: function currentReserve() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) CurrentReserve() (*big.Int, error) {
-	return _IOTXStake.Contract.CurrentReserve(&_IOTXStake.CallOpts)
-}
-
-// CurrentReserve is a free data retrieval call binding the contract method 0x2e12007c.
-//
-// Solidity: function currentReserve() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) CurrentReserve() (*big.Int, error) {
-	return _IOTXStake.Contract.CurrentReserve(&_IOTXStake.CallOpts)
-}
-
-// DefaultExchangeRatio is a free data retrieval call binding the contract method 0x74f82ce0.
-//
-// Solidity: function defaultExchangeRatio() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) DefaultExchangeRatio(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "defaultExchangeRatio")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// DefaultExchangeRatio is a free data retrieval call binding the contract method 0x74f82ce0.
-//
-// Solidity: function defaultExchangeRatio() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) DefaultExchangeRatio() (*big.Int, error) {
-	return _IOTXStake.Contract.DefaultExchangeRatio(&_IOTXStake.CallOpts)
-}
-
-// DefaultExchangeRatio is a free data retrieval call binding the contract method 0x74f82ce0.
-//
-// Solidity: function defaultExchangeRatio() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) DefaultExchangeRatio() (*big.Int, error) {
-	return _IOTXStake.Contract.DefaultExchangeRatio(&_IOTXStake.CallOpts)
-}
-
-// ExchangeRatio is a free data retrieval call binding the contract method 0x4006ccc5.
-//
-// Solidity: function exchangeRatio() view returns(uint256 ratio)
-func (_IOTXStake *IOTXStakeCaller) ExchangeRatio(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "exchangeRatio")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// ExchangeRatio is a free data retrieval call binding the contract method 0x4006ccc5.
-//
-// Solidity: function exchangeRatio() view returns(uint256 ratio)
-func (_IOTXStake *IOTXStakeSession) ExchangeRatio() (*big.Int, error) {
-	return _IOTXStake.Contract.ExchangeRatio(&_IOTXStake.CallOpts)
-}
-
-// ExchangeRatio is a free data retrieval call binding the contract method 0x4006ccc5.
-//
-// Solidity: function exchangeRatio() view returns(uint256 ratio)
-func (_IOTXStake *IOTXStakeCallerSession) ExchangeRatio() (*big.Int, error) {
-	return _IOTXStake.Contract.ExchangeRatio(&_IOTXStake.CallOpts)
-}
-
-// GetRedeemedTokenIds is a free data retrieval call binding the contract method 0x69ced3c0.
-//
-// Solidity: function getRedeemedTokenIds(uint256 i, uint256 j) view returns(uint256[] tokenIds)
-func (_IOTXStake *IOTXStakeCaller) GetRedeemedTokenIds(opts *bind.CallOpts, i *big.Int, j *big.Int) ([]*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "getRedeemedTokenIds", i, j)
-
-	if err != nil {
-		return *new([]*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([]*big.Int)).(*[]*big.Int)
-
-	return out0, err
-
-}
-
-// GetRedeemedTokenIds is a free data retrieval call binding the contract method 0x69ced3c0.
-//
-// Solidity: function getRedeemedTokenIds(uint256 i, uint256 j) view returns(uint256[] tokenIds)
-func (_IOTXStake *IOTXStakeSession) GetRedeemedTokenIds(i *big.Int, j *big.Int) ([]*big.Int, error) {
-	return _IOTXStake.Contract.GetRedeemedTokenIds(&_IOTXStake.CallOpts, i, j)
-}
-
-// GetRedeemedTokenIds is a free data retrieval call binding the contract method 0x69ced3c0.
-//
-// Solidity: function getRedeemedTokenIds(uint256 i, uint256 j) view returns(uint256[] tokenIds)
-func (_IOTXStake *IOTXStakeCallerSession) GetRedeemedTokenIds(i *big.Int, j *big.Int) ([]*big.Int, error) {
-	return _IOTXStake.Contract.GetRedeemedTokenIds(&_IOTXStake.CallOpts, i, j)
+// Solidity: function getReward(address account) view returns(uint256)
+func (_IOTXStake *IOTXStakeCallerSession) GetReward(account common.Address) (*big.Int, error) {
+	return _IOTXStake.Contract.GetReward(&_IOTXStake.CallOpts, account)
 }
 
 // GetRoleAdmin is a free data retrieval call binding the contract method 0x248a9ca3.
@@ -520,37 +365,6 @@ func (_IOTXStake *IOTXStakeCallerSession) GetRoleAdmin(role [32]byte) ([32]byte,
 	return _IOTXStake.Contract.GetRoleAdmin(&_IOTXStake.CallOpts, role)
 }
 
-// GlobalDelegate is a free data retrieval call binding the contract method 0x11e4bc2d.
-//
-// Solidity: function globalDelegate() view returns(address)
-func (_IOTXStake *IOTXStakeCaller) GlobalDelegate(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "globalDelegate")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
-}
-
-// GlobalDelegate is a free data retrieval call binding the contract method 0x11e4bc2d.
-//
-// Solidity: function globalDelegate() view returns(address)
-func (_IOTXStake *IOTXStakeSession) GlobalDelegate() (common.Address, error) {
-	return _IOTXStake.Contract.GlobalDelegate(&_IOTXStake.CallOpts)
-}
-
-// GlobalDelegate is a free data retrieval call binding the contract method 0x11e4bc2d.
-//
-// Solidity: function globalDelegate() view returns(address)
-func (_IOTXStake *IOTXStakeCallerSession) GlobalDelegate() (common.Address, error) {
-	return _IOTXStake.Contract.GlobalDelegate(&_IOTXStake.CallOpts)
-}
-
 // HasRole is a free data retrieval call binding the contract method 0x91d14854.
 //
 // Solidity: function hasRole(bytes32 role, address account) view returns(bool)
@@ -582,43 +396,57 @@ func (_IOTXStake *IOTXStakeCallerSession) HasRole(role [32]byte, account common.
 	return _IOTXStake.Contract.HasRole(&_IOTXStake.CallOpts, role, account)
 }
 
-// IotxClear is a free data retrieval call binding the contract method 0x5b3f86b4.
+// IotxDebts is a free data retrieval call binding the contract method 0x5c14675e.
 //
-// Solidity: function iotxClear() view returns(address)
-func (_IOTXStake *IOTXStakeCaller) IotxClear(opts *bind.CallOpts) (common.Address, error) {
+// Solidity: function iotxDebts(uint256 ) view returns(address account, uint256 amount)
+func (_IOTXStake *IOTXStakeCaller) IotxDebts(opts *bind.CallOpts, arg0 *big.Int) (struct {
+	Account common.Address
+	Amount  *big.Int
+}, error) {
 	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "iotxClear")
+	err := _IOTXStake.contract.Call(opts, &out, "iotxDebts", arg0)
 
+	outstruct := new(struct {
+		Account common.Address
+		Amount  *big.Int
+	})
 	if err != nil {
-		return *new(common.Address), err
+		return *outstruct, err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+	outstruct.Account = *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+	outstruct.Amount = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
 
-	return out0, err
+	return *outstruct, err
 
 }
 
-// IotxClear is a free data retrieval call binding the contract method 0x5b3f86b4.
+// IotxDebts is a free data retrieval call binding the contract method 0x5c14675e.
 //
-// Solidity: function iotxClear() view returns(address)
-func (_IOTXStake *IOTXStakeSession) IotxClear() (common.Address, error) {
-	return _IOTXStake.Contract.IotxClear(&_IOTXStake.CallOpts)
+// Solidity: function iotxDebts(uint256 ) view returns(address account, uint256 amount)
+func (_IOTXStake *IOTXStakeSession) IotxDebts(arg0 *big.Int) (struct {
+	Account common.Address
+	Amount  *big.Int
+}, error) {
+	return _IOTXStake.Contract.IotxDebts(&_IOTXStake.CallOpts, arg0)
 }
 
-// IotxClear is a free data retrieval call binding the contract method 0x5b3f86b4.
+// IotxDebts is a free data retrieval call binding the contract method 0x5c14675e.
 //
-// Solidity: function iotxClear() view returns(address)
-func (_IOTXStake *IOTXStakeCallerSession) IotxClear() (common.Address, error) {
-	return _IOTXStake.Contract.IotxClear(&_IOTXStake.CallOpts)
+// Solidity: function iotxDebts(uint256 ) view returns(address account, uint256 amount)
+func (_IOTXStake *IOTXStakeCallerSession) IotxDebts(arg0 *big.Int) (struct {
+	Account common.Address
+	Amount  *big.Int
+}, error) {
+	return _IOTXStake.Contract.IotxDebts(&_IOTXStake.CallOpts, arg0)
 }
 
-// ManagerFeeShares is a free data retrieval call binding the contract method 0xf6af7527.
+// LastIndex is a free data retrieval call binding the contract method 0xf3f6f0d7.
 //
-// Solidity: function managerFeeShares() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) ManagerFeeShares(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function lastIndex() view returns(uint256)
+func (_IOTXStake *IOTXStakeCaller) LastIndex(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "managerFeeShares")
+	err := _IOTXStake.contract.Call(opts, &out, "lastIndex")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -630,18 +458,18 @@ func (_IOTXStake *IOTXStakeCaller) ManagerFeeShares(opts *bind.CallOpts) (*big.I
 
 }
 
-// ManagerFeeShares is a free data retrieval call binding the contract method 0xf6af7527.
+// LastIndex is a free data retrieval call binding the contract method 0xf3f6f0d7.
 //
-// Solidity: function managerFeeShares() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) ManagerFeeShares() (*big.Int, error) {
-	return _IOTXStake.Contract.ManagerFeeShares(&_IOTXStake.CallOpts)
+// Solidity: function lastIndex() view returns(uint256)
+func (_IOTXStake *IOTXStakeSession) LastIndex() (*big.Int, error) {
+	return _IOTXStake.Contract.LastIndex(&_IOTXStake.CallOpts)
 }
 
-// ManagerFeeShares is a free data retrieval call binding the contract method 0xf6af7527.
+// LastIndex is a free data retrieval call binding the contract method 0xf3f6f0d7.
 //
-// Solidity: function managerFeeShares() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) ManagerFeeShares() (*big.Int, error) {
-	return _IOTXStake.Contract.ManagerFeeShares(&_IOTXStake.CallOpts)
+// Solidity: function lastIndex() view returns(uint256)
+func (_IOTXStake *IOTXStakeCallerSession) LastIndex() (*big.Int, error) {
+	return _IOTXStake.Contract.LastIndex(&_IOTXStake.CallOpts)
 }
 
 // OnERC721Received is a free data retrieval call binding the contract method 0x150b7a02.
@@ -706,12 +534,12 @@ func (_IOTXStake *IOTXStakeCallerSession) Paused() (bool, error) {
 	return _IOTXStake.Contract.Paused(&_IOTXStake.CallOpts)
 }
 
-// RecentReceived is a free data retrieval call binding the contract method 0xf34255be.
+// RewardRate is a free data retrieval call binding the contract method 0x7b0a47ee.
 //
-// Solidity: function recentReceived() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) RecentReceived(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function rewardRate() view returns(uint256)
+func (_IOTXStake *IOTXStakeCaller) RewardRate(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "recentReceived")
+	err := _IOTXStake.contract.Call(opts, &out, "rewardRate")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -723,173 +551,18 @@ func (_IOTXStake *IOTXStakeCaller) RecentReceived(opts *bind.CallOpts) (*big.Int
 
 }
 
-// RecentReceived is a free data retrieval call binding the contract method 0xf34255be.
+// RewardRate is a free data retrieval call binding the contract method 0x7b0a47ee.
 //
-// Solidity: function recentReceived() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) RecentReceived() (*big.Int, error) {
-	return _IOTXStake.Contract.RecentReceived(&_IOTXStake.CallOpts)
+// Solidity: function rewardRate() view returns(uint256)
+func (_IOTXStake *IOTXStakeSession) RewardRate() (*big.Int, error) {
+	return _IOTXStake.Contract.RewardRate(&_IOTXStake.CallOpts)
 }
 
-// RecentReceived is a free data retrieval call binding the contract method 0xf34255be.
+// RewardRate is a free data retrieval call binding the contract method 0x7b0a47ee.
 //
-// Solidity: function recentReceived() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) RecentReceived() (*big.Int, error) {
-	return _IOTXStake.Contract.RecentReceived(&_IOTXStake.CallOpts)
-}
-
-// RedeemedTokenCount is a free data retrieval call binding the contract method 0xb9bafb72.
-//
-// Solidity: function redeemedTokenCount() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) RedeemedTokenCount(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "redeemedTokenCount")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// RedeemedTokenCount is a free data retrieval call binding the contract method 0xb9bafb72.
-//
-// Solidity: function redeemedTokenCount() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) RedeemedTokenCount() (*big.Int, error) {
-	return _IOTXStake.Contract.RedeemedTokenCount(&_IOTXStake.CallOpts)
-}
-
-// RedeemedTokenCount is a free data retrieval call binding the contract method 0xb9bafb72.
-//
-// Solidity: function redeemedTokenCount() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) RedeemedTokenCount() (*big.Int, error) {
-	return _IOTXStake.Contract.RedeemedTokenCount(&_IOTXStake.CallOpts)
-}
-
-// RewardDebts is a free data retrieval call binding the contract method 0xf0dd59d0.
-//
-// Solidity: function rewardDebts() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) RewardDebts(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "rewardDebts")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// RewardDebts is a free data retrieval call binding the contract method 0xf0dd59d0.
-//
-// Solidity: function rewardDebts() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) RewardDebts() (*big.Int, error) {
-	return _IOTXStake.Contract.RewardDebts(&_IOTXStake.CallOpts)
-}
-
-// RewardDebts is a free data retrieval call binding the contract method 0xf0dd59d0.
-//
-// Solidity: function rewardDebts() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) RewardDebts() (*big.Int, error) {
-	return _IOTXStake.Contract.RewardDebts(&_IOTXStake.CallOpts)
-}
-
-// SequenceLength is a free data retrieval call binding the contract method 0xc030a6b9.
-//
-// Solidity: function sequenceLength() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) SequenceLength(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "sequenceLength")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// SequenceLength is a free data retrieval call binding the contract method 0xc030a6b9.
-//
-// Solidity: function sequenceLength() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) SequenceLength() (*big.Int, error) {
-	return _IOTXStake.Contract.SequenceLength(&_IOTXStake.CallOpts)
-}
-
-// SequenceLength is a free data retrieval call binding the contract method 0xc030a6b9.
-//
-// Solidity: function sequenceLength() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) SequenceLength() (*big.Int, error) {
-	return _IOTXStake.Contract.SequenceLength(&_IOTXStake.CallOpts)
-}
-
-// StakeDuration is a free data retrieval call binding the contract method 0x40f02ab6.
-//
-// Solidity: function stakeDuration() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) StakeDuration(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "stakeDuration")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// StakeDuration is a free data retrieval call binding the contract method 0x40f02ab6.
-//
-// Solidity: function stakeDuration() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) StakeDuration() (*big.Int, error) {
-	return _IOTXStake.Contract.StakeDuration(&_IOTXStake.CallOpts)
-}
-
-// StakeDuration is a free data retrieval call binding the contract method 0x40f02ab6.
-//
-// Solidity: function stakeDuration() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) StakeDuration() (*big.Int, error) {
-	return _IOTXStake.Contract.StakeDuration(&_IOTXStake.CallOpts)
-}
-
-// StartAmount is a free data retrieval call binding the contract method 0x0f767872.
-//
-// Solidity: function startAmount() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) StartAmount(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "startAmount")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// StartAmount is a free data retrieval call binding the contract method 0x0f767872.
-//
-// Solidity: function startAmount() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) StartAmount() (*big.Int, error) {
-	return _IOTXStake.Contract.StartAmount(&_IOTXStake.CallOpts)
-}
-
-// StartAmount is a free data retrieval call binding the contract method 0x0f767872.
-//
-// Solidity: function startAmount() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) StartAmount() (*big.Int, error) {
-	return _IOTXStake.Contract.StartAmount(&_IOTXStake.CallOpts)
+// Solidity: function rewardRate() view returns(uint256)
+func (_IOTXStake *IOTXStakeCallerSession) RewardRate() (*big.Int, error) {
+	return _IOTXStake.Contract.RewardRate(&_IOTXStake.CallOpts)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
@@ -954,12 +627,12 @@ func (_IOTXStake *IOTXStakeCallerSession) SystemStake() (common.Address, error) 
 	return _IOTXStake.Contract.SystemStake(&_IOTXStake.CallOpts)
 }
 
-// TokenQueues is a free data retrieval call binding the contract method 0x4777aa71.
+// TotalDebts is a free data retrieval call binding the contract method 0x14a1c32d.
 //
-// Solidity: function tokenQueues(uint256 , uint256 ) view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) TokenQueues(opts *bind.CallOpts, arg0 *big.Int, arg1 *big.Int) (*big.Int, error) {
+// Solidity: function totalDebts() view returns(uint256)
+func (_IOTXStake *IOTXStakeCaller) TotalDebts(opts *bind.CallOpts) (*big.Int, error) {
 	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "tokenQueues", arg0, arg1)
+	err := _IOTXStake.contract.Call(opts, &out, "totalDebts")
 
 	if err != nil {
 		return *new(*big.Int), err
@@ -971,132 +644,89 @@ func (_IOTXStake *IOTXStakeCaller) TokenQueues(opts *bind.CallOpts, arg0 *big.In
 
 }
 
-// TokenQueues is a free data retrieval call binding the contract method 0x4777aa71.
+// TotalDebts is a free data retrieval call binding the contract method 0x14a1c32d.
 //
-// Solidity: function tokenQueues(uint256 , uint256 ) view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) TokenQueues(arg0 *big.Int, arg1 *big.Int) (*big.Int, error) {
-	return _IOTXStake.Contract.TokenQueues(&_IOTXStake.CallOpts, arg0, arg1)
+// Solidity: function totalDebts() view returns(uint256)
+func (_IOTXStake *IOTXStakeSession) TotalDebts() (*big.Int, error) {
+	return _IOTXStake.Contract.TotalDebts(&_IOTXStake.CallOpts)
 }
 
-// TokenQueues is a free data retrieval call binding the contract method 0x4777aa71.
+// TotalDebts is a free data retrieval call binding the contract method 0x14a1c32d.
 //
-// Solidity: function tokenQueues(uint256 , uint256 ) view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) TokenQueues(arg0 *big.Int, arg1 *big.Int) (*big.Int, error) {
-	return _IOTXStake.Contract.TokenQueues(&_IOTXStake.CallOpts, arg0, arg1)
+// Solidity: function totalDebts() view returns(uint256)
+func (_IOTXStake *IOTXStakeCallerSession) TotalDebts() (*big.Int, error) {
+	return _IOTXStake.Contract.TotalDebts(&_IOTXStake.CallOpts)
 }
 
-// TotalPending is a free data retrieval call binding the contract method 0x3f90916a.
+// UserInfos is a free data retrieval call binding the contract method 0x43b0215f.
 //
-// Solidity: function totalPending() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) TotalPending(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function userInfos(address ) view returns(uint256 debt, uint256 reward, uint256 rewardRate)
+func (_IOTXStake *IOTXStakeCaller) UserInfos(opts *bind.CallOpts, arg0 common.Address) (struct {
+	Debt       *big.Int
+	Reward     *big.Int
+	RewardRate *big.Int
+}, error) {
 	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "totalPending")
+	err := _IOTXStake.contract.Call(opts, &out, "userInfos", arg0)
 
+	outstruct := new(struct {
+		Debt       *big.Int
+		Reward     *big.Int
+		RewardRate *big.Int
+	})
 	if err != nil {
-		return *new(*big.Int), err
+		return *outstruct, err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	outstruct.Debt = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	outstruct.Reward = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
+	outstruct.RewardRate = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
 
-	return out0, err
-
-}
-
-// TotalPending is a free data retrieval call binding the contract method 0x3f90916a.
-//
-// Solidity: function totalPending() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) TotalPending() (*big.Int, error) {
-	return _IOTXStake.Contract.TotalPending(&_IOTXStake.CallOpts)
-}
-
-// TotalPending is a free data retrieval call binding the contract method 0x3f90916a.
-//
-// Solidity: function totalPending() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) TotalPending() (*big.Int, error) {
-	return _IOTXStake.Contract.TotalPending(&_IOTXStake.CallOpts)
-}
-
-// TotalStaked is a free data retrieval call binding the contract method 0x817b1cd2.
-//
-// Solidity: function totalStaked() view returns(uint256)
-func (_IOTXStake *IOTXStakeCaller) TotalStaked(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "totalStaked")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
+	return *outstruct, err
 
 }
 
-// TotalStaked is a free data retrieval call binding the contract method 0x817b1cd2.
+// UserInfos is a free data retrieval call binding the contract method 0x43b0215f.
 //
-// Solidity: function totalStaked() view returns(uint256)
-func (_IOTXStake *IOTXStakeSession) TotalStaked() (*big.Int, error) {
-	return _IOTXStake.Contract.TotalStaked(&_IOTXStake.CallOpts)
+// Solidity: function userInfos(address ) view returns(uint256 debt, uint256 reward, uint256 rewardRate)
+func (_IOTXStake *IOTXStakeSession) UserInfos(arg0 common.Address) (struct {
+	Debt       *big.Int
+	Reward     *big.Int
+	RewardRate *big.Int
+}, error) {
+	return _IOTXStake.Contract.UserInfos(&_IOTXStake.CallOpts, arg0)
 }
 
-// TotalStaked is a free data retrieval call binding the contract method 0x817b1cd2.
+// UserInfos is a free data retrieval call binding the contract method 0x43b0215f.
 //
-// Solidity: function totalStaked() view returns(uint256)
-func (_IOTXStake *IOTXStakeCallerSession) TotalStaked() (*big.Int, error) {
-	return _IOTXStake.Contract.TotalStaked(&_IOTXStake.CallOpts)
+// Solidity: function userInfos(address ) view returns(uint256 debt, uint256 reward, uint256 rewardRate)
+func (_IOTXStake *IOTXStakeCallerSession) UserInfos(arg0 common.Address) (struct {
+	Debt       *big.Int
+	Reward     *big.Int
+	RewardRate *big.Int
+}, error) {
+	return _IOTXStake.Contract.UserInfos(&_IOTXStake.CallOpts, arg0)
 }
 
-// UniIOTX is a free data retrieval call binding the contract method 0x35b83d28.
+// ClaimRewards is a paid mutator transaction binding the contract method 0x6c7b69cb.
 //
-// Solidity: function uniIOTX() view returns(address)
-func (_IOTXStake *IOTXStakeCaller) UniIOTX(opts *bind.CallOpts) (common.Address, error) {
-	var out []interface{}
-	err := _IOTXStake.contract.Call(opts, &out, "uniIOTX")
-
-	if err != nil {
-		return *new(common.Address), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
-	return out0, err
-
+// Solidity: function claimRewards(uint256 amount, address recipient) returns()
+func (_IOTXStake *IOTXStakeTransactor) ClaimRewards(opts *bind.TransactOpts, amount *big.Int, recipient common.Address) (*types.Transaction, error) {
+	return _IOTXStake.contract.Transact(opts, "claimRewards", amount, recipient)
 }
 
-// UniIOTX is a free data retrieval call binding the contract method 0x35b83d28.
+// ClaimRewards is a paid mutator transaction binding the contract method 0x6c7b69cb.
 //
-// Solidity: function uniIOTX() view returns(address)
-func (_IOTXStake *IOTXStakeSession) UniIOTX() (common.Address, error) {
-	return _IOTXStake.Contract.UniIOTX(&_IOTXStake.CallOpts)
+// Solidity: function claimRewards(uint256 amount, address recipient) returns()
+func (_IOTXStake *IOTXStakeSession) ClaimRewards(amount *big.Int, recipient common.Address) (*types.Transaction, error) {
+	return _IOTXStake.Contract.ClaimRewards(&_IOTXStake.TransactOpts, amount, recipient)
 }
 
-// UniIOTX is a free data retrieval call binding the contract method 0x35b83d28.
+// ClaimRewards is a paid mutator transaction binding the contract method 0x6c7b69cb.
 //
-// Solidity: function uniIOTX() view returns(address)
-func (_IOTXStake *IOTXStakeCallerSession) UniIOTX() (common.Address, error) {
-	return _IOTXStake.Contract.UniIOTX(&_IOTXStake.CallOpts)
-}
-
-// Deposit is a paid mutator transaction binding the contract method 0xe2bbb158.
-//
-// Solidity: function deposit(uint256 minToMint, uint256 deadline) payable returns(uint256 minted)
-func (_IOTXStake *IOTXStakeTransactor) Deposit(opts *bind.TransactOpts, minToMint *big.Int, deadline *big.Int) (*types.Transaction, error) {
-	return _IOTXStake.contract.Transact(opts, "deposit", minToMint, deadline)
-}
-
-// Deposit is a paid mutator transaction binding the contract method 0xe2bbb158.
-//
-// Solidity: function deposit(uint256 minToMint, uint256 deadline) payable returns(uint256 minted)
-func (_IOTXStake *IOTXStakeSession) Deposit(minToMint *big.Int, deadline *big.Int) (*types.Transaction, error) {
-	return _IOTXStake.Contract.Deposit(&_IOTXStake.TransactOpts, minToMint, deadline)
-}
-
-// Deposit is a paid mutator transaction binding the contract method 0xe2bbb158.
-//
-// Solidity: function deposit(uint256 minToMint, uint256 deadline) payable returns(uint256 minted)
-func (_IOTXStake *IOTXStakeTransactorSession) Deposit(minToMint *big.Int, deadline *big.Int) (*types.Transaction, error) {
-	return _IOTXStake.Contract.Deposit(&_IOTXStake.TransactOpts, minToMint, deadline)
+// Solidity: function claimRewards(uint256 amount, address recipient) returns()
+func (_IOTXStake *IOTXStakeTransactorSession) ClaimRewards(amount *big.Int, recipient common.Address) (*types.Transaction, error) {
+	return _IOTXStake.Contract.ClaimRewards(&_IOTXStake.TransactOpts, amount, recipient)
 }
 
 // GrantRole is a paid mutator transaction binding the contract method 0x2f2ff15d.
@@ -1120,67 +750,46 @@ func (_IOTXStake *IOTXStakeTransactorSession) GrantRole(role [32]byte, account c
 	return _IOTXStake.Contract.GrantRole(&_IOTXStake.TransactOpts, role, account)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x8754bbc6.
+// Initialize is a paid mutator transaction binding the contract method 0xc0c53b8b.
 //
-// Solidity: function initialize(address _systemStakeAddress, address _iotxClear, address _oracleAddress, uint256 _startAmount, uint256 _commonRatio, uint256 _sequenceLength, address _globalDelegate) returns()
-func (_IOTXStake *IOTXStakeTransactor) Initialize(opts *bind.TransactOpts, _systemStakeAddress common.Address, _iotxClear common.Address, _oracleAddress common.Address, _startAmount *big.Int, _commonRatio *big.Int, _sequenceLength *big.Int, _globalDelegate common.Address) (*types.Transaction, error) {
-	return _IOTXStake.contract.Transact(opts, "initialize", _systemStakeAddress, _iotxClear, _oracleAddress, _startAmount, _commonRatio, _sequenceLength, _globalDelegate)
+// Solidity: function initialize(address _systemStakeAddress, address _iotxStakeAddress, address _oracleAddress) returns()
+func (_IOTXStake *IOTXStakeTransactor) Initialize(opts *bind.TransactOpts, _systemStakeAddress common.Address, _iotxStakeAddress common.Address, _oracleAddress common.Address) (*types.Transaction, error) {
+	return _IOTXStake.contract.Transact(opts, "initialize", _systemStakeAddress, _iotxStakeAddress, _oracleAddress)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x8754bbc6.
+// Initialize is a paid mutator transaction binding the contract method 0xc0c53b8b.
 //
-// Solidity: function initialize(address _systemStakeAddress, address _iotxClear, address _oracleAddress, uint256 _startAmount, uint256 _commonRatio, uint256 _sequenceLength, address _globalDelegate) returns()
-func (_IOTXStake *IOTXStakeSession) Initialize(_systemStakeAddress common.Address, _iotxClear common.Address, _oracleAddress common.Address, _startAmount *big.Int, _commonRatio *big.Int, _sequenceLength *big.Int, _globalDelegate common.Address) (*types.Transaction, error) {
-	return _IOTXStake.Contract.Initialize(&_IOTXStake.TransactOpts, _systemStakeAddress, _iotxClear, _oracleAddress, _startAmount, _commonRatio, _sequenceLength, _globalDelegate)
+// Solidity: function initialize(address _systemStakeAddress, address _iotxStakeAddress, address _oracleAddress) returns()
+func (_IOTXStake *IOTXStakeSession) Initialize(_systemStakeAddress common.Address, _iotxStakeAddress common.Address, _oracleAddress common.Address) (*types.Transaction, error) {
+	return _IOTXStake.Contract.Initialize(&_IOTXStake.TransactOpts, _systemStakeAddress, _iotxStakeAddress, _oracleAddress)
 }
 
-// Initialize is a paid mutator transaction binding the contract method 0x8754bbc6.
+// Initialize is a paid mutator transaction binding the contract method 0xc0c53b8b.
 //
-// Solidity: function initialize(address _systemStakeAddress, address _iotxClear, address _oracleAddress, uint256 _startAmount, uint256 _commonRatio, uint256 _sequenceLength, address _globalDelegate) returns()
-func (_IOTXStake *IOTXStakeTransactorSession) Initialize(_systemStakeAddress common.Address, _iotxClear common.Address, _oracleAddress common.Address, _startAmount *big.Int, _commonRatio *big.Int, _sequenceLength *big.Int, _globalDelegate common.Address) (*types.Transaction, error) {
-	return _IOTXStake.Contract.Initialize(&_IOTXStake.TransactOpts, _systemStakeAddress, _iotxClear, _oracleAddress, _startAmount, _commonRatio, _sequenceLength, _globalDelegate)
+// Solidity: function initialize(address _systemStakeAddress, address _iotxStakeAddress, address _oracleAddress) returns()
+func (_IOTXStake *IOTXStakeTransactorSession) Initialize(_systemStakeAddress common.Address, _iotxStakeAddress common.Address, _oracleAddress common.Address) (*types.Transaction, error) {
+	return _IOTXStake.Contract.Initialize(&_IOTXStake.TransactOpts, _systemStakeAddress, _iotxStakeAddress, _oracleAddress)
 }
 
-// Pause is a paid mutator transaction binding the contract method 0x8456cb59.
+// JoinDebt is a paid mutator transaction binding the contract method 0x7180f85b.
 //
-// Solidity: function pause() returns()
-func (_IOTXStake *IOTXStakeTransactor) Pause(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IOTXStake.contract.Transact(opts, "pause")
+// Solidity: function joinDebt(address account, uint256 amount) returns()
+func (_IOTXStake *IOTXStakeTransactor) JoinDebt(opts *bind.TransactOpts, account common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _IOTXStake.contract.Transact(opts, "joinDebt", account, amount)
 }
 
-// Pause is a paid mutator transaction binding the contract method 0x8456cb59.
+// JoinDebt is a paid mutator transaction binding the contract method 0x7180f85b.
 //
-// Solidity: function pause() returns()
-func (_IOTXStake *IOTXStakeSession) Pause() (*types.Transaction, error) {
-	return _IOTXStake.Contract.Pause(&_IOTXStake.TransactOpts)
+// Solidity: function joinDebt(address account, uint256 amount) returns()
+func (_IOTXStake *IOTXStakeSession) JoinDebt(account common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _IOTXStake.Contract.JoinDebt(&_IOTXStake.TransactOpts, account, amount)
 }
 
-// Pause is a paid mutator transaction binding the contract method 0x8456cb59.
+// JoinDebt is a paid mutator transaction binding the contract method 0x7180f85b.
 //
-// Solidity: function pause() returns()
-func (_IOTXStake *IOTXStakeTransactorSession) Pause() (*types.Transaction, error) {
-	return _IOTXStake.Contract.Pause(&_IOTXStake.TransactOpts)
-}
-
-// Redeem is a paid mutator transaction binding the contract method 0xb8192205.
-//
-// Solidity: function redeem(uint256 iotxsToRedeem, uint256 maxToBurn, uint256 deadline) returns(uint256 burned)
-func (_IOTXStake *IOTXStakeTransactor) Redeem(opts *bind.TransactOpts, iotxsToRedeem *big.Int, maxToBurn *big.Int, deadline *big.Int) (*types.Transaction, error) {
-	return _IOTXStake.contract.Transact(opts, "redeem", iotxsToRedeem, maxToBurn, deadline)
-}
-
-// Redeem is a paid mutator transaction binding the contract method 0xb8192205.
-//
-// Solidity: function redeem(uint256 iotxsToRedeem, uint256 maxToBurn, uint256 deadline) returns(uint256 burned)
-func (_IOTXStake *IOTXStakeSession) Redeem(iotxsToRedeem *big.Int, maxToBurn *big.Int, deadline *big.Int) (*types.Transaction, error) {
-	return _IOTXStake.Contract.Redeem(&_IOTXStake.TransactOpts, iotxsToRedeem, maxToBurn, deadline)
-}
-
-// Redeem is a paid mutator transaction binding the contract method 0xb8192205.
-//
-// Solidity: function redeem(uint256 iotxsToRedeem, uint256 maxToBurn, uint256 deadline) returns(uint256 burned)
-func (_IOTXStake *IOTXStakeTransactorSession) Redeem(iotxsToRedeem *big.Int, maxToBurn *big.Int, deadline *big.Int) (*types.Transaction, error) {
-	return _IOTXStake.Contract.Redeem(&_IOTXStake.TransactOpts, iotxsToRedeem, maxToBurn, deadline)
+// Solidity: function joinDebt(address account, uint256 amount) returns()
+func (_IOTXStake *IOTXStakeTransactorSession) JoinDebt(account common.Address, amount *big.Int) (*types.Transaction, error) {
+	return _IOTXStake.Contract.JoinDebt(&_IOTXStake.TransactOpts, account, amount)
 }
 
 // RenounceRole is a paid mutator transaction binding the contract method 0x36568abe.
@@ -1225,88 +834,25 @@ func (_IOTXStake *IOTXStakeTransactorSession) RevokeRole(role [32]byte, account 
 	return _IOTXStake.Contract.RevokeRole(&_IOTXStake.TransactOpts, role, account)
 }
 
-// SetGlobalDelegate is a paid mutator transaction binding the contract method 0x229bf1b6.
+// Unstake is a paid mutator transaction binding the contract method 0xe449f341.
 //
-// Solidity: function setGlobalDelegate(address delegate) returns()
-func (_IOTXStake *IOTXStakeTransactor) SetGlobalDelegate(opts *bind.TransactOpts, delegate common.Address) (*types.Transaction, error) {
-	return _IOTXStake.contract.Transact(opts, "setGlobalDelegate", delegate)
+// Solidity: function unstake(uint256[] tokenIds) returns()
+func (_IOTXStake *IOTXStakeTransactor) Unstake(opts *bind.TransactOpts, tokenIds []*big.Int) (*types.Transaction, error) {
+	return _IOTXStake.contract.Transact(opts, "unstake", tokenIds)
 }
 
-// SetGlobalDelegate is a paid mutator transaction binding the contract method 0x229bf1b6.
+// Unstake is a paid mutator transaction binding the contract method 0xe449f341.
 //
-// Solidity: function setGlobalDelegate(address delegate) returns()
-func (_IOTXStake *IOTXStakeSession) SetGlobalDelegate(delegate common.Address) (*types.Transaction, error) {
-	return _IOTXStake.Contract.SetGlobalDelegate(&_IOTXStake.TransactOpts, delegate)
+// Solidity: function unstake(uint256[] tokenIds) returns()
+func (_IOTXStake *IOTXStakeSession) Unstake(tokenIds []*big.Int) (*types.Transaction, error) {
+	return _IOTXStake.Contract.Unstake(&_IOTXStake.TransactOpts, tokenIds)
 }
 
-// SetGlobalDelegate is a paid mutator transaction binding the contract method 0x229bf1b6.
+// Unstake is a paid mutator transaction binding the contract method 0xe449f341.
 //
-// Solidity: function setGlobalDelegate(address delegate) returns()
-func (_IOTXStake *IOTXStakeTransactorSession) SetGlobalDelegate(delegate common.Address) (*types.Transaction, error) {
-	return _IOTXStake.Contract.SetGlobalDelegate(&_IOTXStake.TransactOpts, delegate)
-}
-
-// SetManagerFeeShares is a paid mutator transaction binding the contract method 0xbecd0858.
-//
-// Solidity: function setManagerFeeShares(uint256 shares) returns()
-func (_IOTXStake *IOTXStakeTransactor) SetManagerFeeShares(opts *bind.TransactOpts, shares *big.Int) (*types.Transaction, error) {
-	return _IOTXStake.contract.Transact(opts, "setManagerFeeShares", shares)
-}
-
-// SetManagerFeeShares is a paid mutator transaction binding the contract method 0xbecd0858.
-//
-// Solidity: function setManagerFeeShares(uint256 shares) returns()
-func (_IOTXStake *IOTXStakeSession) SetManagerFeeShares(shares *big.Int) (*types.Transaction, error) {
-	return _IOTXStake.Contract.SetManagerFeeShares(&_IOTXStake.TransactOpts, shares)
-}
-
-// SetManagerFeeShares is a paid mutator transaction binding the contract method 0xbecd0858.
-//
-// Solidity: function setManagerFeeShares(uint256 shares) returns()
-func (_IOTXStake *IOTXStakeTransactorSession) SetManagerFeeShares(shares *big.Int) (*types.Transaction, error) {
-	return _IOTXStake.Contract.SetManagerFeeShares(&_IOTXStake.TransactOpts, shares)
-}
-
-// Stake is a paid mutator transaction binding the contract method 0x3a4b66f1.
-//
-// Solidity: function stake() returns()
-func (_IOTXStake *IOTXStakeTransactor) Stake(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IOTXStake.contract.Transact(opts, "stake")
-}
-
-// Stake is a paid mutator transaction binding the contract method 0x3a4b66f1.
-//
-// Solidity: function stake() returns()
-func (_IOTXStake *IOTXStakeSession) Stake() (*types.Transaction, error) {
-	return _IOTXStake.Contract.Stake(&_IOTXStake.TransactOpts)
-}
-
-// Stake is a paid mutator transaction binding the contract method 0x3a4b66f1.
-//
-// Solidity: function stake() returns()
-func (_IOTXStake *IOTXStakeTransactorSession) Stake() (*types.Transaction, error) {
-	return _IOTXStake.Contract.Stake(&_IOTXStake.TransactOpts)
-}
-
-// Unpause is a paid mutator transaction binding the contract method 0x3f4ba83a.
-//
-// Solidity: function unpause() returns()
-func (_IOTXStake *IOTXStakeTransactor) Unpause(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IOTXStake.contract.Transact(opts, "unpause")
-}
-
-// Unpause is a paid mutator transaction binding the contract method 0x3f4ba83a.
-//
-// Solidity: function unpause() returns()
-func (_IOTXStake *IOTXStakeSession) Unpause() (*types.Transaction, error) {
-	return _IOTXStake.Contract.Unpause(&_IOTXStake.TransactOpts)
-}
-
-// Unpause is a paid mutator transaction binding the contract method 0x3f4ba83a.
-//
-// Solidity: function unpause() returns()
-func (_IOTXStake *IOTXStakeTransactorSession) Unpause() (*types.Transaction, error) {
-	return _IOTXStake.Contract.Unpause(&_IOTXStake.TransactOpts)
+// Solidity: function unstake(uint256[] tokenIds) returns()
+func (_IOTXStake *IOTXStakeTransactorSession) Unstake(tokenIds []*big.Int) (*types.Transaction, error) {
+	return _IOTXStake.Contract.Unstake(&_IOTXStake.TransactOpts, tokenIds)
 }
 
 // UpdateDelegates is a paid mutator transaction binding the contract method 0x2328782f.
@@ -1330,72 +876,51 @@ func (_IOTXStake *IOTXStakeTransactorSession) UpdateDelegates(tokenIds []*big.In
 	return _IOTXStake.Contract.UpdateDelegates(&_IOTXStake.TransactOpts, tokenIds, delegate)
 }
 
-// UpdateReward is a paid mutator transaction binding the contract method 0xf36c0a72.
+// UpdateReward is a paid mutator transaction binding the contract method 0x632447c9.
 //
-// Solidity: function updateReward() returns()
-func (_IOTXStake *IOTXStakeTransactor) UpdateReward(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IOTXStake.contract.Transact(opts, "updateReward")
+// Solidity: function updateReward(address account) returns(uint256)
+func (_IOTXStake *IOTXStakeTransactor) UpdateReward(opts *bind.TransactOpts, account common.Address) (*types.Transaction, error) {
+	return _IOTXStake.contract.Transact(opts, "updateReward", account)
 }
 
-// UpdateReward is a paid mutator transaction binding the contract method 0xf36c0a72.
+// UpdateReward is a paid mutator transaction binding the contract method 0x632447c9.
 //
-// Solidity: function updateReward() returns()
-func (_IOTXStake *IOTXStakeSession) UpdateReward() (*types.Transaction, error) {
-	return _IOTXStake.Contract.UpdateReward(&_IOTXStake.TransactOpts)
+// Solidity: function updateReward(address account) returns(uint256)
+func (_IOTXStake *IOTXStakeSession) UpdateReward(account common.Address) (*types.Transaction, error) {
+	return _IOTXStake.Contract.UpdateReward(&_IOTXStake.TransactOpts, account)
 }
 
-// UpdateReward is a paid mutator transaction binding the contract method 0xf36c0a72.
+// UpdateReward is a paid mutator transaction binding the contract method 0x632447c9.
 //
-// Solidity: function updateReward() returns()
-func (_IOTXStake *IOTXStakeTransactorSession) UpdateReward() (*types.Transaction, error) {
-	return _IOTXStake.Contract.UpdateReward(&_IOTXStake.TransactOpts)
+// Solidity: function updateReward(address account) returns(uint256)
+func (_IOTXStake *IOTXStakeTransactorSession) UpdateReward(account common.Address) (*types.Transaction, error) {
+	return _IOTXStake.Contract.UpdateReward(&_IOTXStake.TransactOpts, account)
 }
 
-// WithdrawManagerFee is a paid mutator transaction binding the contract method 0xfa0ec2ce.
+// Withdraw is a paid mutator transaction binding the contract method 0x983d95ce.
 //
-// Solidity: function withdrawManagerFee(uint256 amount, address recipient) returns()
-func (_IOTXStake *IOTXStakeTransactor) WithdrawManagerFee(opts *bind.TransactOpts, amount *big.Int, recipient common.Address) (*types.Transaction, error) {
-	return _IOTXStake.contract.Transact(opts, "withdrawManagerFee", amount, recipient)
+// Solidity: function withdraw(uint256[] tokenIds) returns()
+func (_IOTXStake *IOTXStakeTransactor) Withdraw(opts *bind.TransactOpts, tokenIds []*big.Int) (*types.Transaction, error) {
+	return _IOTXStake.contract.Transact(opts, "withdraw", tokenIds)
 }
 
-// WithdrawManagerFee is a paid mutator transaction binding the contract method 0xfa0ec2ce.
+// Withdraw is a paid mutator transaction binding the contract method 0x983d95ce.
 //
-// Solidity: function withdrawManagerFee(uint256 amount, address recipient) returns()
-func (_IOTXStake *IOTXStakeSession) WithdrawManagerFee(amount *big.Int, recipient common.Address) (*types.Transaction, error) {
-	return _IOTXStake.Contract.WithdrawManagerFee(&_IOTXStake.TransactOpts, amount, recipient)
+// Solidity: function withdraw(uint256[] tokenIds) returns()
+func (_IOTXStake *IOTXStakeSession) Withdraw(tokenIds []*big.Int) (*types.Transaction, error) {
+	return _IOTXStake.Contract.Withdraw(&_IOTXStake.TransactOpts, tokenIds)
 }
 
-// WithdrawManagerFee is a paid mutator transaction binding the contract method 0xfa0ec2ce.
+// Withdraw is a paid mutator transaction binding the contract method 0x983d95ce.
 //
-// Solidity: function withdrawManagerFee(uint256 amount, address recipient) returns()
-func (_IOTXStake *IOTXStakeTransactorSession) WithdrawManagerFee(amount *big.Int, recipient common.Address) (*types.Transaction, error) {
-	return _IOTXStake.Contract.WithdrawManagerFee(&_IOTXStake.TransactOpts, amount, recipient)
+// Solidity: function withdraw(uint256[] tokenIds) returns()
+func (_IOTXStake *IOTXStakeTransactorSession) Withdraw(tokenIds []*big.Int) (*types.Transaction, error) {
+	return _IOTXStake.Contract.Withdraw(&_IOTXStake.TransactOpts, tokenIds)
 }
 
-// Receive is a paid mutator transaction binding the contract receive function.
-//
-// Solidity: receive() payable returns()
-func (_IOTXStake *IOTXStakeTransactor) Receive(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _IOTXStake.contract.RawTransact(opts, nil) // calldata is disallowed for receive function
-}
-
-// Receive is a paid mutator transaction binding the contract receive function.
-//
-// Solidity: receive() payable returns()
-func (_IOTXStake *IOTXStakeSession) Receive() (*types.Transaction, error) {
-	return _IOTXStake.Contract.Receive(&_IOTXStake.TransactOpts)
-}
-
-// Receive is a paid mutator transaction binding the contract receive function.
-//
-// Solidity: receive() payable returns()
-func (_IOTXStake *IOTXStakeTransactorSession) Receive() (*types.Transaction, error) {
-	return _IOTXStake.Contract.Receive(&_IOTXStake.TransactOpts)
-}
-
-// IOTXStakeBalanceSyncedIterator is returned from FilterBalanceSynced and is used to iterate over the raw logs and unpacked data for BalanceSynced events raised by the IOTXStake contract.
-type IOTXStakeBalanceSyncedIterator struct {
-	Event *IOTXStakeBalanceSynced // Event containing the contract specifics and raw log
+// IOTXStakeDebtAddedIterator is returned from FilterDebtAdded and is used to iterate over the raw logs and unpacked data for DebtAdded events raised by the IOTXStake contract.
+type IOTXStakeDebtAddedIterator struct {
+	Event *IOTXStakeDebtAdded // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1409,7 +934,7 @@ type IOTXStakeBalanceSyncedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *IOTXStakeBalanceSyncedIterator) Next() bool {
+func (it *IOTXStakeDebtAddedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1418,7 +943,7 @@ func (it *IOTXStakeBalanceSyncedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(IOTXStakeBalanceSynced)
+			it.Event = new(IOTXStakeDebtAdded)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1433,7 +958,7 @@ func (it *IOTXStakeBalanceSyncedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(IOTXStakeBalanceSynced)
+		it.Event = new(IOTXStakeDebtAdded)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1449,41 +974,42 @@ func (it *IOTXStakeBalanceSyncedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *IOTXStakeBalanceSyncedIterator) Error() error {
+func (it *IOTXStakeDebtAddedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *IOTXStakeBalanceSyncedIterator) Close() error {
+func (it *IOTXStakeDebtAddedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// IOTXStakeBalanceSynced represents a BalanceSynced event raised by the IOTXStake contract.
-type IOTXStakeBalanceSynced struct {
-	Diff *big.Int
-	Raw  types.Log // Blockchain specific contextual infos
+// IOTXStakeDebtAdded represents a DebtAdded event raised by the IOTXStake contract.
+type IOTXStakeDebtAdded struct {
+	Account common.Address
+	Amount  *big.Int
+	Raw     types.Log // Blockchain specific contextual infos
 }
 
-// FilterBalanceSynced is a free log retrieval operation binding the contract event 0xe7948c33eb604391785037114655100edf93283c25b69884e9238ae197f07817.
+// FilterDebtAdded is a free log retrieval operation binding the contract event 0x183076a1e61b553fbb03b0fb4641f565bba910da3e423f6931f9d08a16539692.
 //
-// Solidity: event BalanceSynced(uint256 diff)
-func (_IOTXStake *IOTXStakeFilterer) FilterBalanceSynced(opts *bind.FilterOpts) (*IOTXStakeBalanceSyncedIterator, error) {
+// Solidity: event DebtAdded(address account, uint256 amount)
+func (_IOTXStake *IOTXStakeFilterer) FilterDebtAdded(opts *bind.FilterOpts) (*IOTXStakeDebtAddedIterator, error) {
 
-	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "BalanceSynced")
+	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "DebtAdded")
 	if err != nil {
 		return nil, err
 	}
-	return &IOTXStakeBalanceSyncedIterator{contract: _IOTXStake.contract, event: "BalanceSynced", logs: logs, sub: sub}, nil
+	return &IOTXStakeDebtAddedIterator{contract: _IOTXStake.contract, event: "DebtAdded", logs: logs, sub: sub}, nil
 }
 
-// WatchBalanceSynced is a free log subscription operation binding the contract event 0xe7948c33eb604391785037114655100edf93283c25b69884e9238ae197f07817.
+// WatchDebtAdded is a free log subscription operation binding the contract event 0x183076a1e61b553fbb03b0fb4641f565bba910da3e423f6931f9d08a16539692.
 //
-// Solidity: event BalanceSynced(uint256 diff)
-func (_IOTXStake *IOTXStakeFilterer) WatchBalanceSynced(opts *bind.WatchOpts, sink chan<- *IOTXStakeBalanceSynced) (event.Subscription, error) {
+// Solidity: event DebtAdded(address account, uint256 amount)
+func (_IOTXStake *IOTXStakeFilterer) WatchDebtAdded(opts *bind.WatchOpts, sink chan<- *IOTXStakeDebtAdded) (event.Subscription, error) {
 
-	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "BalanceSynced")
+	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "DebtAdded")
 	if err != nil {
 		return nil, err
 	}
@@ -1493,8 +1019,8 @@ func (_IOTXStake *IOTXStakeFilterer) WatchBalanceSynced(opts *bind.WatchOpts, si
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(IOTXStakeBalanceSynced)
-				if err := _IOTXStake.contract.UnpackLog(event, "BalanceSynced", log); err != nil {
+				event := new(IOTXStakeDebtAdded)
+				if err := _IOTXStake.contract.UnpackLog(event, "DebtAdded", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1515,21 +1041,21 @@ func (_IOTXStake *IOTXStakeFilterer) WatchBalanceSynced(opts *bind.WatchOpts, si
 	}), nil
 }
 
-// ParseBalanceSynced is a log parse operation binding the contract event 0xe7948c33eb604391785037114655100edf93283c25b69884e9238ae197f07817.
+// ParseDebtAdded is a log parse operation binding the contract event 0x183076a1e61b553fbb03b0fb4641f565bba910da3e423f6931f9d08a16539692.
 //
-// Solidity: event BalanceSynced(uint256 diff)
-func (_IOTXStake *IOTXStakeFilterer) ParseBalanceSynced(log types.Log) (*IOTXStakeBalanceSynced, error) {
-	event := new(IOTXStakeBalanceSynced)
-	if err := _IOTXStake.contract.UnpackLog(event, "BalanceSynced", log); err != nil {
+// Solidity: event DebtAdded(address account, uint256 amount)
+func (_IOTXStake *IOTXStakeFilterer) ParseDebtAdded(log types.Log) (*IOTXStakeDebtAdded, error) {
+	event := new(IOTXStakeDebtAdded)
+	if err := _IOTXStake.contract.UnpackLog(event, "DebtAdded", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// IOTXStakeDelegateStoppedIterator is returned from FilterDelegateStopped and is used to iterate over the raw logs and unpacked data for DelegateStopped events raised by the IOTXStake contract.
-type IOTXStakeDelegateStoppedIterator struct {
-	Event *IOTXStakeDelegateStopped // Event containing the contract specifics and raw log
+// IOTXStakeDebtPaidIterator is returned from FilterDebtPaid and is used to iterate over the raw logs and unpacked data for DebtPaid events raised by the IOTXStake contract.
+type IOTXStakeDebtPaidIterator struct {
+	Event *IOTXStakeDebtPaid // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1543,7 +1069,7 @@ type IOTXStakeDelegateStoppedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *IOTXStakeDelegateStoppedIterator) Next() bool {
+func (it *IOTXStakeDebtPaidIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1552,7 +1078,7 @@ func (it *IOTXStakeDelegateStoppedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(IOTXStakeDelegateStopped)
+			it.Event = new(IOTXStakeDebtPaid)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1567,7 +1093,7 @@ func (it *IOTXStakeDelegateStoppedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(IOTXStakeDelegateStopped)
+		it.Event = new(IOTXStakeDebtPaid)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1583,41 +1109,42 @@ func (it *IOTXStakeDelegateStoppedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *IOTXStakeDelegateStoppedIterator) Error() error {
+func (it *IOTXStakeDebtPaidIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *IOTXStakeDelegateStoppedIterator) Close() error {
+func (it *IOTXStakeDebtPaidIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// IOTXStakeDelegateStopped represents a DelegateStopped event raised by the IOTXStake contract.
-type IOTXStakeDelegateStopped struct {
-	StoppedCount *big.Int
-	Raw          types.Log // Blockchain specific contextual infos
+// IOTXStakeDebtPaid represents a DebtPaid event raised by the IOTXStake contract.
+type IOTXStakeDebtPaid struct {
+	Account common.Address
+	Amount  *big.Int
+	Raw     types.Log // Blockchain specific contextual infos
 }
 
-// FilterDelegateStopped is a free log retrieval operation binding the contract event 0x9f0979f58f3b0f69232b14cede4e830af40e231d1a19295681d423413c8d493c.
+// FilterDebtPaid is a free log retrieval operation binding the contract event 0xc75e95ca1d8e8b97e6452ce2acc93a4f8f9f5779fbced06e43809b0d4e4e3ce4.
 //
-// Solidity: event DelegateStopped(uint256 stoppedCount)
-func (_IOTXStake *IOTXStakeFilterer) FilterDelegateStopped(opts *bind.FilterOpts) (*IOTXStakeDelegateStoppedIterator, error) {
+// Solidity: event DebtPaid(address account, uint256 amount)
+func (_IOTXStake *IOTXStakeFilterer) FilterDebtPaid(opts *bind.FilterOpts) (*IOTXStakeDebtPaidIterator, error) {
 
-	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "DelegateStopped")
+	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "DebtPaid")
 	if err != nil {
 		return nil, err
 	}
-	return &IOTXStakeDelegateStoppedIterator{contract: _IOTXStake.contract, event: "DelegateStopped", logs: logs, sub: sub}, nil
+	return &IOTXStakeDebtPaidIterator{contract: _IOTXStake.contract, event: "DebtPaid", logs: logs, sub: sub}, nil
 }
 
-// WatchDelegateStopped is a free log subscription operation binding the contract event 0x9f0979f58f3b0f69232b14cede4e830af40e231d1a19295681d423413c8d493c.
+// WatchDebtPaid is a free log subscription operation binding the contract event 0xc75e95ca1d8e8b97e6452ce2acc93a4f8f9f5779fbced06e43809b0d4e4e3ce4.
 //
-// Solidity: event DelegateStopped(uint256 stoppedCount)
-func (_IOTXStake *IOTXStakeFilterer) WatchDelegateStopped(opts *bind.WatchOpts, sink chan<- *IOTXStakeDelegateStopped) (event.Subscription, error) {
+// Solidity: event DebtPaid(address account, uint256 amount)
+func (_IOTXStake *IOTXStakeFilterer) WatchDebtPaid(opts *bind.WatchOpts, sink chan<- *IOTXStakeDebtPaid) (event.Subscription, error) {
 
-	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "DelegateStopped")
+	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "DebtPaid")
 	if err != nil {
 		return nil, err
 	}
@@ -1627,8 +1154,8 @@ func (_IOTXStake *IOTXStakeFilterer) WatchDelegateStopped(opts *bind.WatchOpts, 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(IOTXStakeDelegateStopped)
-				if err := _IOTXStake.contract.UnpackLog(event, "DelegateStopped", log); err != nil {
+				event := new(IOTXStakeDebtPaid)
+				if err := _IOTXStake.contract.UnpackLog(event, "DebtPaid", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1649,12 +1176,12 @@ func (_IOTXStake *IOTXStakeFilterer) WatchDelegateStopped(opts *bind.WatchOpts, 
 	}), nil
 }
 
-// ParseDelegateStopped is a log parse operation binding the contract event 0x9f0979f58f3b0f69232b14cede4e830af40e231d1a19295681d423413c8d493c.
+// ParseDebtPaid is a log parse operation binding the contract event 0xc75e95ca1d8e8b97e6452ce2acc93a4f8f9f5779fbced06e43809b0d4e4e3ce4.
 //
-// Solidity: event DelegateStopped(uint256 stoppedCount)
-func (_IOTXStake *IOTXStakeFilterer) ParseDelegateStopped(log types.Log) (*IOTXStakeDelegateStopped, error) {
-	event := new(IOTXStakeDelegateStopped)
-	if err := _IOTXStake.contract.UnpackLog(event, "DelegateStopped", log); err != nil {
+// Solidity: event DebtPaid(address account, uint256 amount)
+func (_IOTXStake *IOTXStakeFilterer) ParseDebtPaid(log types.Log) (*IOTXStakeDebtPaid, error) {
+	event := new(IOTXStakeDebtPaid)
+	if err := _IOTXStake.contract.UnpackLog(event, "DebtPaid", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -1795,546 +1322,6 @@ func (_IOTXStake *IOTXStakeFilterer) ParseInitialized(log types.Log) (*IOTXStake
 	return event, nil
 }
 
-// IOTXStakeManagerFeeSharesSetIterator is returned from FilterManagerFeeSharesSet and is used to iterate over the raw logs and unpacked data for ManagerFeeSharesSet events raised by the IOTXStake contract.
-type IOTXStakeManagerFeeSharesSetIterator struct {
-	Event *IOTXStakeManagerFeeSharesSet // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *IOTXStakeManagerFeeSharesSetIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(IOTXStakeManagerFeeSharesSet)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(IOTXStakeManagerFeeSharesSet)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *IOTXStakeManagerFeeSharesSetIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *IOTXStakeManagerFeeSharesSetIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// IOTXStakeManagerFeeSharesSet represents a ManagerFeeSharesSet event raised by the IOTXStake contract.
-type IOTXStakeManagerFeeSharesSet struct {
-	Shares *big.Int
-	Raw    types.Log // Blockchain specific contextual infos
-}
-
-// FilterManagerFeeSharesSet is a free log retrieval operation binding the contract event 0xb6efe094bbb68f7f840c92b10663dc9fdee2f9c7b4b7ba75d88b13e0b685b228.
-//
-// Solidity: event ManagerFeeSharesSet(uint256 shares)
-func (_IOTXStake *IOTXStakeFilterer) FilterManagerFeeSharesSet(opts *bind.FilterOpts) (*IOTXStakeManagerFeeSharesSetIterator, error) {
-
-	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "ManagerFeeSharesSet")
-	if err != nil {
-		return nil, err
-	}
-	return &IOTXStakeManagerFeeSharesSetIterator{contract: _IOTXStake.contract, event: "ManagerFeeSharesSet", logs: logs, sub: sub}, nil
-}
-
-// WatchManagerFeeSharesSet is a free log subscription operation binding the contract event 0xb6efe094bbb68f7f840c92b10663dc9fdee2f9c7b4b7ba75d88b13e0b685b228.
-//
-// Solidity: event ManagerFeeSharesSet(uint256 shares)
-func (_IOTXStake *IOTXStakeFilterer) WatchManagerFeeSharesSet(opts *bind.WatchOpts, sink chan<- *IOTXStakeManagerFeeSharesSet) (event.Subscription, error) {
-
-	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "ManagerFeeSharesSet")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(IOTXStakeManagerFeeSharesSet)
-				if err := _IOTXStake.contract.UnpackLog(event, "ManagerFeeSharesSet", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseManagerFeeSharesSet is a log parse operation binding the contract event 0xb6efe094bbb68f7f840c92b10663dc9fdee2f9c7b4b7ba75d88b13e0b685b228.
-//
-// Solidity: event ManagerFeeSharesSet(uint256 shares)
-func (_IOTXStake *IOTXStakeFilterer) ParseManagerFeeSharesSet(log types.Log) (*IOTXStakeManagerFeeSharesSet, error) {
-	event := new(IOTXStakeManagerFeeSharesSet)
-	if err := _IOTXStake.contract.UnpackLog(event, "ManagerFeeSharesSet", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
-// IOTXStakeManagerFeeWithdrawedIterator is returned from FilterManagerFeeWithdrawed and is used to iterate over the raw logs and unpacked data for ManagerFeeWithdrawed events raised by the IOTXStake contract.
-type IOTXStakeManagerFeeWithdrawedIterator struct {
-	Event *IOTXStakeManagerFeeWithdrawed // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *IOTXStakeManagerFeeWithdrawedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(IOTXStakeManagerFeeWithdrawed)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(IOTXStakeManagerFeeWithdrawed)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *IOTXStakeManagerFeeWithdrawedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *IOTXStakeManagerFeeWithdrawedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// IOTXStakeManagerFeeWithdrawed represents a ManagerFeeWithdrawed event raised by the IOTXStake contract.
-type IOTXStakeManagerFeeWithdrawed struct {
-	Amount    *big.Int
-	Minted    *big.Int
-	Recipient common.Address
-	Raw       types.Log // Blockchain specific contextual infos
-}
-
-// FilterManagerFeeWithdrawed is a free log retrieval operation binding the contract event 0xce3d910b07bcccb2bc98f93c5292e13a264d588f34ef3740940f872cea14a7eb.
-//
-// Solidity: event ManagerFeeWithdrawed(uint256 amount, uint256 minted, address recipient)
-func (_IOTXStake *IOTXStakeFilterer) FilterManagerFeeWithdrawed(opts *bind.FilterOpts) (*IOTXStakeManagerFeeWithdrawedIterator, error) {
-
-	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "ManagerFeeWithdrawed")
-	if err != nil {
-		return nil, err
-	}
-	return &IOTXStakeManagerFeeWithdrawedIterator{contract: _IOTXStake.contract, event: "ManagerFeeWithdrawed", logs: logs, sub: sub}, nil
-}
-
-// WatchManagerFeeWithdrawed is a free log subscription operation binding the contract event 0xce3d910b07bcccb2bc98f93c5292e13a264d588f34ef3740940f872cea14a7eb.
-//
-// Solidity: event ManagerFeeWithdrawed(uint256 amount, uint256 minted, address recipient)
-func (_IOTXStake *IOTXStakeFilterer) WatchManagerFeeWithdrawed(opts *bind.WatchOpts, sink chan<- *IOTXStakeManagerFeeWithdrawed) (event.Subscription, error) {
-
-	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "ManagerFeeWithdrawed")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(IOTXStakeManagerFeeWithdrawed)
-				if err := _IOTXStake.contract.UnpackLog(event, "ManagerFeeWithdrawed", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseManagerFeeWithdrawed is a log parse operation binding the contract event 0xce3d910b07bcccb2bc98f93c5292e13a264d588f34ef3740940f872cea14a7eb.
-//
-// Solidity: event ManagerFeeWithdrawed(uint256 amount, uint256 minted, address recipient)
-func (_IOTXStake *IOTXStakeFilterer) ParseManagerFeeWithdrawed(log types.Log) (*IOTXStakeManagerFeeWithdrawed, error) {
-	event := new(IOTXStakeManagerFeeWithdrawed)
-	if err := _IOTXStake.contract.UnpackLog(event, "ManagerFeeWithdrawed", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
-// IOTXStakeMergedIterator is returned from FilterMerged and is used to iterate over the raw logs and unpacked data for Merged events raised by the IOTXStake contract.
-type IOTXStakeMergedIterator struct {
-	Event *IOTXStakeMerged // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *IOTXStakeMergedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(IOTXStakeMerged)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(IOTXStakeMerged)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *IOTXStakeMergedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *IOTXStakeMergedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// IOTXStakeMerged represents a Merged event raised by the IOTXStake contract.
-type IOTXStakeMerged struct {
-	TokenIds []*big.Int
-	Amount   *big.Int
-	Raw      types.Log // Blockchain specific contextual infos
-}
-
-// FilterMerged is a free log retrieval operation binding the contract event 0x0c834fb4dca660c7c0016cf0716f341c5bd26cd91f18223279e15942b2fe0cda.
-//
-// Solidity: event Merged(uint256[] tokenIds, uint256 amount)
-func (_IOTXStake *IOTXStakeFilterer) FilterMerged(opts *bind.FilterOpts) (*IOTXStakeMergedIterator, error) {
-
-	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "Merged")
-	if err != nil {
-		return nil, err
-	}
-	return &IOTXStakeMergedIterator{contract: _IOTXStake.contract, event: "Merged", logs: logs, sub: sub}, nil
-}
-
-// WatchMerged is a free log subscription operation binding the contract event 0x0c834fb4dca660c7c0016cf0716f341c5bd26cd91f18223279e15942b2fe0cda.
-//
-// Solidity: event Merged(uint256[] tokenIds, uint256 amount)
-func (_IOTXStake *IOTXStakeFilterer) WatchMerged(opts *bind.WatchOpts, sink chan<- *IOTXStakeMerged) (event.Subscription, error) {
-
-	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "Merged")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(IOTXStakeMerged)
-				if err := _IOTXStake.contract.UnpackLog(event, "Merged", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseMerged is a log parse operation binding the contract event 0x0c834fb4dca660c7c0016cf0716f341c5bd26cd91f18223279e15942b2fe0cda.
-//
-// Solidity: event Merged(uint256[] tokenIds, uint256 amount)
-func (_IOTXStake *IOTXStakeFilterer) ParseMerged(log types.Log) (*IOTXStakeMerged, error) {
-	event := new(IOTXStakeMerged)
-	if err := _IOTXStake.contract.UnpackLog(event, "Merged", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
-// IOTXStakeMintedIterator is returned from FilterMinted and is used to iterate over the raw logs and unpacked data for Minted events raised by the IOTXStake contract.
-type IOTXStakeMintedIterator struct {
-	Event *IOTXStakeMinted // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *IOTXStakeMintedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(IOTXStakeMinted)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(IOTXStakeMinted)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *IOTXStakeMintedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *IOTXStakeMintedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// IOTXStakeMinted represents a Minted event raised by the IOTXStake contract.
-type IOTXStakeMinted struct {
-	User   common.Address
-	Minted *big.Int
-	Raw    types.Log // Blockchain specific contextual infos
-}
-
-// FilterMinted is a free log retrieval operation binding the contract event 0x30385c845b448a36257a6a1716e6ad2e1bc2cbe333cde1e69fe849ad6511adfe.
-//
-// Solidity: event Minted(address user, uint256 minted)
-func (_IOTXStake *IOTXStakeFilterer) FilterMinted(opts *bind.FilterOpts) (*IOTXStakeMintedIterator, error) {
-
-	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "Minted")
-	if err != nil {
-		return nil, err
-	}
-	return &IOTXStakeMintedIterator{contract: _IOTXStake.contract, event: "Minted", logs: logs, sub: sub}, nil
-}
-
-// WatchMinted is a free log subscription operation binding the contract event 0x30385c845b448a36257a6a1716e6ad2e1bc2cbe333cde1e69fe849ad6511adfe.
-//
-// Solidity: event Minted(address user, uint256 minted)
-func (_IOTXStake *IOTXStakeFilterer) WatchMinted(opts *bind.WatchOpts, sink chan<- *IOTXStakeMinted) (event.Subscription, error) {
-
-	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "Minted")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(IOTXStakeMinted)
-				if err := _IOTXStake.contract.UnpackLog(event, "Minted", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseMinted is a log parse operation binding the contract event 0x30385c845b448a36257a6a1716e6ad2e1bc2cbe333cde1e69fe849ad6511adfe.
-//
-// Solidity: event Minted(address user, uint256 minted)
-func (_IOTXStake *IOTXStakeFilterer) ParseMinted(log types.Log) (*IOTXStakeMinted, error) {
-	event := new(IOTXStakeMinted)
-	if err := _IOTXStake.contract.UnpackLog(event, "Minted", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
 // IOTXStakePausedIterator is returned from FilterPaused and is used to iterate over the raw logs and unpacked data for Paused events raised by the IOTXStake contract.
 type IOTXStakePausedIterator struct {
 	Event *IOTXStakePaused // Event containing the contract specifics and raw log
@@ -2469,9 +1456,9 @@ func (_IOTXStake *IOTXStakeFilterer) ParsePaused(log types.Log) (*IOTXStakePause
 	return event, nil
 }
 
-// IOTXStakeRedeemedIterator is returned from FilterRedeemed and is used to iterate over the raw logs and unpacked data for Redeemed events raised by the IOTXStake contract.
-type IOTXStakeRedeemedIterator struct {
-	Event *IOTXStakeRedeemed // Event containing the contract specifics and raw log
+// IOTXStakeRewardClaimedIterator is returned from FilterRewardClaimed and is used to iterate over the raw logs and unpacked data for RewardClaimed events raised by the IOTXStake contract.
+type IOTXStakeRewardClaimedIterator struct {
+	Event *IOTXStakeRewardClaimed // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -2485,7 +1472,7 @@ type IOTXStakeRedeemedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *IOTXStakeRedeemedIterator) Next() bool {
+func (it *IOTXStakeRewardClaimedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -2494,7 +1481,7 @@ func (it *IOTXStakeRedeemedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(IOTXStakeRedeemed)
+			it.Event = new(IOTXStakeRewardClaimed)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -2509,7 +1496,7 @@ func (it *IOTXStakeRedeemedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(IOTXStakeRedeemed)
+		it.Event = new(IOTXStakeRewardClaimed)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -2525,43 +1512,43 @@ func (it *IOTXStakeRedeemedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *IOTXStakeRedeemedIterator) Error() error {
+func (it *IOTXStakeRewardClaimedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *IOTXStakeRedeemedIterator) Close() error {
+func (it *IOTXStakeRewardClaimedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// IOTXStakeRedeemed represents a Redeemed event raised by the IOTXStake contract.
-type IOTXStakeRedeemed struct {
-	User     common.Address
-	Burned   *big.Int
-	TokenIds []*big.Int
-	Raw      types.Log // Blockchain specific contextual infos
+// IOTXStakeRewardClaimed represents a RewardClaimed event raised by the IOTXStake contract.
+type IOTXStakeRewardClaimed struct {
+	Claimer   common.Address
+	Recipient common.Address
+	Amount    *big.Int
+	Raw       types.Log // Blockchain specific contextual infos
 }
 
-// FilterRedeemed is a free log retrieval operation binding the contract event 0x6b921527f65949c80fab346e1e330b442e353b32e7b29f428d3d0c7766dd9152.
+// FilterRewardClaimed is a free log retrieval operation binding the contract event 0x0aa4d283470c904c551d18bb894d37e17674920f3261a7f854be501e25f421b7.
 //
-// Solidity: event Redeemed(address user, uint256 burned, uint256[] tokenIds)
-func (_IOTXStake *IOTXStakeFilterer) FilterRedeemed(opts *bind.FilterOpts) (*IOTXStakeRedeemedIterator, error) {
+// Solidity: event RewardClaimed(address claimer, address recipient, uint256 amount)
+func (_IOTXStake *IOTXStakeFilterer) FilterRewardClaimed(opts *bind.FilterOpts) (*IOTXStakeRewardClaimedIterator, error) {
 
-	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "Redeemed")
+	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "RewardClaimed")
 	if err != nil {
 		return nil, err
 	}
-	return &IOTXStakeRedeemedIterator{contract: _IOTXStake.contract, event: "Redeemed", logs: logs, sub: sub}, nil
+	return &IOTXStakeRewardClaimedIterator{contract: _IOTXStake.contract, event: "RewardClaimed", logs: logs, sub: sub}, nil
 }
 
-// WatchRedeemed is a free log subscription operation binding the contract event 0x6b921527f65949c80fab346e1e330b442e353b32e7b29f428d3d0c7766dd9152.
+// WatchRewardClaimed is a free log subscription operation binding the contract event 0x0aa4d283470c904c551d18bb894d37e17674920f3261a7f854be501e25f421b7.
 //
-// Solidity: event Redeemed(address user, uint256 burned, uint256[] tokenIds)
-func (_IOTXStake *IOTXStakeFilterer) WatchRedeemed(opts *bind.WatchOpts, sink chan<- *IOTXStakeRedeemed) (event.Subscription, error) {
+// Solidity: event RewardClaimed(address claimer, address recipient, uint256 amount)
+func (_IOTXStake *IOTXStakeFilterer) WatchRewardClaimed(opts *bind.WatchOpts, sink chan<- *IOTXStakeRewardClaimed) (event.Subscription, error) {
 
-	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "Redeemed")
+	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "RewardClaimed")
 	if err != nil {
 		return nil, err
 	}
@@ -2571,8 +1558,8 @@ func (_IOTXStake *IOTXStakeFilterer) WatchRedeemed(opts *bind.WatchOpts, sink ch
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(IOTXStakeRedeemed)
-				if err := _IOTXStake.contract.UnpackLog(event, "Redeemed", log); err != nil {
+				event := new(IOTXStakeRewardClaimed)
+				if err := _IOTXStake.contract.UnpackLog(event, "RewardClaimed", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -2593,146 +1580,12 @@ func (_IOTXStake *IOTXStakeFilterer) WatchRedeemed(opts *bind.WatchOpts, sink ch
 	}), nil
 }
 
-// ParseRedeemed is a log parse operation binding the contract event 0x6b921527f65949c80fab346e1e330b442e353b32e7b29f428d3d0c7766dd9152.
+// ParseRewardClaimed is a log parse operation binding the contract event 0x0aa4d283470c904c551d18bb894d37e17674920f3261a7f854be501e25f421b7.
 //
-// Solidity: event Redeemed(address user, uint256 burned, uint256[] tokenIds)
-func (_IOTXStake *IOTXStakeFilterer) ParseRedeemed(log types.Log) (*IOTXStakeRedeemed, error) {
-	event := new(IOTXStakeRedeemed)
-	if err := _IOTXStake.contract.UnpackLog(event, "Redeemed", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
-// IOTXStakeRevenueAccountedIterator is returned from FilterRevenueAccounted and is used to iterate over the raw logs and unpacked data for RevenueAccounted events raised by the IOTXStake contract.
-type IOTXStakeRevenueAccountedIterator struct {
-	Event *IOTXStakeRevenueAccounted // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *IOTXStakeRevenueAccountedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(IOTXStakeRevenueAccounted)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(IOTXStakeRevenueAccounted)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *IOTXStakeRevenueAccountedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *IOTXStakeRevenueAccountedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// IOTXStakeRevenueAccounted represents a RevenueAccounted event raised by the IOTXStake contract.
-type IOTXStakeRevenueAccounted struct {
-	Amount *big.Int
-	Raw    types.Log // Blockchain specific contextual infos
-}
-
-// FilterRevenueAccounted is a free log retrieval operation binding the contract event 0x82f24840c0f58d92529afdd441950ddc6e8f2d60138d4458a8d74ba367540cda.
-//
-// Solidity: event RevenueAccounted(uint256 amount)
-func (_IOTXStake *IOTXStakeFilterer) FilterRevenueAccounted(opts *bind.FilterOpts) (*IOTXStakeRevenueAccountedIterator, error) {
-
-	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "RevenueAccounted")
-	if err != nil {
-		return nil, err
-	}
-	return &IOTXStakeRevenueAccountedIterator{contract: _IOTXStake.contract, event: "RevenueAccounted", logs: logs, sub: sub}, nil
-}
-
-// WatchRevenueAccounted is a free log subscription operation binding the contract event 0x82f24840c0f58d92529afdd441950ddc6e8f2d60138d4458a8d74ba367540cda.
-//
-// Solidity: event RevenueAccounted(uint256 amount)
-func (_IOTXStake *IOTXStakeFilterer) WatchRevenueAccounted(opts *bind.WatchOpts, sink chan<- *IOTXStakeRevenueAccounted) (event.Subscription, error) {
-
-	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "RevenueAccounted")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(IOTXStakeRevenueAccounted)
-				if err := _IOTXStake.contract.UnpackLog(event, "RevenueAccounted", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseRevenueAccounted is a log parse operation binding the contract event 0x82f24840c0f58d92529afdd441950ddc6e8f2d60138d4458a8d74ba367540cda.
-//
-// Solidity: event RevenueAccounted(uint256 amount)
-func (_IOTXStake *IOTXStakeFilterer) ParseRevenueAccounted(log types.Log) (*IOTXStakeRevenueAccounted, error) {
-	event := new(IOTXStakeRevenueAccounted)
-	if err := _IOTXStake.contract.UnpackLog(event, "RevenueAccounted", log); err != nil {
+// Solidity: event RewardClaimed(address claimer, address recipient, uint256 amount)
+func (_IOTXStake *IOTXStakeFilterer) ParseRewardClaimed(log types.Log) (*IOTXStakeRewardClaimed, error) {
+	event := new(IOTXStakeRewardClaimed)
+	if err := _IOTXStake.contract.UnpackLog(event, "RewardClaimed", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -3219,143 +2072,6 @@ func (_IOTXStake *IOTXStakeFilterer) WatchRoleRevoked(opts *bind.WatchOpts, sink
 func (_IOTXStake *IOTXStakeFilterer) ParseRoleRevoked(log types.Log) (*IOTXStakeRoleRevoked, error) {
 	event := new(IOTXStakeRoleRevoked)
 	if err := _IOTXStake.contract.UnpackLog(event, "RoleRevoked", log); err != nil {
-		return nil, err
-	}
-	event.Raw = log
-	return event, nil
-}
-
-// IOTXStakeStakedIterator is returned from FilterStaked and is used to iterate over the raw logs and unpacked data for Staked events raised by the IOTXStake contract.
-type IOTXStakeStakedIterator struct {
-	Event *IOTXStakeStaked // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *IOTXStakeStakedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(IOTXStakeStaked)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(IOTXStakeStaked)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *IOTXStakeStakedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *IOTXStakeStakedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// IOTXStakeStaked represents a Staked event raised by the IOTXStake contract.
-type IOTXStakeStaked struct {
-	FirstTokenId *big.Int
-	Amount       *big.Int
-	Delegate     common.Address
-	Count        *big.Int
-	Raw          types.Log // Blockchain specific contextual infos
-}
-
-// FilterStaked is a free log retrieval operation binding the contract event 0xc49cabe9d2bbfea8d9f51b0961c30a1081ff6fd3c4d6a9182cd65de8cea2df00.
-//
-// Solidity: event Staked(uint256 firstTokenId, uint256 amount, address delegate, uint256 count)
-func (_IOTXStake *IOTXStakeFilterer) FilterStaked(opts *bind.FilterOpts) (*IOTXStakeStakedIterator, error) {
-
-	logs, sub, err := _IOTXStake.contract.FilterLogs(opts, "Staked")
-	if err != nil {
-		return nil, err
-	}
-	return &IOTXStakeStakedIterator{contract: _IOTXStake.contract, event: "Staked", logs: logs, sub: sub}, nil
-}
-
-// WatchStaked is a free log subscription operation binding the contract event 0xc49cabe9d2bbfea8d9f51b0961c30a1081ff6fd3c4d6a9182cd65de8cea2df00.
-//
-// Solidity: event Staked(uint256 firstTokenId, uint256 amount, address delegate, uint256 count)
-func (_IOTXStake *IOTXStakeFilterer) WatchStaked(opts *bind.WatchOpts, sink chan<- *IOTXStakeStaked) (event.Subscription, error) {
-
-	logs, sub, err := _IOTXStake.contract.WatchLogs(opts, "Staked")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(IOTXStakeStaked)
-				if err := _IOTXStake.contract.UnpackLog(event, "Staked", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ParseStaked is a log parse operation binding the contract event 0xc49cabe9d2bbfea8d9f51b0961c30a1081ff6fd3c4d6a9182cd65de8cea2df00.
-//
-// Solidity: event Staked(uint256 firstTokenId, uint256 amount, address delegate, uint256 count)
-func (_IOTXStake *IOTXStakeFilterer) ParseStaked(log types.Log) (*IOTXStakeStaked, error) {
-	event := new(IOTXStakeStaked)
-	if err := _IOTXStake.contract.UnpackLog(event, "Staked", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

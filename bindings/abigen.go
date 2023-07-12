@@ -1,7 +1,7 @@
-//go:generate abigen --abi ../build/contracts/SystemStaking.abi --pkg bindings --out SystemStaking.go --type SystemStaking
-//go:generate abigen --abi ../build/contracts/UniIOTX.abi --pkg bindings --out UniIOTX.go --type UniIOTX
-//go:generate abigen --abi ../build/contracts/IOTXClear.abi --pkg bindings --out IOTXClear.go --type IOTXClear
-//go:generate abigen --abi ../build/contracts/IOTXStake.abi --pkg bindings --out IOTXStake.go --type IOTXStake
+//go:generate abigen --abi ../abis/SystemStaking.abi --pkg bindings --out SystemStaking.go --type SystemStaking
+//go:generate abigen --abi ../abis/UniIOTX.abi --pkg bindings --out UniIOTX.go --type UniIOTX
+//go:generate abigen --abi ../abis/IOTXClear.abi --pkg bindings --out IOTXClear.go --type IOTXClear
+//go:generate abigen --abi ../abis/IOTXStake.abi --pkg bindings --out IOTXStake.go --type IOTXStake
 
 package bindings
 
