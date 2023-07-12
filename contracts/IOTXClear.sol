@@ -9,8 +9,6 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 import "./Roles.sol";
-import "./interfaces/IUniIOTX.sol";
-import "./interfaces/IIOTXStake.sol";
 import "../interfaces/ISystemStake.sol";
 
 contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable, IERC721Receiver {
@@ -19,7 +17,6 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // External dependencies
     ISystemStake public systemStake;
-    IIOTXStake public iotxStake;
 
     // Constants
     uint public constant MULTIPLIER = 1e18;
@@ -85,7 +82,6 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         _grantRole(ROLE_ORACLE, _oracleAddress);
 
         systemStake = ISystemStake(_systemStakeAddress);
-        iotxStake = IIOTXStake(_iotxStakeAddress);
 
         firstIndex = 1;
         lastIndex = 0;
