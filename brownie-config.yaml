@@ -20,3 +20,7 @@ compiler:
     remappings:
       - "@openzeppelin/contracts=OpenZeppelin/openzeppelin-contracts@4.8.0/contracts"
       - "@openzeppelin/contracts-upgradeable=OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.0/contracts"
+
+reports:
+  exclude_paths:
+    - contracts/mocks/**/*.*
