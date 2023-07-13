@@ -9,8 +9,18 @@ def main():
     deps = project.load(  Path.home() / ".brownie" / "packages" / config["dependencies"][0])
     TransparentUpgradeableProxy = deps.TransparentUpgradeableProxy
 
-    deployer = accounts.load('DefaultAdmin')
+    # Bucket info
+    start_amount = 10000
+    common_ratio = 10
+    sequence_length = 3
 
+    # Prepare accounts
+    # Todo: Tune it properly
+    deployer = accounts.load('DefaultAdmin')
+    owner = accounts.load('Alice')
+    orale = deployer
+
+    # Deploy contracts
     system_staking = SystemStaking.deploy({'from': deployer})
     system_staking_proxy = TransparentUpgradeableProxy.deploy(system_staking, deployer, b'', {'from': deployer})
     system_staking_transparent = Contract.from_abi("SystemStaking", system_staking_proxy.address, SystemStaking.abi)
@@ -31,5 +41,22 @@ def main():
     print("UniIOTX address:", uni_iotx_transparent)
     print("IOTXClear address:", iotx_clear_transparent)
     print("IOTXStake address:", iotx_stake_transparent)
+
+    # Configure contracts
+    uni_iotx_transparent.initialize(iotx_stake_transparent, {'from': owner})
+    iotx_clear_transparent.initialize(system_staking_transparent, iotx_stake_transparent, orale, {'from': owner})
+    iotx_stake_transparent.initialize(
+        system_staking_transparent,
+        iotx_clear_transparent,
+        orale,
+        start_amount,
+        common_ratio,
+        sequence_length,
+        {'from': owner}
+    )
+
+
+
+
 
 

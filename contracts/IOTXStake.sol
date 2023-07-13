@@ -134,8 +134,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         address _oracleAddress,
         uint _startAmount,
         uint _commonRatio,
-        uint _sequenceLength,
-        address  _globalDelegate
+        uint _sequenceLength
     ) public initializer {
         // Roles
         _grantRole(ROLE_FEE_MANAGER, msg.sender);
@@ -150,9 +149,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         startAmount = _startAmount;
         commonRatio = _commonRatio;
         sequenceLength = _sequenceLength;
-
-        // Initial global delegate
-        globalDelegate = _globalDelegate;
     }
 
     /**
@@ -243,7 +239,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         _stakeAndMergeAtSubLevel();
     }
 
-    function stake() external whenNotPaused onlyRole(ROLE_PROTOCOL_MANAGER) {
+    function stake() external whenNotPaused onlyRole(ROLE_ORACLE) {
         _stakeAtTopLevel();
         _stakeAndMergeAtSubLevel();
     }

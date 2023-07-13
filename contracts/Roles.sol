@@ -7,5 +7,3 @@ bytes32 constant ROLE_MINT = keccak256("ROLE_MINT");
 bytes32 constant ROLE_STAKE = keccak256("ROLE_STAKE");
 bytes32 constant ROLE_FEE_MANAGER = keccak256("ROLE_FEE_MANAGER");
 bytes32 constant ROLE_ORACLE = keccak256("ROLE_ORACLE");
-
-bytes32 constant ROLE_PROTOCOL_MANAGER = keccak256("ROLE_PROTOCOL_MANAGER"); // Todo: Maybe remove it
