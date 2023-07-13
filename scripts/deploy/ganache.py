@@ -6,6 +6,7 @@ from pathlib import Path
 # DefaultAdmin private key: "56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027"
 
 def main():
+    # Reference: https://docs.openzeppelin.com/contracts/4.x/api/proxy#TransparentUpgradeableProxy
     deps = project.load(  Path.home() / ".brownie" / "packages" / config["dependencies"][0])
     TransparentUpgradeableProxy = deps.TransparentUpgradeableProxy
 
@@ -16,9 +17,9 @@ def main():
 
     # Prepare accounts
     # Todo: Tune it properly
-    deployer = accounts.load('DefaultAdmin')
+    deployer = accounts.load('DefaultAdmin') # Todo: Use a dedicated account, maybe consider ProxyAdmin contract
     owner = accounts.load('Alice')
-    orale = deployer
+    orale = owner
 
     # Deploy contracts
     system_staking = SystemStaking.deploy({'from': deployer})
