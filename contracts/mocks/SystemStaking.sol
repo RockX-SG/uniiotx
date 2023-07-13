@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 // This is the official implementation: https://github.com/iotexproject/iip13-contracts
 // We copy it here for the purpose of testing convenience
+// Todo: This file will be removed or modified after we apply a better way to handle related tests.
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
