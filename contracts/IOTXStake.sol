@@ -230,10 +230,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         systemStake.changeDelegates(tokenIds, delegate);
     }
 
-    function mint(uint minToMint) external returns (uint minted) {
-        minted = _mint(minToMint);
-    }
-
     // Todo: Give an explanation of param minToMint
     // Todo: Prove that
     /**
@@ -241,8 +237,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
     function deposit(uint minToMint, uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
         minted = _mint(minToMint);
-//        _stakeAtTopLevel();
-//        _stakeAndMergeAtSubLevel();
+        _stakeAtTopLevel();
+        _stakeAndMergeAtSubLevel();
     }
 
     function stake() external whenNotPaused onlyRole(ROLE_ORACLE) {
