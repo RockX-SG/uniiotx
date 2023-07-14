@@ -1,10 +1,6 @@
 from brownie import SystemStaking, UniIOTX, IOTXClear, IOTXStake, accounts, Contract, project, config
 from pathlib import Path
 
-
-# DefaultAdmin address: "0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC"
-# DefaultAdmin private key: "56289e99c94b6912bfc12adc093c9b51124f0dc54ac7a766b2bc5ccf558d8027"
-
 def main():
     # Reference: https://docs.openzeppelin.com/contracts/4.x/api/proxy#TransparentUpgradeableProxy
     deps = project.load(  Path.home() / ".brownie" / "packages" / config["dependencies"][0])
@@ -16,10 +12,10 @@ def main():
     sequence_length = 3
 
     # Prepare accounts
-    # Todo: Tune it properly
-    deployer = accounts.load('DefaultAdmin') # Todo: Use a dedicated account, maybe consider ProxyAdmin contract
-    owner = accounts.load('Alice')
-    orale = owner
+    # Todo: Use a dedicated account, maybe consider ProxyAdmin contract
+    deployer = accounts[0]
+    owner = accounts[1]
+    orale = accounts[2]
 
     # Deploy contracts
     system_staking = SystemStaking.deploy({'from': deployer})
@@ -48,6 +44,7 @@ def main():
     iotx_clear_transparent.initialize(system_staking_transparent, iotx_stake_transparent, orale, {'from': owner})
     iotx_stake_transparent.initialize(
         system_staking_transparent,
+        uni_iotx_transparent,
         iotx_clear_transparent,
         orale,
         start_amount,
