@@ -24,3 +24,10 @@ compiler:
 reports:
   exclude_paths:
     - contracts/mocks/**/*.*
+
+networks:
+  development:
+    gas_limit: max
+    gas_price: 0
+    cmd_settings:
+      gas_limit: 1000000000000000000
