@@ -15,7 +15,7 @@ def main():
     # Todo: Use a dedicated account, maybe consider ProxyAdmin contract
     deployer = accounts[0]
     owner = accounts[1]
-    orale = accounts[2]
+    oracle = accounts[2]
 
     # Deploy contracts
     system_staking = SystemStaking.deploy({'from': deployer})
@@ -41,12 +41,12 @@ def main():
 
     # Configure contracts
     uni_iotx_transparent.initialize(iotx_stake_transparent, {'from': owner})
-    iotx_clear_transparent.initialize(system_staking_transparent, iotx_stake_transparent, orale, {'from': owner})
+    iotx_clear_transparent.initialize(system_staking_transparent, iotx_stake_transparent, oracle, {'from': owner})
     iotx_stake_transparent.initialize(
         system_staking_transparent,
         uni_iotx_transparent,
         iotx_clear_transparent,
-        orale,
+        oracle,
         start_amount,
         common_ratio,
         sequence_length,
