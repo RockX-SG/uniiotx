@@ -12,16 +12,16 @@ import "./Roles.sol";
 import "../interfaces/ISystemStake.sol";
 
 contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable, IERC721Receiver {
-    // Use libraries
+    // ---Use libraries---
     using Address for address payable;
 
-    // External dependencies
+    // ---External dependencies---
     ISystemStake public systemStake;
 
-    // Constants
+    // ---Constants---
     uint public constant MULTIPLIER = 1e18;
 
-    // Type declarations
+    // ---Type declarations---
 
     struct UserInfo {
         uint debt;   // IOTX value a user requests to redeem but hasn't been withdrawn
@@ -34,7 +34,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         uint amount;
     }
 
-    // State variables
+    // ---State variables---
     uint public accountedBalance;
 
     uint public totalDebts;  // Current total unpaid debts caused by redeeming requests
@@ -49,12 +49,12 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
     // User infos
     mapping(address => UserInfo) public userInfos; // account -> info
 
-    // Events
+    // ---Events---
     event DebtAdded(address account, uint amount);
     event DebtPaid(address account, uint amount);
     event RewardClaimed(address claimer, address recipient, uint amount);
 
-    // Errors
+    // ---Errors---
     error InsufficientReward(uint expected, uint available);
     error DebtAmountMismatched(uint toPayAmount, uint queuedAmount);
 
@@ -66,7 +66,6 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
-    // Todo: Tune it properly
     /**
      * @dev initialization
      */
@@ -143,7 +142,6 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (tokenIds.length > 0) systemStake.unstake(tokenIds);
     }
 
-    // Todo: Maybe optimize the implementation, including introducing necessary validations.
     function withdraw(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
         for (uint i = 0; i < tokenIds.length; i++) {
             address account = _payDebt(tokenIds[i]);
@@ -225,7 +223,6 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         info.rewardRate = rewardRate;
     }
 
-    // Todo: Confirm whether consider an extra manager fee in IOTXClear contract (We also count it in IOTXStake contract).
     function _updateReward() internal {
         if (address(this).balance > accountedBalance && totalDebts > 0) {
             uint incrReward = address(this).balance - accountedBalance;

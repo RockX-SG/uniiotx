@@ -15,18 +15,16 @@ import "../interfaces/IUniIOTX.sol";
 import "../interfaces/ISystemStake.sol";
 
 contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, ReentrancyGuardUpgradeable {
-    // External dependencies
+    // ---External dependencies---
     ISystemStake public systemStake;
     IUniIOTX public uniIOTX;
     IIOTXClear public iotxClear;
 
-    // Constants
+    // ---Constants---
     uint public defaultExchangeRatio = 1;
     uint public constant MULTIPLIER = 1e18;
 
-    // Type declarations
-
-    // State variables
+    // ---State variables---
 
     address public globalDelegate;
 
@@ -37,6 +35,12 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     uint public commonRatio;
     uint public sequenceLength;
 
+    // Users can deposit any amount of IOTXs, but can only redeem amounts that are multiples of the redeemAmountBase.
+    // This value is determined at contract initialization using the formula:
+    // redeemAmountBase = startAmount * (commonRatio ** (sequenceLength-1))
+    // Once set, it remains immutable.
+    uint public redeemAmountBase;
+
     uint public stakeDuration;
 
     // Token queue map: The KEY corresponds to the bucket amount level defined as above;  the VALUE is a dynamic array of token IDs.
@@ -46,12 +50,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     // Note: The staked token count at top staking level is: tokenQueues[sequenceLength-1].length - redeemedTokenCount
     uint public redeemedTokenCount;
 
-    uint public accountedBalance; // TODO: Double check whether its value can be negative.
+    uint public accountedBalance;
 
     uint public recentReceived;
-
-
-    // Stake variables
 
     // Exchange ratio related variables
     // Track user deposits & redeem (uniIOTX mint & burn)
@@ -65,7 +66,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     uint public accountedManagerRevenue;        // Accounted manager's revenue
     uint public rewardDebts;
 
-    // Events
+    // ---Events---
     event DelegateStopped(uint stoppedCount);
     event ManagerFeeSharesSet(uint shares);
     event Minted(address user, uint minted);
@@ -77,7 +78,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     event ManagerFeeWithdrawed(uint amount, uint minted, address recipient);
 
 
-// Errors
+    // ---Errors---
     error ZeroDelegates();
     error TransactionExpired(uint deadline, uint now);
     error InvalidRedeemAmount(uint expectedAmount, uint allowedAmount);
@@ -85,16 +86,14 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     error ManagerFeeSharesOutOfRange();
     error InsufficientManagerRevenue(uint withdrawAmount, uint availableAmount);
 
-    // Modifiers // TODO: code reuse across smart contracts?
+    // ---Modifiers---
     modifier onlyValidTransaction(uint deadline) {
         if (deadline <= block.timestamp) revert TransactionExpired(deadline, block.timestamp);
         _;
     }
 
     modifier notZeroMint() {
-        if (msg.value == 0) {
-            return;
-        }
+        if (msg.value == 0) { return; }
         _;
     }
 
@@ -106,8 +105,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
-    // TODO: What if a user accidentally sent some IOTXs to this contract?
-    // These IOTXs will be treated as reward. How could we prevent that?
+    /**
+     * @notice This function is exclusively designed to receive staking rewards.
+     * The 'deposit' function should be invoked whenever users wish to stake IOTXs.
+     * Any IOTXs accidentally sent to this contract will be considered as rewards.
+     */
     receive() external payable { }
 
     /**
@@ -124,7 +126,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         _unpause();
     }
 
-    // Todo: Tune it properly, including initialize token container
     /**
      * @dev Initialization address
      */
@@ -151,6 +152,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         startAmount = _startAmount;
         commonRatio = _commonRatio;
         sequenceLength = _sequenceLength;
+        redeemAmountBase = startAmount * (commonRatio ** (sequenceLength-1));
     }
 
     /**
@@ -192,14 +194,14 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             return 1 * MULTIPLIER;
         }
 
-        ratio = currentReserve() * MULTIPLIER / uniIOTXAmount; // Todo: further consideration on the fractional part
+        ratio = currentReserve() * MULTIPLIER / uniIOTXAmount;
     }
 
     /**
      * @dev Returns current reserve of IOTXs
      */
     function currentReserve() public view returns(uint) {
-        return totalPending + totalStaked + accountedUserRevenue - rewardDebts; // Todo: Second thought of the correctness, including potential total debts.
+        return totalPending + totalStaked + accountedUserRevenue - rewardDebts;
     }
 
     /**
@@ -230,8 +232,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         systemStake.changeDelegates(tokenIds, delegate);
     }
 
-    // Todo: Give an explanation of param minToMint
-    // Todo: Prove that
     /**
      * @notice This function keeps the exchange ratio invariant to avoid user arbitrage.
      */
@@ -246,8 +246,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         _stakeAndMergeAtSubLevel();
     }
 
-    // Todo: to be optimized
-    // Todo: Give an explanation of param maxToBurn
     /**
      * @notice This function keeps the exchange ratio invariant to avoid user arbitrage.
      * @param iotxsToRedeem The number of IOTXs to redeem must be a multiple of the accepted amount of redeeming base.
@@ -256,8 +254,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         burned = _redeem(iotxsToRedeem, maxToBurn);
     }
 
-    // Todo: reconsideration on economic params.
-    function updateReward() external onlyRole(ROLE_ORACLE) { // Todo: Disable onlyRole check?
+    function updateReward() external onlyRole(ROLE_ORACLE) {
         if (_syncBalance()) {
             uint rewards = _calculateRewards();
             _distributeRewards(rewards);
@@ -266,7 +263,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         }
     }
 
-    // Todo: Should we support directive withdrawing of IOTXs?
     /**
      * @dev This function handles manager revenue in this way:
      * 1. Mint uniIOTXs to the given recipient based on the given IOTX amount;
@@ -292,7 +288,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
-    // Todo: Consider whitelisting KYC users?
     function _mint(uint minToMint) internal notZeroMint returns (uint minted) {
         accountedBalance += msg.value;
 
@@ -385,12 +380,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         }
     }
 
-    // Todo: Recheck the implement very carefully.
     function _redeem(uint iotxsToRedeem, uint maxToBurn) internal returns(uint burned) {
         // Check redeem condition
-        // Todo: This condition is very picky and maybe needs a more flexible policy.
-        uint allowedAmount = startAmount * (commonRatio ** (sequenceLength-1)); // Todo: This value can be calculated at contract initialization?
-        if (iotxsToRedeem < allowedAmount ||  iotxsToRedeem % allowedAmount != 0) revert InvalidRedeemAmount(iotxsToRedeem, allowedAmount);
+        if (iotxsToRedeem < redeemAmountBase ||  iotxsToRedeem % redeemAmountBase != 0) revert InvalidRedeemAmount(iotxsToRedeem, redeemAmountBase);
 
         // Burn uniIOTXs
         uint toBurn = _convertIotxTouniIOTX(msg.value);
@@ -401,7 +393,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
         // Extract tokens to unlock
         uint [] memory tq = tokenQueues[sequenceLength-1];
-        uint count = iotxsToRedeem / allowedAmount;
+        uint count = iotxsToRedeem / redeemAmountBase;
         uint[] memory tokenIdsToUnlock = new uint[](count);
         for (uint i = 0; i < count; i++) {
             tokenIdsToUnlock[i] = tq[redeemedTokenCount];
@@ -433,7 +425,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         amountuniIOTX = defaultExchangeRatio * amountIOTX;
 
         if (_currentReserve > 0) { // avert division overflow
-            amountuniIOTX = totalSupply * amountIOTX / _currentReserve; // TODO: further consideration on the fractional part
+            amountuniIOTX = totalSupply * amountIOTX / _currentReserve;
         }
     }
 
@@ -444,15 +436,12 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             accountedBalance = thisBalance;
             recentReceived += diff;
             changed = true;
-            // Todo: Trigger vectorClockTick ?
 
             emit BalanceSynced(diff);
         }
     }
 
-    // Todo: Reconsider the rules for calculating rewards.
     function _calculateRewards() internal view returns (uint) {
-        // Todo: Check whether to account in slash
         return recentReceived;
     }
 
@@ -464,8 +453,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         emit RevenueAccounted(rewards);
     }
 
-    // Todo: Reconsider the amount for auto compound
-    function _autoCompound() internal { // Todo: What if disabling this feature?
+    function _autoCompound() internal {
         uint amount = accountedUserRevenue - rewardDebts;
         totalPending += amount;
         rewardDebts += amount;
