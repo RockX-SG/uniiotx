@@ -606,6 +606,11 @@
       },
       {
         "internalType": "address",
+        "name": "_uniIOTX",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
         "name": "_iotxClear",
         "type": "address"
       },
@@ -755,6 +760,19 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "redeemAmountBase",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
