@@ -1,37 +1,5 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "toPayAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "queuedAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "DebtAmountMismatched",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "expected",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "available",
-        "type": "uint256"
-      }
-    ],
-    "name": "InsufficientReward",
-    "type": "error"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
