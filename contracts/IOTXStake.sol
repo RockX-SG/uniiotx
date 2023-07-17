@@ -92,23 +92,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     event RevenueAccounted(uint amount);
     event ManagerFeeWithdrawed(uint amount, uint minted, address recipient);
 
-
-    // ---Errors---
-    error ZeroDelegates();
-    error TransactionExpired(uint deadline, uint now);
-    error InvalidRedeemAmount(uint expectedAmount, uint allowedAmount);
-    error ExchangeRatioMismatch(uint expectedAmount, uint gotAmount);
-    error ManagerFeeSharesOutOfRange();
-    error InsufficientManagerRevenue(uint withdrawAmount, uint availableAmount);
-
     // ---Modifiers---
     modifier onlyValidTransaction(uint deadline) {
-        if (deadline <= block.timestamp) revert TransactionExpired(deadline, block.timestamp);
-        _;
-    }
-
-    modifier notZeroMint() {
-        if (msg.value == 0) { return; }
+        require(deadline > block.timestamp, "Transaction expired");
         _;
     }
 
@@ -174,7 +160,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @dev Set Manager's fee in range [0, 1000]
      */
     function setManagerFeeShares(uint shares) external onlyRole(ROLE_FEE_MANAGER)  {
-        if (shares > 1000) revert ManagerFeeSharesOutOfRange();
+        require(shares <= 1000, "Manager fee shares out of range");
         managerFeeShares = shares;
 
         emit ManagerFeeSharesSet(shares);
@@ -251,6 +237,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @notice This function keeps the exchange ratio invariant to avoid user arbitrage.
      */
     function deposit(uint minToMint, uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
+        require(msg.value > 0, "Invalid deposit amount");
+
         minted = _mint(minToMint);
         _stakeAtTopLevel();
         _stakeAndMergeAtSubLevel();
@@ -284,7 +272,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * 2. Shift the corresponding amount of accountedManagerRevenue to totalPending.
      */
     function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
-        if (amount > accountedManagerRevenue) revert InsufficientManagerRevenue(amount, accountedManagerRevenue);
+        require(amount <= accountedManagerRevenue, "Insufficient manager revenue");
 
         uint toMint = _convertIotxTouniIOTX(amount);
         uniIOTX.mint(recipient, toMint);
@@ -303,11 +291,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * ======================================================================================
      */
 
-    function _mint(uint minToMint) internal notZeroMint returns (uint minted) {
+    function _mint(uint minToMint) internal returns (uint minted) {
         accountedBalance += msg.value;
 
         uint toMint = _convertIotxTouniIOTX(msg.value);
-        if (toMint < minToMint) revert ExchangeRatioMismatch(minToMint, toMint);
+        require(toMint >= minToMint, "Exchange ratio mismatch");
         uniIOTX.mint(msg.sender, toMint);
         minted = toMint;
 
@@ -397,11 +385,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     function _redeem(uint iotxsToRedeem, uint maxToBurn) internal returns(uint burned) {
         // Check redeem condition
-        if (iotxsToRedeem < redeemAmountBase ||  iotxsToRedeem % redeemAmountBase != 0) revert InvalidRedeemAmount(iotxsToRedeem, redeemAmountBase);
+        require(iotxsToRedeem >= redeemAmountBase && iotxsToRedeem % redeemAmountBase == 0, "Invalid redeem amount");
 
         // Burn uniIOTXs
         uint toBurn = _convertIotxTouniIOTX(msg.value);
-        if (toBurn > maxToBurn) revert ExchangeRatioMismatch(maxToBurn, toBurn);
+        require(toBurn <= maxToBurn, "Exchange ratio mismatch");
         uniIOTX.burn(toBurn);
         burned = toBurn;
         totalStaked -= iotxsToRedeem;

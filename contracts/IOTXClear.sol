@@ -70,10 +70,6 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
     event DebtPaid(address account, uint amount);
     event RewardClaimed(address claimer, address recipient, uint amount);
 
-    // ---Errors---
-    error InsufficientReward(uint expected, uint available);
-    error DebtAmountMismatched(uint toPayAmount, uint queuedAmount);
-
     /**
      * ======================================================================================
      *
@@ -181,7 +177,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
         // Check reward
         UserInfo storage info = userInfos[msg.sender];
-        if (info.reward < amount) revert InsufficientReward(amount, info.reward);
+        require(info.reward >= amount, "Insufficient reward");
 
         // Transfer reward
         payable(recipient).sendValue(amount);
@@ -218,7 +214,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
         // Validate NFT amount
         (uint amount, , , ,) = systemStake.bucketOf(tokenId);
-        if (amount != firstDebt.amount) revert DebtAmountMismatched(amount, firstDebt.amount);
+        require(amount == firstDebt.amount, "Debt amount mismatch");
 
         // Withdraw NFT to user account
         systemStake.withdraw(tokenId, payable(account));
