@@ -161,16 +161,6 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         }
     }
 
-    /**
-     * @dev This function accounts for new reward increments (if there are any),
-     * and accumulate reward rate to the latest value.
-     * Then it returns the updated claimable reward for the given account
-     */
-    function updateReward(address account) external returns (uint) {
-        _updateReward(account);
-        return userInfos[account].reward;
-    }
-
     function claimRewards(uint amount, address recipient) external nonReentrant whenNotPaused {
          // Update reward
         _updateReward(msg.sender);
