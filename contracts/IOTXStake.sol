@@ -137,7 +137,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         address _oracleAddress,
         uint _startAmount,
         uint _commonRatio,
-        uint _sequenceLength
+        uint _sequenceLength,
+        uint _stakeDuration
     ) public initializer {
         // Roles
         _grantRole(ROLE_FEE_MANAGER, msg.sender);
@@ -153,6 +154,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         startAmount = _startAmount;
         commonRatio = _commonRatio;
         sequenceLength = _sequenceLength;
+        stakeDuration = _stakeDuration;
         redeemAmountBase = startAmount * (commonRatio ** (sequenceLength-1));
     }
 
@@ -215,6 +217,14 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
                 tokenIds[k] = tq[i+k];
             }
         }
+    }
+
+    /**
+     * @dev Return current staked token count at given staking level
+     */
+    function getStakedTokenCount(uint level) external view returns (uint count) {
+        require(level < sequenceLength, "level out of range");
+        count = tokenQueues[level].length;
     }
 
     /**
@@ -315,10 +325,14 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     function _stakeAndMergeAtSubLevel() internal {
-        for (uint level = sequenceLength-2; level >= 0;  ) {
+        for (uint level = sequenceLength-2; level >= 0 && level < sequenceLength-1;  ) {
             // Determine values of stake params
             (uint amount, uint count) = _getStakeAmountAndCount(level);
-            if (count == 0) continue;
+            if (count == 0) {
+                if (level == 0) return;
+                level--;
+                continue;
+            }
 
             uint stakedCount = tokenQueues[level].length;
             if ((count+stakedCount) >= commonRatio) {
@@ -333,7 +347,10 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
             // Handle remained amount
             (, count) = _getStakeAmountAndCount(level);
-            if (count == 0) level--;
+            if (count == 0) {
+                if (level == 0) return;
+                level--;
+            }
         }
     }
 
@@ -462,3 +479,4 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         rewardDebts += amount;
     }
 }
+
