@@ -167,7 +167,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
         // Check reward
         UserInfo storage info = userInfos[msg.sender];
-        require(info.reward >= amount, "Insufficient reward");
+        require(info.reward >= amount, "insufficient reward");
 
         // Transfer reward
         payable(recipient).sendValue(amount);
@@ -204,7 +204,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
         // Validate NFT amount
         (uint amount, , , ,) = systemStake.bucketOf(tokenId);
-        require(amount == firstDebt.amount, "Debt amount mismatch");
+        require(amount == firstDebt.amount, "debt amount mismatch");
 
         // Withdraw NFT to user account
         systemStake.withdraw(tokenId, payable(account));

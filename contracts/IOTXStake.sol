@@ -94,7 +94,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // ---Modifiers---
     modifier onlyValidTransaction(uint deadline) {
-        require(deadline > block.timestamp, "Transaction expired");
+        require(deadline > block.timestamp, "transaction expired");
         _;
     }
 
@@ -162,7 +162,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @dev Set Manager's fee in range [0, 1000]
      */
     function setManagerFeeShares(uint shares) external onlyRole(ROLE_FEE_MANAGER)  {
-        require(shares <= 1000, "Manager fee shares out of range");
+        require(shares <= 1000, "manager fee shares out of range");
         managerFeeShares = shares;
 
         emit ManagerFeeSharesSet(shares);
@@ -222,9 +222,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     /**
      * @dev Return current staked token count at given staking level
      */
-    function getStakedTokenCount(uint level) external view returns (uint count) {
-        require(level < sequenceLength, "level out of range");
-        count = tokenQueues[level].length;
+    function getStakedTokenCount(uint stakingLevel) external view returns (uint count) {
+        require(stakingLevel < sequenceLength, "staking level out of range");
+        count = tokenQueues[stakingLevel].length;
     }
 
     /**
@@ -247,7 +247,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @notice This function keeps the exchange ratio invariant to avoid user arbitrage.
      */
     function deposit(uint minToMint, uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
-        require(msg.value > 0, "Invalid deposit amount");
+        require(msg.value > 0, "invalid deposit amount");
 
         minted = _mint(minToMint);
         _stakeAtTopLevel();
@@ -282,9 +282,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * 2. Shift the corresponding amount of accountedManagerRevenue to totalPending.
      */
     function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
-        require(amount <= accountedManagerRevenue, "Insufficient manager revenue");
+        require(amount <= accountedManagerRevenue, "insufficient manager revenue");
 
-        uint toMint = _convertIotxTouniIOTX(amount);
+        uint toMint = _convertIotxToUniIOTX(amount);
         uniIOTX.mint(recipient, toMint);
 
         accountedManagerRevenue -= amount;
@@ -304,8 +304,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function _mint(uint minToMint) internal returns (uint minted) {
         accountedBalance += msg.value;
 
-        uint toMint = _convertIotxTouniIOTX(msg.value);
-        require(toMint >= minToMint, "Exchange ratio mismatch");
+        uint toMint = _convertIotxToUniIOTX(msg.value);
+        require(toMint >= minToMint, "exchange ratio mismatch");
         uniIOTX.mint(msg.sender, toMint);
         minted = toMint;
 
@@ -402,11 +402,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     function _redeem(uint iotxsToRedeem, uint maxToBurn) internal returns(uint burned) {
         // Check redeem condition
-        require(iotxsToRedeem >= redeemAmountBase && iotxsToRedeem % redeemAmountBase == 0, "Invalid redeem amount");
+        require(iotxsToRedeem >= redeemAmountBase && iotxsToRedeem % redeemAmountBase == 0, "invalid redeem amount");
 
         // Burn uniIOTXs
-        uint toBurn = _convertIotxTouniIOTX(msg.value);
-        require(toBurn <= maxToBurn, "Exchange ratio mismatch");
+        uint toBurn = _convertIotxToUniIOTX(msg.value);
+        require(toBurn <= maxToBurn, "exchange ratio mismatch");
         uniIOTX.burn(toBurn);
         burned = toBurn;
         totalStaked -= iotxsToRedeem;
@@ -439,7 +439,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * aiming to keep the exchange ratio invariant to avoid user arbitrage.
      * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
      */
-    function _convertIotxTouniIOTX(uint amountIOTX) internal view returns (uint amountuniIOTX) {
+    function _convertIotxToUniIOTX(uint amountIOTX) internal view returns (uint amountuniIOTX) {
         uint totalSupply = uniIOTX.totalSupply();
         uint _currentReserve = currentReserve();
         amountuniIOTX = defaultExchangeRatio * amountIOTX;
