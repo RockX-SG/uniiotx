@@ -469,6 +469,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "level",
+        "type": "uint256"
+      }
+    ],
+    "name": "getStakedTokenCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "count",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "globalDelegate",
     "outputs": [
@@ -558,6 +577,11 @@
       {
         "internalType": "uint256",
         "name": "_sequenceLength",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_stakeDuration",
         "type": "uint256"
       }
     ],
