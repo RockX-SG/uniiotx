@@ -118,12 +118,12 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
             return this.onERC721Received.selector;
     }
 
-
     /**
-     * @dev Return user reward which is available for future claim
+     * @dev Return the user's total reward that is available for future claims.
+     * @notice The returned value includes the pending reward that hasn't been accounted yet.
      */
     function getReward(address account) external view returns (uint) {
-        return userInfos[account].reward;
+        return userInfos[account].reward + _calcPendingReward(account);
     }
 
     /**
@@ -231,5 +231,15 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
             rewardRate += incrReward * MULTIPLIER / totalDebts;
             accountedBalance = address(this).balance;
         }
+    }
+
+    function _calcPendingReward(address account) internal view returns (uint) {
+        UserInfo memory info = userInfos[account];
+        if (info.debt > 0 && address(this).balance > accountedBalance) {
+            uint incrReward = address(this).balance - accountedBalance;
+            uint _rewardRate = rewardRate + incrReward * MULTIPLIER / totalDebts;
+            return (_rewardRate - info.rewardRate) * info.debt / MULTIPLIER;
+        }
+        return 0;
     }
 }
