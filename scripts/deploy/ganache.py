@@ -10,6 +10,10 @@ def main():
     start_amount = 10000
     common_ratio = 10
     sequence_length = 3
+    stake_duration = 600
+    stake_amount0 = 10000
+    stake_amount1 = 100000
+    stake_amount2 = 1000000
 
     # Prepare accounts
     # Todo: Use a dedicated account, maybe consider ProxyAdmin contract
@@ -40,6 +44,10 @@ def main():
     print("IOTXStake address:", iotx_stake_transparent)
 
     # Configure contracts
+    system_staking.addBucketType(stake_amount0, stake_duration, {'from': deployer})
+    system_staking.addBucketType(stake_amount1, stake_duration, {'from': deployer})
+    system_staking.addBucketType(stake_amount2, stake_duration, {'from': deployer})
+
     uni_iotx_transparent.initialize(iotx_stake_transparent, {'from': owner})
     iotx_clear_transparent.initialize(system_staking_transparent, iotx_stake_transparent, oracle, {'from': owner})
     iotx_stake_transparent.initialize(
@@ -50,6 +58,7 @@ def main():
         start_amount,
         common_ratio,
         sequence_length,
+        stake_duration,
         {'from': owner}
     )
 
