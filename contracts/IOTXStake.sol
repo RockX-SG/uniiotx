@@ -22,7 +22,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "./Roles.sol";
 import "../interfaces/IIOTXClear.sol";
@@ -30,6 +30,9 @@ import "../interfaces/IUniIOTX.sol";
 import "../interfaces/ISystemStake.sol";
 
 contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, ReentrancyGuardUpgradeable {
+    // ---Use libraries---
+    using SafeERC20 for IERC20;
+
     // ---External dependencies---
     ISystemStake public systemStake;
     IUniIOTX public uniIOTX;
@@ -407,6 +410,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         // Burn uniIOTXs
         uint toBurn = _convertIotxToUniIOTX(iotxsToRedeem);
         require(toBurn <= maxToBurn, "Exchange ratio mismatch");
+        IERC20(uniIOTX).safeTransferFrom(msg.sender, address(this), toBurn);
         uniIOTX.burn(toBurn);
         burned = toBurn;
         totalStaked -= iotxsToRedeem;
