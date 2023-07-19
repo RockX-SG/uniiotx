@@ -10,7 +10,7 @@ def main():
     start_amount = 10000
     common_ratio = 10
     sequence_length = 3
-    stake_duration = 600
+    stake_duration = 60
     stake_amount0 = 10000
     stake_amount1 = 100000
     stake_amount2 = 1000000
