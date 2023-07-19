@@ -24,6 +24,5 @@ interface IIOTXClear {
     function joinDebt(address claimAddr, uint amount) external;
     function unstake(uint[] calldata tokenIds) external;
     function withdraw(uint[] calldata tokenIds) external;
-    function updateReward(address acount) external returns (uint);
     function claimRewards(uint amount, address recipient) external;
 }

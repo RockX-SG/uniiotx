@@ -22,6 +22,7 @@ interface IIOTXStake {
     function exchangeRatio() external returns (uint ratio);
     function currentReserve() external view returns(uint); // Todo: public?
     function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory tokenIds);
+    function getStakedTokenCount(uint tokenQueueIndex) external view returns (uint count);
     function setGlobalDelegate(address delegate) external;
     function updateDelegates(uint[] calldata tokenIds, address delegate) external;
     function deposit(uint minToMint, uint deadline) external payable returns (uint minted);
