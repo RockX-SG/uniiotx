@@ -472,7 +472,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "level",
+        "name": "stakingLevel",
         "type": "uint256"
       }
     ],
