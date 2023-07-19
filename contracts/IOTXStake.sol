@@ -392,9 +392,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             systemStake.merge(tq, stakeDuration);
 
             // Move the merged tokens to upper queue
-            delete tokenQueues[i];
             uint[] storage tqUpper = tokenQueues[i+1];
             tqUpper.push(tq[0]);
+            delete tokenQueues[i];
 
             emit Merged(tq, startAmount * (commonRatio**(i+1)));
         }
