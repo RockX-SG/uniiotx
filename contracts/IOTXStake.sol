@@ -405,7 +405,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         require(iotxsToRedeem >= redeemAmountBase && iotxsToRedeem % redeemAmountBase == 0, "Invalid redeem amount");
 
         // Burn uniIOTXs
-        uint toBurn = _convertIotxToUniIOTX(msg.value);
+        uint toBurn = _convertIotxToUniIOTX(iotxsToRedeem);
         require(toBurn <= maxToBurn, "Exchange ratio mismatch");
         uniIOTX.burn(toBurn);
         burned = toBurn;
