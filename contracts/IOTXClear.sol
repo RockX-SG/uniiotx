@@ -154,7 +154,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (tokenIds.length > 0) systemStake.unstake(tokenIds);
     }
 
-    function withdraw(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
+    function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
         for (uint i = 0; i < tokenIds.length; i++) {
             address account = _payDebt(tokenIds[i]);
             _updateReward(account);
