@@ -220,11 +220,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev Return current staked token count at given staking level
+     * @dev Return current staked token count of the specified token queue
      */
-    function getStakedTokenCount(uint stakingLevel) external view returns (uint count) {
-        require(stakingLevel < sequenceLength, "Staking level out of range");
-        count = tokenQueues[stakingLevel].length;
+    function getStakedTokenCount(uint tokenQueueIndex) external view returns (uint count) {
+        require(tokenQueueIndex < sequenceLength, "Token queue index out of range");
+        count = tokenQueues[tokenQueueIndex].length;
     }
 
     /**
