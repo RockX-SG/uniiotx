@@ -204,7 +204,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function exchangeRatio() external view returns (uint ratio) {
         uint uniIOTXAmount = uniIOTX.totalSupply();
         if (uniIOTXAmount == 0) {
-            return 1 * MULTIPLIER;
+            return defaultExchangeRatio * MULTIPLIER;
         }
 
         ratio = currentReserve() * MULTIPLIER / uniIOTXAmount;
