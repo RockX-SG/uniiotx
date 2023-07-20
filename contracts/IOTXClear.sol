@@ -59,8 +59,8 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     // Simulating a FIFO queue of debts
     mapping(uint=>Debt) public iotxDebts;   // Index -> Debt
-    uint public firstIndex;
-    uint public lastIndex;
+    uint public headIndex;
+    uint public rearIndex;
 
     // User infos
     mapping(address => UserInfo) public userInfos; // account -> info
@@ -100,8 +100,8 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
         systemStake = ISystemStake(_systemStakeAddress);
 
-        firstIndex = 1;
-        lastIndex = 0;
+        headIndex = 1;
+        rearIndex = 0;
     }
 
     /**
@@ -163,13 +163,13 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
         for (uint i = 0; i < tokenIds.length; i++) {
             // Pop a debt in FIFO order
-            Debt storage firstDebt = iotxDebts[firstIndex];
-            address account = firstDebt.account;
+            Debt storage headDebt = iotxDebts[headIndex];
+            address account = headDebt.account;
 
             // Validate NFT amount against the debt
             uint tokenId = tokenIds[i];
             (uint amount, , , ,) = systemStake.bucketOf(tokenId);
-            require(amount == firstDebt.amount, "Debt amount mismatch");
+            require(amount == headDebt.amount, "Debt amount mismatch");
 
             // Update current user reward
             _updateUserReward(account);
@@ -205,8 +205,8 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     function _addDebt(address account, uint amount) internal {
         // Add a debt in FIFO order
-        lastIndex += 1;
-        iotxDebts[lastIndex] = Debt({account:account, amount:amount});
+        rearIndex += 1;
+        iotxDebts[rearIndex] = Debt({account:account, amount:amount});
 
         // Update debt states
         userInfos[account].debt += amount;
@@ -222,8 +222,8 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         // Update debt states
         userInfos[account].debt -= amount;
         totalDebts -= amount;
-        delete iotxDebts[firstIndex];
-        firstIndex += 1;
+        delete iotxDebts[headIndex];
+        headIndex += 1;
 
         emit DebtPaid(account, amount);
     }
