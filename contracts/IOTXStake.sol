@@ -84,7 +84,6 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     uint public compoundedUserReward;          // The accountedUserReward that has been automatically compounded into the totalPending for future stakes.
 
     // ---Events---
-    event DelegateStopped(uint stoppedCount);
     event ManagerFeeSharesSet(uint shares);
     event Minted(address user, uint minted);
     event Redeemed(address user, uint burned, uint[] tokenIds);
