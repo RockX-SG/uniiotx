@@ -159,6 +159,13 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         sequenceLength = _sequenceLength;
         stakeDuration = _stakeDuration;
         redeemAmountBase = startAmount * (commonRatio ** (sequenceLength-1));
+
+        // Validate bucket type info
+        for (uint level = 0; level < _sequenceLength; level++) {
+            uint amount = _startAmount * (_commonRatio**level);
+            bool isActive = systemStake.isActiveBucketType(amount, _stakeDuration);
+            require(isActive, "inactive bucket type");
+        }
     }
 
     /**

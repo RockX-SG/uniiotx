@@ -22,6 +22,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 // @notice This is the IoTeX system contract interface. It issues an NFT token for each bucket creation.
 // For more information see https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol
 interface ISystemStake is IERC721 {
+    function isActiveBucketType(uint256 _amount, uint256 _duration) external view returns (bool);
     function bucketOf(uint _tokenId) external view returns ( uint amount_, uint duration_, uint unlockedAt_, uint unstakedAt_, address delegate_);
 
     function stake(uint _amount, uint _duration, address _delegate, uint _count) external payable returns (uint firstTokenId_);
