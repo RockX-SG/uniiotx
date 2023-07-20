@@ -79,10 +79,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     uint public managerFeeShares; // Shares range: [0, 1000]
 
-    // Track revenue from validators to form exchange ratio
-    uint public accountedUserRevenue;           // Accounted shared user revenue
-    uint public accountedManagerRevenue;        // Accounted manager's revenue
-    uint public rewardDebts;
+    uint public accountedUserReward;           // Accounted shared user reward
+    uint public accountedManagerReward;        // Accounted manager's reward
+    uint public compoundedUserReward;          // The accountedUserReward that has been automatically compounded into the totalPending for future stakes.
 
     // ---Events---
     event DelegateStopped(uint stoppedCount);
@@ -214,7 +213,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @dev Returns current reserve of IOTXs
      */
     function currentReserve() public view returns(uint) {
-        return totalPending + totalStaked + accountedUserRevenue - rewardDebts;
+        return totalPending + totalStaked + accountedUserReward - compoundedUserReward;
     }
 
     /**
@@ -292,12 +291,12 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * 2. Shift the corresponding amount of accountedManagerRevenue to totalPending.
      */
     function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
-        require(amount <= accountedManagerRevenue, "Insufficient manager revenue");
+        require(amount <= accountedManagerReward, "Insufficient manager revenue");
 
         uint toMint = _convertIotxToUniIOTX(amount);
         uniIOTX.mint(recipient, toMint);
 
-        accountedManagerRevenue -= amount;
+        accountedManagerReward -= amount;
         totalPending += amount;
 
         emit ManagerFeeWithdrawed(amount, toMint, recipient);
@@ -478,16 +477,16 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     function _distributeRewards(uint rewards) internal {
         uint fee = rewards * managerFeeShares / 1000;
-        accountedManagerRevenue += fee;
-        accountedUserRevenue += rewards - fee;
+        accountedManagerReward += fee;
+        accountedUserReward += rewards - fee;
 
         emit RevenueAccounted(rewards);
     }
 
     function _autoCompound() internal {
-        uint amount = accountedUserRevenue - rewardDebts;
+        uint amount = accountedUserReward - compoundedUserReward;
         totalPending += amount;
-        rewardDebts += amount;
+        compoundedUserReward += amount;
     }
 }
 
