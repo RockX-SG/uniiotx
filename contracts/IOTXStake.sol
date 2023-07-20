@@ -275,6 +275,10 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         burned = _redeem(iotxsToRedeem, maxToBurn);
     }
 
+    /**
+     * @dev This function distributes recently accrued rewards from delegates among users and the manager.
+     * It also automatically compounds the users' port into totalStaking for future stakes.
+     */
     function updateReward() external onlyRole(ROLE_ORACLE) {
         if (_syncBalance()) {
             uint rewards = _calculateRewards();
