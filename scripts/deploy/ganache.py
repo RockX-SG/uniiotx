@@ -15,17 +15,23 @@ def main():
     stake_amount1 = stake_amount0 * common_ratio
     stake_amount2 = stake_amount1 * common_ratio
 
+    # Manager fee shares
+    manager_fee_shares = 100
+
     # Prepare accounts
     # Todo: Use a dedicated account, maybe consider ProxyAdmin contract
-    deployer = accounts[0]
-    owner = accounts[1]
-    oracle = accounts[2]
+    system_staking_owner = accounts[0]
+    deployer = accounts[1]
+    admin = accounts[2]
+    oracle = accounts[3]
     delegate = accounts[4]
+    user = accounts[5]
+
 
     # Deploy contracts
-    system_staking = SystemStaking.deploy({'from': deployer})
-    system_staking_proxy = TransparentUpgradeableProxy.deploy(system_staking, deployer, b'', {'from': deployer})
-    system_staking_transparent = Contract.from_abi("SystemStaking", system_staking_proxy.address, SystemStaking.abi)
+    system_staking = SystemStaking.deploy({'from': system_staking_owner})
+    # system_staking_proxy = TransparentUpgradeableProxy.deploy(system_staking, deployer, b'', {'from': deployer})
+    # system_staking_transparent = Contract.from_abi("SystemStaking", system_staking_proxy.address, SystemStaking.abi)
 
     uni_iotx = UniIOTX.deploy({'from': deployer})
     uni_iotx_proxy = TransparentUpgradeableProxy.deploy(uni_iotx, deployer, b'', {'from': deployer})
@@ -39,20 +45,20 @@ def main():
     iotx_stake_proxy = TransparentUpgradeableProxy.deploy(iotx_stake, deployer, b'', {'from': deployer})
     iotx_stake_transparent = Contract.from_abi("IOTXStake", iotx_stake_proxy.address, IOTXStake.abi)
 
-    print("SystemStaking address:", system_staking_transparent)
+    print("SystemStaking address:", system_staking)
     print("UniIOTX address:", uni_iotx_transparent)
     print("IOTXClear address:", iotx_clear_transparent)
     print("IOTXStake address:", iotx_stake_transparent)
 
     # Configure contracts # Todo: Use loop for simplicity
-    system_staking.addBucketType(stake_amount0, stake_duration, {'from': deployer})
-    system_staking.addBucketType(stake_amount1, stake_duration, {'from': deployer})
-    system_staking.addBucketType(stake_amount2, stake_duration, {'from': deployer})
+    system_staking.addBucketType(stake_amount0, stake_duration, {'from': system_staking_owner})
+    system_staking.addBucketType(stake_amount1, stake_duration, {'from': system_staking_owner})
+    system_staking.addBucketType(stake_amount2, stake_duration, {'from': system_staking_owner})
 
-    uni_iotx_transparent.initialize(iotx_stake_transparent, {'from': owner})
-    iotx_clear_transparent.initialize(system_staking_transparent, iotx_stake_transparent, oracle, {'from': owner})
+    uni_iotx_transparent.initialize(iotx_stake_transparent, {'from': admin})
+    iotx_clear_transparent.initialize(system_staking, iotx_stake_transparent, oracle, {'from': admin})
     iotx_stake_transparent.initialize(
-        system_staking_transparent,
+        system_staking,
         uni_iotx_transparent,
         iotx_clear_transparent,
         oracle,
@@ -60,9 +66,10 @@ def main():
         common_ratio,
         sequence_length,
         stake_duration,
-        {'from': owner}
+        {'from': admin}
     )
     iotx_stake_transparent.setGlobalDelegate(delegate, {'from': oracle})
+    iotx_stake_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
 
 
 
