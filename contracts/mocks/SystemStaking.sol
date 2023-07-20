@@ -15,7 +15,7 @@
  * ==================================================================
  */
 
-// This is the official implementation: https://github.com/iotexproject/iip13-contracts
+// This is the official implementation: https://github.com/iotexproject/iip13-contracts/blob/9a4bd265225a569af4bf9948bef153529cb1bb17/src/SystemStaking.sol
 // We have replicated it here for ease of testing.
 // The constant UNSTAKE_FREEZE_BLOCKS is set to 1, deviating from the default 51840
 
