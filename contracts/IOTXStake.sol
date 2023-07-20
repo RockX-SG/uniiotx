@@ -70,14 +70,16 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     uint public accountedBalance;
 
-    uint public recentReceived;
-
     // Exchange ratio related variables
     // Track user deposits & redeem (uniIOTX mint & burn)
     uint public totalPending;               // Total pending IOTXs awaiting to be staked
     uint public totalStaked;            // Track current staked iotxs for delegates
 
     uint public managerFeeShares; // Shares range: [0, 1000]
+
+    // recentlyAccruedReward is the amount of recently accumulated rewards yielded from delegates,
+    // These are added during balance synchronization and reset to zero when rewards are updated.
+    uint public recentlyAccruedReward;
 
     uint public accountedUserReward;           // Accounted shared user reward
     uint public accountedManagerReward;        // Accounted manager's reward
@@ -284,7 +286,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
             uint rewards = _calculateRewards();
             _distributeRewards(rewards);
             _autoCompound();
-            recentReceived = 0;
+            recentlyAccruedReward = 0;
         }
     }
 
@@ -467,7 +469,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (thisBalance > accountedBalance) {
             uint diff = thisBalance - accountedBalance;
             accountedBalance = thisBalance;
-            recentReceived += diff;
+            recentlyAccruedReward += diff;
             changed = true;
 
             emit BalanceSynced(diff);
@@ -475,7 +477,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     function _calculateRewards() internal view returns (uint) {
-        return recentReceived;
+        return recentlyAccruedReward;
     }
 
     function _distributeRewards(uint rewards) internal {
