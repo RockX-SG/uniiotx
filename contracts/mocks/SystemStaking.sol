@@ -1,7 +1,24 @@
-// SPDX-License-Identifier: UNLICENSED
+/*
+ * ==================================================================
+ * Copyright (C) 2023 Altstake Technology Pte. Ltd. (RockX)
+ * CAUTION: THESE CODES HAVE NOT BEEN AUDITED
+ * This code is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 3 of the License,
+ * or (at your option) any later version.
+ * This code is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License.
+ * If not, see <http://www.gnu.org/licenses/>
+ * ==================================================================
+ */
+
 // This is the official implementation: https://github.com/iotexproject/iip13-contracts
-// We copy it here for the purpose of testing convenience
-// Todo: This file will be removed or modified after we apply a better way to handle related tests.
+// We have replicated it here for ease of testing.
+// The constant UNSTAKE_FREEZE_BLOCKS is set to 1, deviating from the default 51840
+
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -23,7 +40,8 @@ struct BucketType {
 
 contract SystemStaking is ERC721, Ownable, Pausable {
     uint256 public constant UINT256_MAX = type(uint256).max;
-    uint256 public constant UNSTAKE_FREEZE_BLOCKS = 51840; // (3 * 24 * 60 * 60) / 5;
+    // Note: official default: 51840,  (3 * 24 * 60 * 60) / 5;
+    uint256 public constant UNSTAKE_FREEZE_BLOCKS = 1;
 
     event BucketTypeActivated(uint256 amount, uint256 duration);
     event BucketTypeDeactivated(uint256 amount, uint256 duration);
