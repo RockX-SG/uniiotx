@@ -7,19 +7,20 @@ def main():
     TransparentUpgradeableProxy = deps.TransparentUpgradeableProxy
 
     # Bucket info
-    start_amount = 10000
+    start_amount = 100
     common_ratio = 10
     sequence_length = 3
-    stake_duration = 60
-    stake_amount0 = 10000
-    stake_amount1 = 100000
-    stake_amount2 = 1000000
+    stake_duration = 1
+    stake_amount0 = start_amount
+    stake_amount1 = stake_amount0 * common_ratio
+    stake_amount2 = stake_amount1 * common_ratio
 
     # Prepare accounts
     # Todo: Use a dedicated account, maybe consider ProxyAdmin contract
     deployer = accounts[0]
     owner = accounts[1]
     oracle = accounts[2]
+    delegate = accounts[4]
 
     # Deploy contracts
     system_staking = SystemStaking.deploy({'from': deployer})
@@ -43,7 +44,7 @@ def main():
     print("IOTXClear address:", iotx_clear_transparent)
     print("IOTXStake address:", iotx_stake_transparent)
 
-    # Configure contracts
+    # Configure contracts # Todo: Use loop for simplicity
     system_staking.addBucketType(stake_amount0, stake_duration, {'from': deployer})
     system_staking.addBucketType(stake_amount1, stake_duration, {'from': deployer})
     system_staking.addBucketType(stake_amount2, stake_duration, {'from': deployer})
@@ -61,6 +62,7 @@ def main():
         stake_duration,
         {'from': owner}
     )
+    iotx_stake_transparent.setGlobalDelegate(delegate, {'from': oracle})
 
 
 
