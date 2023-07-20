@@ -79,6 +79,12 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
 
     /**
+    * @notice This function is exclusively designed to receive staking rewards generated after the 'joinDebt' function is evoked.
+     * Any IOTXs inadvertently sent to this contract will be considered as rewards.
+     */
+    receive() external payable { }
+
+    /**
      * @dev initialization
      */
     function initialize(
@@ -140,7 +146,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
     function joinDebt(address account, uint amount) external whenNotPaused onlyRole(ROLE_STAKE) {
         // Update current user reward
-        _updateReward(account);
+        _updateUserReward(account);
 
         // Record new user debt
         _addDebt(account, amount);
@@ -156,14 +162,26 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
     function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
         for (uint i = 0; i < tokenIds.length; i++) {
-            address account = _payDebt(tokenIds[i]);
-            _updateReward(account);
+            // Pop a debt in FIFO order
+            Debt storage firstDebt = iotxDebts[firstIndex];
+            address account = firstDebt.account;
+
+            // Validate NFT amount against the debt
+            uint tokenId = tokenIds[i];
+            (uint amount, , , ,) = systemStake.bucketOf(tokenId);
+            require(amount == firstDebt.amount, "Debt amount mismatch");
+
+            // Update current user reward
+            _updateUserReward(account);
+
+            // Settle the user's debt
+            _payDebt(account, amount, tokenId);
         }
     }
 
     function claimRewards(uint amount, address recipient) external nonReentrant whenNotPaused {
          // Update reward
-        _updateReward(msg.sender);
+        _updateUserReward(msg.sender);
 
         // Check reward
         UserInfo storage info = userInfos[msg.sender];
@@ -197,15 +215,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         emit DebtAdded(account, amount);
     }
 
-    function _payDebt(uint tokenId) internal returns (address account) {
-        // Pick a debt in FIFO order
-        Debt storage firstDebt = iotxDebts[firstIndex];
-        account = firstDebt.account;
-
-        // Validate NFT amount
-        (uint amount, , , ,) = systemStake.bucketOf(tokenId);
-        require(amount == firstDebt.amount, "Debt amount mismatch");
-
+    function _payDebt(address account, uint amount, uint tokenId) internal {
         // Withdraw NFT to user account
         systemStake.withdraw(tokenId, payable(account));
 
@@ -218,14 +228,17 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         emit DebtPaid(account, amount);
     }
 
-    function _updateReward(address account) internal {
-        _updateReward();
+    /**
+     * @dev This function updates the user's rewards according to their most recent debt
+     */
+    function _updateUserReward(address account) internal {
+        _updateSharedReward();
         UserInfo storage info = userInfos[account];
         info.reward += (rewardRate - info.rewardRate) * info.debt / MULTIPLIER;
         info.rewardRate = rewardRate;
     }
 
-    function _updateReward() internal {
+    function _updateSharedReward() internal {
         if (address(this).balance > accountedBalance && totalDebts > 0) {
             uint incrReward = address(this).balance - accountedBalance;
             rewardRate += incrReward * MULTIPLIER / totalDebts;
