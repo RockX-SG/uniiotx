@@ -30,8 +30,6 @@ def main():
 
     # Deploy contracts
     system_staking = SystemStaking.deploy({'from': system_staking_owner})
-    # system_staking_proxy = TransparentUpgradeableProxy.deploy(system_staking, deployer, b'', {'from': deployer})
-    # system_staking_transparent = Contract.from_abi("SystemStaking", system_staking_proxy.address, SystemStaking.abi)
 
     uni_iotx = UniIOTX.deploy({'from': deployer})
     uni_iotx_proxy = TransparentUpgradeableProxy.deploy(uni_iotx, deployer, b'', {'from': deployer})
