@@ -68,8 +68,8 @@ def main():
         stake_duration,
         {'from': admin}
     )
-    iotx_stake_transparent.setGlobalDelegate(delegate, {'from': oracle})
     iotx_stake_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
+    iotx_stake_transparent.setGlobalDelegate(delegate, {'from': oracle})
 
 
 
