@@ -17,19 +17,6 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "stoppedCount",
-        "type": "uint256"
-      }
-    ],
-    "name": "DelegateStopped",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
         "internalType": "uint8",
         "name": "version",
         "type": "uint8"
@@ -325,7 +312,7 @@
   },
   {
     "inputs": [],
-    "name": "accountedManagerRevenue",
+    "name": "accountedManagerReward",
     "outputs": [
       {
         "internalType": "uint256",
@@ -338,7 +325,7 @@
   },
   {
     "inputs": [],
-    "name": "accountedUserRevenue",
+    "name": "accountedUserReward",
     "outputs": [
       {
         "internalType": "uint256",
@@ -352,6 +339,19 @@
   {
     "inputs": [],
     "name": "commonRatio",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "compoundedUserReward",
     "outputs": [
       {
         "internalType": "uint256",
@@ -672,7 +672,7 @@
   },
   {
     "inputs": [],
-    "name": "recentReceived",
+    "name": "recentlyAccruedReward",
     "outputs": [
       {
         "internalType": "uint256",
@@ -772,19 +772,6 @@
     "name": "revokeRole",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "rewardDebts",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
