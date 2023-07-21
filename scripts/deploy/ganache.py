@@ -1,6 +1,8 @@
 from brownie import SystemStaking, UniIOTX, IOTXClear, IOTXStake, accounts, Contract, project, config
 from pathlib import Path
 
+# Note: The Ganache client must be installed locally prior to executing this script
+# The link to the Ganache client: https://github.com/trufflesuite/ganache
 def main():
     # Reference: https://docs.openzeppelin.com/contracts/4.x/api/proxy#TransparentUpgradeableProxy
     deps = project.load(  Path.home() / ".brownie" / "packages" / config["dependencies"][0])
