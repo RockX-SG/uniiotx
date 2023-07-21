@@ -22,7 +22,6 @@ def main():
     oracle = "0xC8a85eD8A9aBF0a21031B7c62C13464D1527cd09"
 
     # Private accounts
-    # Todo: Use a dedicated account, maybe consider ProxyAdmin contract
     deployer = accounts.load("IoTeXDeployer")
     admin = accounts.load("IoTeXAdmin")
 
