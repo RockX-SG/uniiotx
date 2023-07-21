@@ -43,10 +43,10 @@ def main():
     iotx_stake_proxy = TransparentUpgradeableProxy.deploy(iotx_stake, deployer, b'', {'from': deployer})
     iotx_stake_transparent = Contract.from_abi("IOTXStake", iotx_stake_proxy.address, IOTXStake.abi)
 
-    print("SystemStaking address:", system_staking)
-    print("UniIOTX address:", uni_iotx_transparent)
-    print("IOTXClear address:", iotx_clear_transparent)
-    print("IOTXStake address:", iotx_stake_transparent)
+    print("Deployed SystemStaking address:", system_staking)
+    print("Deployed UniIOTX address:", uni_iotx_transparent)
+    print("Deployed IOTXClear address:", iotx_clear_transparent)
+    print("Deployed IOTXStake address:", iotx_stake_transparent)
 
     # Configure contracts # Todo: Use loop for simplicity
     system_staking.addBucketType(stake_amount0, stake_duration, {'from': system_staking_owner})
