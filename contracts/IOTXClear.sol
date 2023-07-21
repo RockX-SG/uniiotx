@@ -57,7 +57,12 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
     uint public rewardRate;    // Accumulated reward rate calculated against totalDebts, multiplied by MULTIPLIER
 
 
-    // Simulating a FIFO queue of debts
+    // Simulating a First-In-First-Out (FIFO) queue of debts
+    // Index for adding new debt: rearIndex + 1
+    // Index for the next debt payment: headIndex + 1
+    // Total count of added debts: rearIndex
+    // Total count of paid debts: headIndex
+    // Total count of unpaid debts: rearIndex - headIndex
     mapping(uint=>Debt) public iotxDebts;   // Index -> Debt
     uint public headIndex;
     uint public rearIndex;
@@ -99,9 +104,6 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         _grantRole(ROLE_ORACLE, _oracleAddress);
 
         systemStake = ISystemStake(_systemStakeAddress);
-
-        headIndex = 1;
-        rearIndex = 0;
     }
 
     /**
@@ -163,13 +165,13 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
     function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
         for (uint i = 0; i < tokenIds.length; i++) {
             // Pop a debt in FIFO order
-            Debt storage headDebt = iotxDebts[headIndex];
-            address account = headDebt.account;
+            Debt storage nextDebt = iotxDebts[headIndex+1];
+            address account = nextDebt.account;
 
             // Validate NFT amount against the debt
             uint tokenId = tokenIds[i];
             (uint amount, , , ,) = systemStake.bucketOf(tokenId);
-            require(amount == headDebt.amount, "Debt amount mismatch");
+            require(amount == nextDebt.amount, "Debt amount mismatch");
 
             // Update current user reward
             _updateUserReward(account);
@@ -222,7 +224,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         // Update debt states
         userInfos[account].debt -= amount;
         totalDebts -= amount;
-        delete iotxDebts[headIndex];
+        delete iotxDebts[headIndex+1];
         headIndex += 1;
 
         emit DebtPaid(account, amount);
