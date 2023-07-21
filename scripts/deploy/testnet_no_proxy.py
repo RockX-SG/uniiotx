@@ -30,9 +30,9 @@ def main():
     delegate = "0xac82586b613d10a33df00835aC6DAd8541952334"  # io14jp9s6mp85g2x00spq66cmdds4qe2ge5r0p72d
 
     # Deploy contracts
-    uni_iotx = UniIOTX.deploy({'from': deployer})
-    iotx_clear = IOTXClear.deploy({'from': deployer})
-    iotx_stake = IOTXStake.deploy({'from': deployer})
+    uni_iotx = UniIOTX.deploy({'from': deployer}, publish_source=True)
+    iotx_clear = IOTXClear.deploy({'from': deployer}, publish_source=True)
+    iotx_stake = IOTXStake.deploy({'from': deployer}, publish_source=True)
 
     print("Deployed UniIOTX address:", uni_iotx)  # 0x85792f60633DBCF7c2414675bcC0a790B1b65CbB
     print("Deployed IOTXClear address:", iotx_clear)  # 0x06c186Ff3a0dA2ce668E5B703015f3134F4a88Ad
