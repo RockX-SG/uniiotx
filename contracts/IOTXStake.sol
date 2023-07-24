@@ -144,6 +144,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         uint _stakeDuration
     ) public initializer {
         // Roles
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(ROLE_FEE_MANAGER, msg.sender);
         _grantRole(ROLE_PAUSE, msg.sender);
         _grantRole(ROLE_ORACLE, _oracleAddress);

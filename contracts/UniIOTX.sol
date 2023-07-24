@@ -35,6 +35,7 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
         __ERC20Snapshot_init();
         __Pausable_init();
 
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(ROLE_PAUSE, iotxStakeAddress);
         _grantRole(ROLE_MINT, iotxStakeAddress);
     }
