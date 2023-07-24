@@ -23,13 +23,19 @@ def main():
     # https://testnet.iotexscan.io/address/0x52ab0fe2c3a94644de0888a3ba9ea1443672e61f#transactions
     system_staking = "0x52ab0fe2c3a94644de0888a3ba9ea1443672e61f"
 
-    # Oracle address
-    oracle = "0xC8a85eD8A9aBF0a21031B7c62C13464D1527cd09"
-
-    # Private accounts
+    # Load accounts
     # Todo: Use a dedicated account, maybe consider ProxyAdmin contract
     deployer = accounts.load("IoTeXDeployer")
     admin = accounts.load("IoTeXAdmin")
+    oracle = accounts.load("IoTeXOracle")
+
+    # Fund accounts
+    # Assume that the admin account holds sufficient assets
+    fund_base = 1e18
+    if deployer.balance() < fund_base:
+        admin.transfer(deployer, fund_base*10)
+    if oracle.balance() < fund_base:
+        admin.transfer(oracle, fund_base*10)
 
     # Init delegate
     delegate = "0xac82586b613d10a33df00835aC6DAd8541952334"  # io14jp9s6mp85g2x00spq66cmdds4qe2ge5r0p72d
