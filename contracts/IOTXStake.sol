@@ -39,7 +39,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     IIOTXClear public iotxClear;
 
     // ---Constants---
-    uint public defaultExchangeRatio = 1;
+    uint public constant defaultExchangeRatio = 1;
     uint public constant MULTIPLIER = 1e18;
 
     // ---State variables---
