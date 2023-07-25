@@ -222,7 +222,9 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev Return [i, j) slice of already redeemed/unlocked token id.
+     * @dev Return [i, j) slice of already redeemed/unlocked token id, which is indexed from 0 in this contract.
+     * @notice The valid index values for i and j are determined by this conditional check: i < j && j <= redeemedTokenCount
+     * It recommended to check the value of 'redeemedTokenCount' beforehand to prevent the passed j from going out of range.
      */
     function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory tokenIds) {
         if (i < j && j <= redeemedTokenCount) {
