@@ -238,7 +238,12 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
     function getStakedTokenCount(uint tokenQueueIndex) external view returns (uint count) {
         require(tokenQueueIndex < sequenceLength, "Token queue index out of range");
-        count = tokenQueues[tokenQueueIndex].length;
+        uint queueLen = tokenQueues[tokenQueueIndex].length;
+        if (tokenQueueIndex == sequenceLength-1) {
+            count = queueLen - redeemedTokenCount;
+        } else {
+            count = queueLen;
+        }
     }
 
     /**
