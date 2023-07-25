@@ -100,9 +100,9 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
         __Pausable_init();
         __ReentrancyGuard_init();
 
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(ROLE_STAKE, _iotxStakeAddress);
-        _grantRole(ROLE_ORACLE, _oracleAddress);
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(ROLE_STAKE, _iotxStakeAddress);
+        _setupRole(ROLE_ORACLE, _oracleAddress);
 
         systemStake = ISystemStake(_systemStakeAddress);
     }
