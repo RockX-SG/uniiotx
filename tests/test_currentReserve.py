@@ -15,6 +15,7 @@ def test_currentReserve(w3, contracts, users, delegates, oracle, admin):
     assert iotx_stake.currentReserve() == amt
 
     # The rewards that have not been updated yet should not affect the current reserve.
+    # The value sent here will be considered as rewards from the delegate
     amt_reward = 10
     delegates[0].transfer(iotx_stake, amt_reward)
     assert iotx_stake.currentReserve() == amt
