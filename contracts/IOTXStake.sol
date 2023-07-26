@@ -226,13 +226,17 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * @notice The valid index values for i and j are determined by this conditional check: i < j && j <= redeemedTokenCount
      * It recommended to check the value of 'redeemedTokenCount' beforehand to prevent the passed j from going out of range.
      */
-    function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory tokenIds) {
+    function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory) {
         if (i < j && j <= redeemedTokenCount) {
             uint[] memory tq = tokenQueues[sequenceLength-1];
+            uint[] memory tokenIds = new uint[](j-i);
             for (uint k = 0; k < j-i; k++) {
                 tokenIds[k] = tq[i+k];
             }
+            return tokenIds;
         }
+        uint[] memory tokenIds = new uint[](0);
+        return tokenIds;
     }
 
     /**
