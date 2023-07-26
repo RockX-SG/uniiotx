@@ -212,9 +212,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev Returns the current reserve of IOTXs, significantly contributed by:
-     * 1. User deposited/staked principal;
-     * 2. Rewards generated delegation, including user rewards but excluding manager rewards.
+     * @dev Returns the current reserve of IOTXs, determined by the following contributions:
+     * 1. User deposits/stakes their principal.
+     * 2. Rewards generated from delegation, excluding manager rewards, are added to the reserve.
+     * 3. The manager fee is withdrawn and included in the totalPending amount.
+     * 4. When users make a 'redeem' call, the totalStaked amount decreases.
      * @notice The returned amount may vary from the actual value, which will be synchronized once the rewards are updated.
      */
     function currentReserve() public view returns(uint) {
