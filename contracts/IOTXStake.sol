@@ -200,7 +200,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @return The exchange ratio of uniIOTX to IOTX, multiplied by 'MULTIPLIER' (1e18).
+     * @return ratio The exchange ratio of uniIOTX to IOTX, multiplied by 'MULTIPLIER' (1e18).
      * @dev The factors that affect the returned result are the same as those of the 'currentReserve' function.
      */
     function exchangeRatio() external view returns (uint ratio) {
@@ -243,7 +243,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @return The current staked token count of the specified token queue
+     * @return count The current staked token count of the specified token queue
      * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength]
      */
     function getStakedTokenCount(uint tokenQueueIndex) external view returns (uint count) {
