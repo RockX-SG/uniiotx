@@ -2,11 +2,14 @@ import pytest
 from brownie import accounts
 from web3 import Web3
 
+# Web3 client
+@pytest.fixture
+def w3():
+    return Web3(Web3.HTTPProvider('http://localhost:8545'))
+
 # Roles
 @pytest.fixture
-def roles():
-    # Update ROLE_ORACLE provided by backend developer
-    w3 = Web3(Web3.HTTPProvider('http://localhost:8545'))
+def roles(w3):
     role_pause = w3.keccak(text='ROLE_PAUSE')  # index = 0
     role_mint = w3.keccak(text='ROLE_MINT')  # index = 1
     role_stake = w3.keccak(text='ROLE_STAKE')  # index = 2
