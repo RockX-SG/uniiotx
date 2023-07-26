@@ -90,7 +90,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
     receive() external payable { }
 
     /**
-     * @dev initialization
+     * @dev This function initializes the contract
      */
     function initialize(
         address _systemStakeAddress,
@@ -116,7 +116,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
 
     /**
-     * @dev IERC721Receiver implement for receiving redeemed/unlocked NFT transferred by IOTXStake contract
+     * @dev This function is the IERC721Receiver implement for receiving redeemed/unlocked NFT transferred by IOTXStake contract
          */
     function onERC721Received(
         address, // operator
@@ -128,7 +128,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev Return the user's total reward that is available for future claims.
+     * @dev This function returns the user's total reward that is available for future claims.
      * @notice The returned value includes the pending reward that hasn't been accounted yet.
      */
     function getReward(address account) external view returns (uint) {
@@ -144,7 +144,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
 
     /**
-     * @dev IOTXStake contract calls this function upon the user's redeeming request.
+     * @dev The contract 'IOTXStake' calls this function upon the user's redeeming request.
      * This function queues the redeemed amount as debt, which can be paid by withdrawal in FIFO order.
      */
     function joinDebt(address account, uint amount) external whenNotPaused onlyRole(ROLE_STAKE) {

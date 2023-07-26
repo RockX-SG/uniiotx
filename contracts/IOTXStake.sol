@@ -117,21 +117,21 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     receive() external payable { }
 
     /**
-     * @dev Pause the contract
+     * @dev This function pauses the contract
      */
     function pause() public onlyRole(ROLE_PAUSE) {
         _pause();
     }
 
     /**
-     * @dev Unpause the contract
+     * @dev This function unpauses the contract
      */
     function unpause() public onlyRole(ROLE_PAUSE) {
         _unpause();
     }
 
     /**
-     * @dev Initialization address
+     * @dev This function initializes the contract.
      */
     function initialize(
         address _systemStakeAddress,
@@ -170,7 +170,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev Set Manager's fee in range [0, 1000]
+     * @dev This function sets manager's fee in range [0, 1000]
      */
     function setManagerFeeShares(uint shares) external onlyRole(ROLE_FEE_MANAGER)  {
         require(shares <= 1000, "Manager fee shares out of range");
@@ -188,8 +188,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
 
     /**
-     * @dev IERC721Receiver implement for receiving staking NFT
-         */
+     * @dev This function is the IERC721Receiver implement for receiving staking NFT
+     */
     function onERC721Received(
         address, // operator
         address, // from
@@ -200,7 +200,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev Return exchange ratio of uniIOTX to IOTX, multiplied by 1e18
+     * @dev This function returns exchange ratio of uniIOTX to IOTX, multiplied by 1e18
      */
     function exchangeRatio() external view returns (uint ratio) {
         uint uniIOTXAmount = uniIOTX.totalSupply();
@@ -212,7 +212,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev Returns the current reserve of IOTXs, determined by the following contributions:
+     * @dev This function returns the current reserve of IOTXs, determined by the following contributions:
      * 1. User deposits/stakes their principal.
      * 2. Rewards generated from delegation, excluding manager rewards, are added to the reserve.
      * 3. The manager fee is withdrawn and included in the totalPending amount.
@@ -224,7 +224,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev Return [i, j) slice of already redeemed/unlocked token id, which is indexed from 0 in this contract.
+     * @dev This function returns [i, j) slice of already redeemed/unlocked token id, which is indexed from 0 in this contract.
      * @notice The valid index values for i and j are determined by this conditional check: i < j && j <= redeemedTokenCount
      * It recommended to check the value of 'redeemedTokenCount' beforehand to prevent the passed j from going out of range.
      */
@@ -242,7 +242,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev Return current staked token count of the specified token queue
+     * @dev This function returns current staked token count of the specified token queue
      * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength]
      */
     function getStakedTokenCount(uint tokenQueueIndex) external view returns (uint count) {
@@ -469,7 +469,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev Calculates uniIOTX amount based on IOTX amount for mint and burn operation,
+     * @dev This function calculates uniIOTX amount based on IOTX amount for mint and burn operation,
      * aiming to keep the exchange ratio invariant to avoid user arbitrage.
      * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
      */
