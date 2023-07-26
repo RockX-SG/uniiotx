@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 from brownie import SystemStaking, UniIOTX, IOTXClear, IOTXStake, accounts, Contract, project, config
-from configs import  *
+from configs import *
 from brownie import *
 
 # Contracts
