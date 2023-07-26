@@ -188,7 +188,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
 
         // Check reward
         UserInfo storage info = userInfos[msg.sender];
-        require(info.reward >= amount, "Insufficient reward");
+        require(info.reward >= amount, "Insufficient accounted reward");
 
         // Transfer reward
         payable(recipient).sendValue(amount);

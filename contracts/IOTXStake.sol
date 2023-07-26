@@ -316,7 +316,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * 2. Shift the corresponding amount of accountedManagerRevenue to totalPending.
      */
     function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
-        require(amount <= accountedManagerReward, "Insufficient manager revenue");
+        require(amount <= accountedManagerReward, "Insufficient accounted manager revenue");
 
         uint toMint = _convertIotxToUniIOTX(amount);
         uniIOTX.mint(recipient, toMint);
