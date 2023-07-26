@@ -3,11 +3,12 @@ import pytest
 from configs import *
 from contracts import *
 
-def test_getRedeemedTokenIds(w3, contracts, sequence_length, stake_amounts, users):
+def test_getRedeemedTokenIds(w3, contracts, users):
     uni_iotx, iotx_stake = contracts[1], contracts[3]
 
     # At the beginning, there should be no redeemed token ID, even if 'deposit' has been called.
-    amount = stake_amounts[sequence_length-1]
+    sequence_length = iotx_stake.sequenceLength()
+    amount = iotx_stake.redeemAmountBase()
     deadline = w3.eth.get_block('latest').timestamp+60
     iotx_stake.deposit(amount, deadline, {'from': users[0], 'value': amount, 'allow_revert': True})
     token_ids = iotx_stake.getRedeemedTokenIds(0, 1)
