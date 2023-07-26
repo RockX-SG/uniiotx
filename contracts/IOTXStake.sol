@@ -110,7 +110,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
 
     /**
-     * @notice This function is exclusively designed to receive staking rewards.
+     * @dev This function is exclusively designed to receive staking rewards.
      * The 'deposit' function should be invoked whenever users wish to stake IOTXs.
      * Any IOTXs accidentally sent to this contract will be considered as rewards.
      */
@@ -188,7 +188,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
 
     /**
-     * @dev This function is the IERC721Receiver implement for receiving staking NFT
+     * @dev This function is the 'IERC721Receiver' implement for receiving staking NFT
      */
     function onERC721Received(
         address, // operator
@@ -200,33 +200,34 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev This function returns exchange ratio of uniIOTX to IOTX, multiplied by 1e18
+     * @return The exchange ratio of uniIOTX to IOTX, multiplied by 'MULTIPLIER' (1e18).
+     * @dev The factors that affect the returned result are the same as those of the 'currentReserve' function.
      */
     function exchangeRatio() external view returns (uint ratio) {
         uint uniIOTXAmount = uniIOTX.totalSupply();
         if (uniIOTXAmount == 0) {
             return defaultExchangeRatio * MULTIPLIER;
         }
-
         ratio = currentReserve() * MULTIPLIER / uniIOTXAmount;
     }
 
     /**
-     * @dev This function returns the current reserve of IOTXs, determined by the following contributions:
+     * @return The current reserve of IOTXs in our liquid staking protocol.
+     * @dev The returned amount is determined by the following contributions:
      * 1. User deposits/stakes their principal.
      * 2. Rewards generated from delegation, excluding manager rewards, are added to the reserve.
      * 3. The manager fee is withdrawn and included in the totalPending amount.
      * 4. When users make a 'redeem' call, the totalStaked amount decreases.
-     * @notice The returned amount may vary from the actual value, which will be synchronized once the rewards are updated.
+     * 5. The Oracle service should regularly call the 'updateReward' function to account for new rewards.
      */
     function currentReserve() public view returns(uint) {
         return totalPending + totalStaked + accountedUserReward - compoundedUserReward;
     }
 
     /**
-     * @dev This function returns [i, j) slice of already redeemed/unlocked token id, which is indexed from 0 in this contract.
-     * @notice The valid index values for i and j are determined by this conditional check: i < j && j <= redeemedTokenCount
-     * It recommended to check the value of 'redeemedTokenCount' beforehand to prevent the passed j from going out of range.
+     * @return An [i, j) slice of already redeemed/unlocked token id, which is indexed from 0 in this contract.
+     * @param i, j The valid index values for i and j are determined by this conditional check: i < j && j <= redeemedTokenCount
+     * @dev It recommended to check the value of 'redeemedTokenCount' beforehand to prevent the passed j from going out of range.
      */
     function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory) {
         if (i < j && j <= redeemedTokenCount) {
@@ -242,7 +243,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev This function returns current staked token count of the specified token queue
+     * @return The current staked token count of the specified token queue
      * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength]
      */
     function getStakedTokenCount(uint tokenQueueIndex) external view returns (uint count) {
@@ -273,7 +274,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @notice This function keeps the exchange ratio invariant to avoid user arbitrage.
+     * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
      */
     function deposit(uint minToMint, uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
         require(msg.value > 0, "Invalid deposit amount");
@@ -289,7 +290,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @notice This function keeps the exchange ratio invariant to avoid user arbitrage.
+     * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
      * @param iotxsToRedeem The number of IOTXs to redeem must be a multiple of the accepted amount of redeeming base.
      */
     function redeem(uint iotxsToRedeem, uint maxToBurn, uint deadline) external nonReentrant onlyValidTransaction(deadline) returns(uint burned) {

@@ -84,7 +84,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
 
     /**
-    * @notice This function is exclusively designed to receive staking rewards generated after the 'joinDebt' function is evoked.
+    * @dev This function is exclusively designed to receive staking rewards generated after the 'joinDebt' function is evoked.
      * Any IOTXs inadvertently sent to this contract will be considered as rewards.
      */
     receive() external payable { }
@@ -116,7 +116,7 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
 
     /**
-     * @dev This function is the IERC721Receiver implement for receiving redeemed/unlocked NFT transferred by IOTXStake contract
+     * @dev This function is the 'IERC721Receiver' implement for receiving redeemed/unlocked NFT transferred by IOTXStake contract
          */
     function onERC721Received(
         address, // operator
@@ -128,8 +128,8 @@ contract IOTXClear is Initializable, PausableUpgradeable, AccessControlUpgradeab
     }
 
     /**
-     * @dev This function returns the user's total reward that is available for future claims.
-     * @notice The returned value includes the pending reward that hasn't been accounted yet.
+     * @return The user's total reward that is available for future claims.
+     * @dev The returned value includes the pending reward that hasn't been accounted yet.
      */
     function getReward(address account) external view returns (uint) {
         return userInfos[account].reward + _calcPendingReward(account);
