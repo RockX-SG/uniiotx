@@ -4,6 +4,10 @@ from brownie import *
 
 # Note: The Ganache client must be installed locally prior to executing this script
 # The link to the Ganache client: https://github.com/trufflesuite/ganache
+
+# The command to run this script: `brownie run scripts/deploy/ganache.py`
+
+
 def main():
     # Reset the local environment to the initial state
     chain.reset()

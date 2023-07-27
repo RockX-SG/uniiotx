@@ -6,6 +6,10 @@ from web3 import Web3
 # Please refer to this link to obtain the chainID and endpoint information:
 # https://docs.iotex.io/reference/babel-web3-api
 # Todo: add a tutorial
+
+# The command to run this script: `brownie run scripts/deploy/testnet.py  --network=iotex-testnet`
+
+
 def main():
     # Reference: https://docs.openzeppelin.com/contracts/4.x/api/proxy#TransparentUpgradeableProxy
     deps = project.load(  Path.home() / ".brownie" / "packages" / config["dependencies"][0])
