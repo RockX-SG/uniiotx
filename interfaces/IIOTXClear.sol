@@ -17,8 +17,9 @@
 
 pragma solidity ^0.8.9;
 
-interface IIOTXClear {
-    function onERC721Received(address, address, uint, bytes calldata) external pure returns (bytes4);
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+
+interface IIOTXClear is IERC721Receiver {
     function updateDelegates(uint[] calldata tokenIds, address delegate) external;
     function getReward(address acount) external returns (uint);
     function joinDebt(address claimAddr, uint amount) external;

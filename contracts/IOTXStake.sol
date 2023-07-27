@@ -21,15 +21,15 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "./Roles.sol";
 import "../interfaces/IIOTXClear.sol";
 import "../interfaces/IUniIOTX.sol";
+import "../interfaces/IIOTXStake.sol";
 import "../interfaces/ISystemStake.sol";
 
-contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeable, IERC721Receiver, ReentrancyGuardUpgradeable {
+contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable {
     // ---Use libraries---
     using SafeERC20 for IERC20;
 
@@ -208,7 +208,7 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         if (uniIOTXAmount == 0) {
             return defaultExchangeRatio * MULTIPLIER;
         }
-        ratio = currentReserve() * MULTIPLIER / uniIOTXAmount;
+        ratio = _currentReserve() * MULTIPLIER / uniIOTXAmount;
     }
 
     /**
@@ -220,8 +220,8 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      * 4. When users make a 'redeem' call, the totalStaked amount decreases.
      * 5. The Oracle service should regularly call the 'updateReward' function to account for new rewards.
      */
-    function currentReserve() public view returns(uint) {
-        return totalPending + totalStaked + accountedUserReward - compoundedUserReward;
+    function currentReserve() external view returns(uint) {
+        return _currentReserve();
     }
 
     /**
@@ -476,11 +476,11 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
      */
     function _convertIotxToUniIOTX(uint amountIOTX) internal view returns (uint amountuniIOTX) {
         uint totalSupply = uniIOTX.totalSupply();
-        uint _currentReserve = currentReserve();
+        uint currentReserveAmt = _currentReserve();
         amountuniIOTX = defaultExchangeRatio * amountIOTX;
 
-        if (_currentReserve > 0) { // avert division overflow
-            amountuniIOTX = totalSupply * amountIOTX / _currentReserve;
+        if (currentReserveAmt > 0) { // avert division overflow
+            amountuniIOTX = totalSupply * amountIOTX / currentReserveAmt;
         }
     }
 
@@ -512,6 +512,10 @@ contract IOTXStake is Initializable, PausableUpgradeable, AccessControlUpgradeab
         uint amount = accountedUserReward - compoundedUserReward;
         totalPending += amount;
         compoundedUserReward += amount;
+    }
+
+    function _currentReserve() internal view returns(uint) {
+        return totalPending + totalStaked + accountedUserReward - compoundedUserReward;
     }
 }
 

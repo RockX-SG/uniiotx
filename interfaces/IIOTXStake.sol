@@ -17,10 +17,11 @@
 
 pragma solidity ^0.8.9;
 
-interface IIOTXStake {
-    function onERC721Received(address, address, uint, bytes calldata) external pure returns (bytes4);
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+
+interface IIOTXStake is IERC721Receiver {
     function exchangeRatio() external returns (uint ratio);
-    function currentReserve() external view returns(uint); // Todo: public?
+    function currentReserve() external view returns(uint);
     function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory tokenIds);
     function getStakedTokenCount(uint tokenQueueIndex) external view returns (uint count);
     function setGlobalDelegate(address delegate) external;
