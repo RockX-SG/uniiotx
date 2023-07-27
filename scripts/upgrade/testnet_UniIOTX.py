@@ -1,4 +1,4 @@
-from brownie import IOTXStake, accounts, project, config
+from brownie import UniIOTX, accounts, project, config
 from pathlib import Path
 
 # The configuration of the IoTeX testnet is necessary to run this script.
@@ -20,9 +20,9 @@ def main():
     uni_iotx_proxy_addr = "0x956a03ecEb344eA15A6CbE8949088992fAD88628"
     uni_iotx_proxy = TransparentUpgradeableProxy.at(uni_iotx_proxy_addr)
 
-    uni_iotx_upgraded = IOTXStake.deploy({'from': deployer, 'gas_limit': gas_limit})
+    uni_iotx_upgraded = UniIOTX.deploy({'from': deployer, 'gas_limit': gas_limit})
     uni_iotx_proxy.upgradeTo(uni_iotx_upgraded, {'from': deployer, 'gas_limit': gas_limit})
 
-    print("Upgraded UniIOTX address:", uni_iotx_upgraded)  # https://testnet.iotexscan.io/address/0xD84C1A0B88Bbf7a1Fef054ffE6ef8b3F7A6Ab12c#transactions
+    print("Upgraded UniIOTX address:", uni_iotx_upgraded)  # https://testnet.iotexscan.io/address/0xfBE83d228d0412620CdfD6b529E376200775Eb22#transactions
 
 
