@@ -1,3 +1,4 @@
+import brownie
 import pytest
 
 from configs import *
@@ -5,6 +6,8 @@ from contracts import *
 
 def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     system_staking, uni_iotx, iotx_stake = contracts[0], contracts[1], contracts[3]
+
+    # ---Happy path testing---
 
     # Any deposit amount that is smaller than the 'startAmount' should be acceptable.
     deadline = w3.eth.get_block('latest').timestamp+60
@@ -92,8 +95,9 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     assert iotx_stake.totalPending() == 0
     assert iotx_stake.totalStaked() == stake_amounts[2]*iotx_stake.commonRatio()
     assert iotx_stake.getStakedTokenCount(2) == 10
-    assert uni_iotx.totalSupply() == stake_amounts[2]*iotx_stake.commonRatio()
-    assert uni_iotx.balanceOf(users[0]) == stake_amounts[2]*iotx_stake.commonRatio()
+    user_balance = stake_amounts[2]*iotx_stake.commonRatio()
+    assert uni_iotx.totalSupply() == user_balance
+    assert uni_iotx.balanceOf(users[0]) == user_balance
     assert "Minted" in tx.events
     assert "Staked" in tx.events
     assert len(tx.events["Staked"]) == 2
@@ -104,6 +108,29 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
         assert (amt, dur, delegate) == (stake_amounts[2], iotx_stake.stakeDuration(), iotx_stake.globalDelegate())
         assert system_staking.ownerOf(token_id) == iotx_stake
 
-    # revert
+    # ---Revert path testing---
+
+    # The transaction of the deposit request should arrive within the deadline time.
+    past_timestamp = "1690514039"
+    with brownie .reverts("Transaction expired"):
+        iotx_stake.deposit(start_amt, past_timestamp, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+
+    # Deposits of zero value are not permitted.
+    with brownie .reverts("Invalid deposit amount"):
+        iotx_stake.deposit(0, deadline, {'from': users[0], 'value': 0, 'allow_revert': True})
+
+    # The change in the exchange ratio should be taken into account.
+    # The value transferred here will be considered as a rewards from the delegate.
+    # Regular updates to rewards can impact the exchange ratio's value.
+    amt_reward = 100
+    delegates[0].transfer(iotx_stake, amt_reward)
+    iotx_stake.updateReward({'from': oracle})
+    exchange_ratio1 = iotx_stake.exchangeRatio()
+    assert exchange_ratio1 > 1e18
+    with brownie .reverts("Exchange ratio mismatch"):
+        iotx_stake.deposit(start_amt, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+    min_to_min = start_amt * 1e18 / exchange_ratio1
+    iotx_stake.deposit(min_to_min, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+
 
 
