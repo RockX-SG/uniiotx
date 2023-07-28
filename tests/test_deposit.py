@@ -127,7 +127,7 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
         iotx_stake.deposit(0, deadline, {'from': users[0], 'value': 0, 'allow_revert': True})
 
     # The change in the exchange ratio should be taken into account.
-    # The value transferred here will be considered as a rewards from the delegate.
+    # The value transferred here will be considered as rewards from the delegate.
     # Regular updates to rewards can impact the exchange ratio's value.
     amt_reward = 100
     delegates[0].transfer(iotx_stake, amt_reward)
