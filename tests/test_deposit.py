@@ -139,6 +139,7 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     min_to_min = start_amt * 1e18 / exchange_ratio1
     iotx_stake.deposit(min_to_min, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
 
+    # Todo: Handle nonReentrant
 
 
 
