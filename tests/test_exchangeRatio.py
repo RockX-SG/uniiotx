@@ -37,6 +37,7 @@ def test_exchangeRatio(w3, contracts, users, delegates, oracle, admin):
     current_reserve1 = iotx_stake.currentReserve()
     total_supply1 = uni_iotx.totalSupply()
     exchange_ratio1 = iotx_stake.exchangeRatio()
+    assert exchange_ratio1 > default_exchange_ratio
     assert current_reserve1 == amt*2 + (amt_reward-manager_fee)
     assert total_supply1 == amt * 2
     assert exchange_ratio1 == 1004500000000000000
@@ -46,6 +47,7 @@ def test_exchangeRatio(w3, contracts, users, delegates, oracle, admin):
     current_reserve2 = iotx_stake.currentReserve()
     total_supply2 = uni_iotx.totalSupply()
     exchange_ratio2 = iotx_stake.exchangeRatio()
+    assert exchange_ratio2 > exchange_ratio1
     assert current_reserve2 == amt*2 + amt_reward
     assert total_supply2 == total_supply1 + 1e18 * manager_fee / exchange_ratio1
     assert exchange_ratio2 == 1004547953420960567
@@ -55,6 +57,8 @@ def test_exchangeRatio(w3, contracts, users, delegates, oracle, admin):
     iotx_stake.redeem(amt, amt, deadline, {'from': users[0], 'allow_revert': True})
     current_reserve3 = iotx_stake.currentReserve()
     total_supply3 = uni_iotx.totalSupply()
+    exchange_ratio3 = iotx_stake.exchangeRatio()
+    assert exchange_ratio3 < exchange_ratio2
     assert current_reserve3 == (amt*2+amt_reward) - amt
     assert total_supply3 == total_supply2 - 1e18 * amt / exchange_ratio2
-    assert iotx_stake.exchangeRatio() == 1004475385380407757
+    assert exchange_ratio3 == 1004475385380407757
