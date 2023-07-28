@@ -92,7 +92,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     event Staked(uint firstTokenId, uint amount, address delegate, uint count);
     event Merged(uint[] tokenIds, uint amount);
     event BalanceSynced(uint diff);
-    event RevenueAccounted(uint amount);
+    event RewardAccounted(uint amount);
     event ManagerFeeWithdrawed(uint amount, uint minted, address recipient);
 
     // ---Modifiers---
@@ -311,12 +311,12 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     }
 
     /**
-     * @dev This function handles manager revenue in this way:
+     * @dev This function handles manager reward in this way:
      * 1. Mint uniIOTXs to the given recipient based on the given IOTX amount;
-     * 2. Shift the corresponding amount of accountedManagerRevenue to totalPending.
+     * 2. Shift the corresponding amount of accountedManagerReward to totalPending.
      */
     function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
-        require(amount <= accountedManagerReward, "Insufficient accounted manager revenue");
+        require(amount <= accountedManagerReward, "Insufficient accounted manager reward");
 
         uint toMint = _convertIotxToUniIOTX(amount);
         uniIOTX.mint(recipient, toMint);
@@ -505,7 +505,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         accountedManagerReward += fee;
         accountedUserReward += rewards - fee;
 
-        emit RevenueAccounted(rewards);
+        emit RewardAccounted(rewards);
     }
 
     function _autoCompound() internal {
