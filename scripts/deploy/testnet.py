@@ -85,6 +85,7 @@ def main():
     role_oracle = w3.keccak(text='ROLE_ORACLE')
     oracle_xie = "0x912AD2282799C5d62334017578418471f5aF5353"
     iotx_stake_transparent.grantRole(role_oracle, oracle_xie, {'from': admin})
+    iotx_clear_transparent.grantRole((role_oracle, oracle_xie, {'from': admin}))
 
 
 
