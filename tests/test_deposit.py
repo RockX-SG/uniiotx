@@ -110,10 +110,17 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
 
     # ---Revert path testing---
 
+    # When the contract is on pause, the 'deposit' function will not operate.
+    iotx_stake.pause({'from': admin})
+    with brownie .reverts("Pausable: paused"):
+        iotx_stake.deposit(start_amt, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+    iotx_stake.unpause({'from': admin})
+    iotx_stake.deposit(start_amt, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+
     # The transaction of the deposit request should arrive within the deadline time.
-    past_timestamp = "1690514039"
+    past_deadline = "1690514039"
     with brownie .reverts("Transaction expired"):
-        iotx_stake.deposit(start_amt, past_timestamp, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+        iotx_stake.deposit(start_amt, past_deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
 
     # Deposits of zero value are not permitted.
     with brownie .reverts("Invalid deposit amount"):
@@ -131,6 +138,7 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
         iotx_stake.deposit(start_amt, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
     min_to_min = start_amt * 1e18 / exchange_ratio1
     iotx_stake.deposit(min_to_min, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+
 
 
 
