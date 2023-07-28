@@ -19,6 +19,7 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     assert uni_iotx.balanceOf(users[0]) == small_amt
     assert "Minted" in tx.events
     assert "Staked" not in tx.events
+    assert system_staking.balanceOf(iotx_stake) == 0
 
     # Any deposit request should automatically trigger SystemStaking
     # if it causes the 'totalPending' exceed the 'startAmount'
@@ -34,8 +35,11 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     assert "Minted" in tx.events
     assert "Staked" in tx.events
     assert len(tx.events["Staked"]) == 2
-    amt, dur, _, _, delegate = system_staking.bucketOf(iotx_stake.tokenQueues(0, 0))
+    token_id = iotx_stake.tokenQueues(0, 0)
+    amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
     assert (amt, dur, delegate) == (start_amt, iotx_stake.stakeDuration(), iotx_stake.globalDelegate())
+    assert system_staking.balanceOf(iotx_stake) == 1
+    assert system_staking.ownerOf(token_id) == iotx_stake
 
     # The merge operation at low staking level should be triggered
     # if the amount of staked tokens reaches the 'commonRatio'
@@ -53,8 +57,11 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     assert "Minted" in tx.events
     assert "Staked" in tx.events
     assert len(tx.events["Staked"]) == 2
-    amt, dur, _, _, delegate = system_staking.bucketOf(iotx_stake.tokenQueues(1, 0))
+    assert token_id == iotx_stake.tokenQueues(1, 0)
+    amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
     assert (amt, dur, delegate) == (stake_amounts[1], iotx_stake.stakeDuration(), iotx_stake.globalDelegate())
+    assert system_staking.balanceOf(iotx_stake) == 1
+    assert system_staking.ownerOf(token_id) == iotx_stake
 
     for i in range(0, iotx_stake.commonRatio()-2):
         iotx_stake.deposit(stake_amounts[1], deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
@@ -70,8 +77,11 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     assert "Minted" in tx.events
     assert "Staked" in tx.events
     assert len(tx.events["Staked"]) == 2
-    amt, dur, _, _, delegate = system_staking.bucketOf(iotx_stake.tokenQueues(2, 0))
+    assert token_id == iotx_stake.tokenQueues(2, 0)
+    amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
     assert (amt, dur, delegate) == (stake_amounts[2], iotx_stake.stakeDuration(), iotx_stake.globalDelegate())
+    assert system_staking.balanceOf(iotx_stake) == 1
+    assert system_staking.ownerOf(token_id) == iotx_stake
 
     # There should be no merge operation at the top staking level.
     for i in range(0, iotx_stake.commonRatio()-2):
@@ -87,12 +97,13 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     assert "Minted" in tx.events
     assert "Staked" in tx.events
     assert len(tx.events["Staked"]) == 2
+    assert system_staking.balanceOf(iotx_stake) == 10
     for i in range(0, 10):
-        amt, dur, _, _, delegate = system_staking.bucketOf(iotx_stake.tokenQueues(2, i))
+        token_id = iotx_stake.tokenQueues(2, i)
+        amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
         assert (amt, dur, delegate) == (stake_amounts[2], iotx_stake.stakeDuration(), iotx_stake.globalDelegate())
+        assert system_staking.ownerOf(token_id) == iotx_stake
 
     # revert
-
-
 
 
