@@ -437,7 +437,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "iotxStakeAddress",
+        "name": "iotxStake",
         "type": "address"
       }
     ],

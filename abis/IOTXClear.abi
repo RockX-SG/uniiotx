@@ -42,6 +42,25 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint256[]",
+        "name": "tokenIds",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "delegate",
+        "type": "address"
+      }
+    ],
+    "name": "DelegatesUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "uint8",
         "name": "version",
         "type": "uint8"
@@ -330,17 +349,17 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_systemStakeAddress",
+        "name": "_systemStake",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_iotxStakeAddress",
+        "name": "_iotxStake",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_oracleAddress",
+        "name": "_oracle",
         "type": "address"
       }
     ],
@@ -537,7 +556,7 @@
     "name": "systemStake",
     "outputs": [
       {
-        "internalType": "contract ISystemStake",
+        "internalType": "address",
         "name": "",
         "type": "address"
       }
