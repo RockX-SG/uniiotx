@@ -77,13 +77,8 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
 
     uint public managerFeeShares; // Shares range: [0, 1000]
 
-    // recentlyAccruedReward is the amount of recently accumulated rewards yielded from delegates,
-    // These are added during balance synchronization and reset to zero when rewards are updated.
-    uint public recentlyAccruedReward;
-
     uint public accountedUserReward;           // Accounted shared user reward
     uint public accountedManagerReward;        // Accounted manager's reward
-    uint public compoundedUserReward;          // The accountedUserReward that has been automatically compounded into the totalPending for future stakes.
 
     // ---Events---
     event ManagerFeeSharesSet(uint shares);
@@ -91,8 +86,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     event Redeemed(address user, uint burned, uint[] tokenIds);
     event Staked(uint firstTokenId, uint amount, address delegate, uint count);
     event Merged(uint[] tokenIds, uint amount);
-    event BalanceSynced(uint diff);
-    event RewardAccounted(uint amount);
+    event RewardUpdated(uint amount);
     event ManagerFeeWithdrawed(uint amount, uint minted, address recipient);
 
     // ---Modifiers---
@@ -299,14 +293,14 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
 
     /**
      * @dev This function distributes recently accrued rewards from delegates among users and the manager.
-     * It also automatically compounds the users' port into totalStaking for future stakes.
+     * It also automatically reinvests the users' share into totalStaking for future stakes.
      */
     function updateReward() external onlyRole(ROLE_ORACLE) {
-        if (_syncBalance()) {
-            uint rewards = _calculateRewards();
-            _distributeRewards(rewards);
-            _autoCompound();
-            recentlyAccruedReward = 0;
+        uint reward = _syncReward();
+        if ( reward > 0 ){
+            uint userReward = _splitReward(reward);
+            _compoundReward(userReward);
+            emit RewardUpdated(reward);
         }
     }
 
@@ -484,38 +478,26 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         }
     }
 
-    function _syncBalance() internal returns (bool changed) {
+    function _syncReward() internal returns (uint reward) {
         uint thisBalance = address(this).balance;
-        if (thisBalance > accountedBalance) {
-            uint diff = thisBalance - accountedBalance;
-            accountedBalance = thisBalance;
-            recentlyAccruedReward += diff;
-            changed = true;
-
-            emit BalanceSynced(diff);
-        }
+        uint diff = thisBalance - accountedBalance;
+        accountedBalance = thisBalance;
+        reward = diff;
     }
 
-    function _calculateRewards() internal view returns (uint) {
-        return recentlyAccruedReward;
-    }
-
-    function _distributeRewards(uint rewards) internal {
-        uint fee = rewards * managerFeeShares / 1000;
+    function _splitReward(uint reward) internal returns (uint userReward) {
+        uint fee = reward * managerFeeShares / 1000;
         accountedManagerReward += fee;
-        accountedUserReward += rewards - fee;
-
-        emit RewardAccounted(rewards);
+        userReward = reward - fee;
+        accountedUserReward += userReward;
     }
 
-    function _autoCompound() internal {
-        uint amount = accountedUserReward - compoundedUserReward;
+    function _compoundReward(uint amount) internal {
         totalPending += amount;
-        compoundedUserReward += amount;
     }
 
     function _currentReserve() internal view returns(uint) {
-        return totalPending + totalStaked + accountedUserReward - compoundedUserReward;
+        return totalPending + totalStaked;
     }
 }
 
