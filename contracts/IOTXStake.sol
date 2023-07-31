@@ -198,11 +198,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
      * @dev The factors that affect the returned result are the same as those of the 'currentReserve' function.
      */
     function exchangeRatio() external view returns (uint ratio) {
-        uint uniIOTXAmount = uniIOTX.totalSupply();
-        if (uniIOTXAmount == 0) {
-            return defaultExchangeRatio * MULTIPLIER;
-        }
-        ratio = _currentReserve() * MULTIPLIER / uniIOTXAmount;
+        return _exchangeRatio();
     }
 
     /**
@@ -468,14 +464,20 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
      * aiming to keep the exchange ratio invariant to avoid user arbitrage.
      * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
      */
-    function _convertIotxToUniIOTX(uint amountIOTX) internal view returns (uint amountuniIOTX) {
-        uint totalSupply = uniIOTX.totalSupply();
-        uint currentReserveAmt = _currentReserve();
-        amountuniIOTX = defaultExchangeRatio * amountIOTX;
+    function _convertIotxToUniIOTX(uint amountIOTX) internal view returns (uint uniIOTXAmount) {
+        uniIOTXAmount = amountIOTX *  MULTIPLIER / _exchangeRatio();
+    }
 
-        if (currentReserveAmt > 0) { // avert division overflow
-            amountuniIOTX = totalSupply * amountIOTX / currentReserveAmt;
+    function _exchangeRatio() internal view returns (uint ratio) {
+        uint uniIOTXAmount = uniIOTX.totalSupply();
+        if (uniIOTXAmount == 0) {
+            return defaultExchangeRatio * MULTIPLIER;
         }
+        ratio = _currentReserve() * MULTIPLIER / uniIOTXAmount;
+    }
+
+    function _currentReserve() internal view returns(uint) {
+        return totalPending + totalStaked;
     }
 
     function _syncReward() internal returns (uint reward) {
@@ -494,10 +496,6 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
 
     function _compoundReward(uint amount) internal {
         totalPending += amount;
-    }
-
-    function _currentReserve() internal view returns(uint) {
-        return totalPending + totalStaked;
     }
 }
 
