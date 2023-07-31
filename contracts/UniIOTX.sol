@@ -28,7 +28,7 @@ import "./Roles.sol";
 
 contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, ERC20SnapshotUpgradeable, PausableUpgradeable, AccessControlUpgradeable {
     function initialize(
-        address iotxStakeAddress
+        address iotxStake
     ) public initializer {
         __ERC20_init("Universal IOTX", "uniIOTX");
         __ERC20Burnable_init();
@@ -36,8 +36,8 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
         __Pausable_init();
 
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(ROLE_PAUSE, iotxStakeAddress);
-        _setupRole(ROLE_MINT, iotxStakeAddress);
+        _setupRole(ROLE_PAUSE, iotxStake);
+        _setupRole(ROLE_MINT, iotxStake);
     }
 
     function burn(uint amount) public override onlyRole(ROLE_MINT) {

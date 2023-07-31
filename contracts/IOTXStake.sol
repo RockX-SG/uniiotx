@@ -34,9 +34,9 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     using SafeERC20 for IERC20;
 
     // ---External dependencies---
-    ISystemStake public systemStake;
-    IUniIOTX public uniIOTX;
-    IIOTXClear public iotxClear;
+    address public systemStake;
+    address public uniIOTX;
+    address public iotxClear;
 
     // ---Constants---
     uint public constant defaultExchangeRatio = 1;
@@ -128,10 +128,10 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
      * @dev This function initializes the contract.
      */
     function initialize(
-        address _systemStakeAddress,
+        address _systemStake,
         address _uniIOTX,
         address _iotxClear,
-        address _oracleAddress,
+        address _oracle,
         uint _startAmount,
         uint _commonRatio,
         uint _sequenceLength,
@@ -141,12 +141,12 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(ROLE_FEE_MANAGER, msg.sender);
         _setupRole(ROLE_PAUSE, msg.sender);
-        _setupRole(ROLE_ORACLE, _oracleAddress);
+        _setupRole(ROLE_ORACLE, _oracle);
 
         // Collaborative contracts
-        systemStake = ISystemStake(_systemStakeAddress);
-        uniIOTX = IUniIOTX(_uniIOTX);
-        iotxClear = IIOTXClear(_iotxClear);
+        systemStake = _systemStake;
+        uniIOTX = _uniIOTX;
+        iotxClear = _iotxClear;
 
         // Immutable staking variables
         startAmount = _startAmount;
@@ -158,7 +158,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         // Validate bucket type info
         for (uint level = 0; level < _sequenceLength; level++) {
             uint amount = _startAmount * (_commonRatio**level);
-            bool isActive = systemStake.isActiveBucketType(amount, _stakeDuration);
+            bool isActive = ISystemStake(systemStake).isActiveBucketType(amount, _stakeDuration);
             require(isActive, "inactive bucket type");
         }
     }
@@ -260,7 +260,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     }
 
     function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
-        systemStake.changeDelegates(tokenIds, delegate);
+        ISystemStake(systemStake).changeDelegates(tokenIds, delegate);
     }
 
     /**
@@ -309,7 +309,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         require(amount <= accountedManagerReward, "Insufficient accounted manager reward");
 
         uint toMint = _convertIotxToUniIOTX(amount);
-        uniIOTX.mint(recipient, toMint);
+        IUniIOTX(uniIOTX).mint(recipient, toMint);
 
         accountedManagerReward -= amount;
         totalPending += amount;
@@ -330,7 +330,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
 
         uint toMint = _convertIotxToUniIOTX(msg.value);
         require(toMint >= minToMint, "Exchange ratio mismatch");
-        uniIOTX.mint(msg.sender, toMint);
+        IUniIOTX(uniIOTX).mint(msg.sender, toMint);
         minted = toMint;
 
         totalPending += msg.value;
@@ -383,7 +383,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         uint totalAmount = amount * count;
 
         // Call system stake service
-        uint firstTokenId = systemStake.stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
+        uint firstTokenId = ISystemStake(systemStake).stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
 
         // Record minted & staked tokens
         uint[] storage tq = tokenQueues[level];
@@ -413,7 +413,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
             // Call system merge service
             // All tokens will be merged into the first token in tokenIdsToMerge
             // Reference: https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol#L302
-            systemStake.merge(tq, stakeDuration);
+            ISystemStake(systemStake).merge(tq, stakeDuration);
 
             // Move the merged tokens to upper queue
             uint[] storage tqUpper = tokenQueues[i+1];
@@ -432,7 +432,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         uint toBurn = _convertIotxToUniIOTX(iotxsToRedeem);
         require(toBurn <= maxToBurn, "Exchange ratio mismatch");
         IERC20(uniIOTX).safeTransferFrom(msg.sender, address(this), toBurn);
-        uniIOTX.burn(toBurn);
+        IUniIOTX(uniIOTX).burn(toBurn);
         burned = toBurn;
         totalStaked -= iotxsToRedeem;
 
@@ -446,15 +446,15 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         }
 
         // Call system unlock service
-        systemStake.unlock(tokenIdsToUnlock);
+        ISystemStake(systemStake).unlock(tokenIdsToUnlock);
 
         // Transfer unlocked tokens to IOTXClear contract
         for (uint i = 0; i < count; i++) {
-            systemStake.safeTransferFrom(address(this), address(iotxClear), tokenIdsToUnlock[i]);
+            ISystemStake(systemStake).safeTransferFrom(address(this), address(iotxClear), tokenIdsToUnlock[i]);
         }
 
         // Record corresponding amount of debt with IOTXClear contract
-        iotxClear.joinDebt(msg.sender, iotxsToRedeem);
+        IIOTXClear(iotxClear).joinDebt(msg.sender, iotxsToRedeem);
 
         emit Redeemed(msg.sender, burned, tokenIdsToUnlock);
     }
@@ -465,7 +465,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
      * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
      */
     function _convertIotxToUniIOTX(uint amountIOTX) internal view returns (uint uniIOTXAmount) {
-        uint totalSupply = uniIOTX.totalSupply();
+        uint totalSupply = IUniIOTX(uniIOTX).totalSupply();
         uint currentReserveAmt = _currentReserve();
         uniIOTXAmount = defaultExchangeRatio * amountIOTX;
 
@@ -475,7 +475,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     }
 
     function _exchangeRatio() internal view returns (uint ratio) {
-        uint uniIOTXAmount = uniIOTX.totalSupply();
+        uint uniIOTXAmount = IUniIOTX(uniIOTX).totalSupply();
         if (uniIOTXAmount == 0) {
             return defaultExchangeRatio * MULTIPLIER;
         }

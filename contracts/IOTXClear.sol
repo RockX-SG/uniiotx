@@ -32,7 +32,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     using Address for address payable;
 
     // ---External dependencies---
-    ISystemStake public systemStake;
+    address public systemStake;
 
     // ---Constants---
     uint public constant MULTIPLIER = 1e18;
@@ -93,18 +93,18 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * @dev This function initializes the contract
      */
     function initialize(
-        address _systemStakeAddress,
-        address _iotxStakeAddress,
-        address _oracleAddress
+        address _systemStake,
+        address _iotxStake,
+        address _oracle
     ) public initializer  {
         __Pausable_init();
         __ReentrancyGuard_init();
 
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(ROLE_STAKE, _iotxStakeAddress);
-        _setupRole(ROLE_ORACLE, _oracleAddress);
+        _setupRole(ROLE_STAKE, _iotxStake);
+        _setupRole(ROLE_ORACLE, _oracle);
 
-        systemStake = ISystemStake(_systemStakeAddress);
+        systemStake = _systemStake;
     }
 
     /**
@@ -156,11 +156,11 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
-        systemStake.changeDelegates(tokenIds, delegate);
+        ISystemStake(systemStake).changeDelegates(tokenIds, delegate);
     }
 
     function unstake(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
-        if (tokenIds.length > 0) systemStake.unstake(tokenIds);
+        if (tokenIds.length > 0) ISystemStake(systemStake).unstake(tokenIds);
     }
 
     function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
@@ -171,7 +171,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
             // Validate NFT amount against the debt
             uint tokenId = tokenIds[i];
-            (uint amount, , , ,) = systemStake.bucketOf(tokenId);
+            (uint amount, , , ,) = ISystemStake(systemStake).bucketOf(tokenId);
             require(amount == nextDebt.amount, "Debt amount mismatch");
 
             // Update current user reward
@@ -220,7 +220,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
     function _payDebt(address account, uint amount, uint tokenId) internal {
         // Withdraw NFT to user account
-        systemStake.withdraw(tokenId, payable(account));
+        ISystemStake(systemStake).withdraw(tokenId, payable(account));
 
         // Update debt states
         userInfos[account].debt -= amount;
