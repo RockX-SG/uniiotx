@@ -39,7 +39,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     address public iotxClear;
 
     // ---Constants---
-    uint public constant defaultExchangeRatio = 1;
+    uint public constant DEFAULT_EXCHANGE_RATIO = 1;
     uint public constant MULTIPLIER = 1e18;
 
     // ---State variables---
@@ -467,7 +467,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     function _convertIotxToUniIOTX(uint amountIOTX) internal view returns (uint uniIOTXAmount) {
         uint totalSupply = IUniIOTX(uniIOTX).totalSupply();
         uint currentReserveAmt = _currentReserve();
-        uniIOTXAmount = defaultExchangeRatio * amountIOTX;
+        uniIOTXAmount = DEFAULT_EXCHANGE_RATIO * amountIOTX;
 
         if (currentReserveAmt > 0) { // avert division overflow
             uniIOTXAmount = totalSupply * amountIOTX / currentReserveAmt;
@@ -477,7 +477,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     function _exchangeRatio() internal view returns (uint ratio) {
         uint uniIOTXAmount = IUniIOTX(uniIOTX).totalSupply();
         if (uniIOTXAmount == 0) {
-            return defaultExchangeRatio * MULTIPLIER;
+            return DEFAULT_EXCHANGE_RATIO * MULTIPLIER;
         }
         ratio = _currentReserve() * MULTIPLIER / uniIOTXAmount;
     }

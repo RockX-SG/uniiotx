@@ -27,7 +27,7 @@ def test_init_status(roles, owner, admin, delegates, oracle, start_amount, commo
 
     assert iotx_clear.MULTIPLIER() == 1000000000000000000
 
-    assert iotx_stake.defaultExchangeRatio() == 1
+    assert iotx_stake.DEFAULT_EXCHANGE_RATIO() == 1
     assert iotx_stake.MULTIPLIER() == 1000000000000000000
     assert iotx_stake.globalDelegate() == delegates[0].address
     assert iotx_stake.startAmount() == start_amount
