@@ -465,7 +465,13 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
      * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
      */
     function _convertIotxToUniIOTX(uint amountIOTX) internal view returns (uint uniIOTXAmount) {
-        uniIOTXAmount = amountIOTX *  MULTIPLIER / _exchangeRatio();
+        uint totalSupply = uniIOTX.totalSupply();
+        uint currentReserveAmt = _currentReserve();
+        uniIOTXAmount = defaultExchangeRatio * amountIOTX;
+
+        if (currentReserveAmt > 0) { // avert division overflow
+            uniIOTXAmount = totalSupply * amountIOTX / currentReserveAmt;
+        }
     }
 
     function _exchangeRatio() internal view returns (uint ratio) {
