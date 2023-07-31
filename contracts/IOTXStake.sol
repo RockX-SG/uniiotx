@@ -88,6 +88,8 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     event RewardUpdated(uint amount);
     event ManagerFeeSharesSet(uint shares);
     event ManagerFeeWithdrawed(uint amount, uint minted, address recipient);
+    event GlobalDelegateSet(address delegate);
+    event DelegatesUpdated(uint[] tokenIds, address delegate);
 
     // ---Modifiers---
     modifier onlyValidTransaction(uint deadline) {
@@ -257,10 +259,14 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
 
     function setGlobalDelegate(address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
         globalDelegate = delegate;
+
+        emit GlobalDelegateSet(delegate);
     }
 
     function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
         ISystemStake(systemStake).changeDelegates(tokenIds, delegate);
+
+        emit DelegatesUpdated(tokenIds, delegate);
     }
 
     /**

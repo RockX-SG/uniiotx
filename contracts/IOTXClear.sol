@@ -74,6 +74,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     event DebtAdded(address account, uint amount);
     event DebtPaid(address account, uint amount);
     event RewardClaimed(address claimer, address recipient, uint amount);
+    event DelegatesUpdated(uint[] tokenIds, address delegate);
 
     /**
      * ======================================================================================
@@ -157,6 +158,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
     function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
         ISystemStake(systemStake).changeDelegates(tokenIds, delegate);
+
+        emit DelegatesUpdated(tokenIds, delegate);
     }
 
     function unstake(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
