@@ -86,6 +86,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     event Staked(uint firstTokenId, uint amount, address delegate, uint count);
     event Merged(uint[] tokenIds, uint amount);
     event RewardUpdated(uint amount);
+    event ManagerFeeSharesSet(uint shares);
     event ManagerFeeWithdrawed(uint amount, uint minted, address recipient);
 
     // ---Modifiers---
@@ -168,6 +169,8 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     function setManagerFeeShares(uint shares) external onlyRole(ROLE_FEE_MANAGER)  {
         require(shares <= 1000, "Manager fee shares out of range");
         managerFeeShares = shares;
+
+        emit ManagerFeeSharesSet(shares);
     }
 
     /**
