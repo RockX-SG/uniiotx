@@ -91,6 +91,20 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     receive() external payable { }
 
     /**
+    * @dev This function pauses the contract
+     */
+    function pause() public onlyRole(ROLE_PAUSE) {
+        _pause();
+    }
+
+    /**
+     * @dev This function unpauses the contract
+     */
+    function unpause() public onlyRole(ROLE_PAUSE) {
+        _unpause();
+    }
+
+    /**
      * @dev This function initializes the contract
      */
     function initialize(
@@ -102,6 +116,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         __ReentrancyGuard_init();
 
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(ROLE_PAUSE, msg.sender);
         _setupRole(ROLE_STAKE, _iotxStake);
         _setupRole(ROLE_ORACLE, _oracle);
 
