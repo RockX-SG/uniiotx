@@ -65,7 +65,6 @@ def main():
     print("Deployed IOTXStake address:", iotx_stake_transparent)  # https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions
 
     uni_iotx_transparent.initialize(iotx_stake_transparent, {'from': admin})
-    iotx_clear_transparent.initialize(system_staking, iotx_stake_transparent, oracle, {'from': admin})
     iotx_stake_transparent.initialize(
         system_staking,
         uni_iotx_transparent,
@@ -77,6 +76,8 @@ def main():
         stake_duration,
         {'from': admin}
     )
+    iotx_clear_transparent.initialize(system_staking, iotx_stake_transparent, oracle, {'from': admin})
+
     iotx_stake_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
     iotx_stake_transparent.setGlobalDelegate(delegate, {'from': oracle})
 

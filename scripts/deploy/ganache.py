@@ -65,7 +65,6 @@ def main():
     system_staking.addBucketType(stake_amount2, stake_duration, {'from': system_staking_owner})
 
     uni_iotx_transparent.initialize(iotx_stake_transparent, {'from': admin})
-    iotx_clear_transparent.initialize(system_staking, iotx_stake_transparent, oracle, {'from': admin})
     iotx_stake_transparent.initialize(
         system_staking,
         uni_iotx_transparent,
@@ -77,6 +76,8 @@ def main():
         stake_duration,
         {'from': admin}
     )
+    iotx_clear_transparent.initialize(system_staking, iotx_stake_transparent, oracle, {'from': admin})
+
     iotx_stake_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
     iotx_stake_transparent.setGlobalDelegate(delegate, {'from': oracle})
 
