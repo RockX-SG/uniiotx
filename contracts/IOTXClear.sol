@@ -25,6 +25,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 
 import "./Roles.sol";
 import "../interfaces/IIOTXClear.sol";
+import "../interfaces/IIOTXStake.sol";
 import "../interfaces/ISystemStake.sol";
 
 contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable {
@@ -57,6 +58,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     uint public rewardRate;    // Accumulated reward rate calculated against totalDebts, multiplied by MULTIPLIER
 
 
+    uint public debtAmountBase;
+
     // Simulating a First-In-First-Out (FIFO) queue of debts
     // Index for adding new debt: rearIndex + 1
     // Index for the next debt payment: headIndex + 1
@@ -75,6 +78,20 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     event DebtPaid(address account, uint amount);
     event RewardClaimed(address claimer, address recipient, uint amount);
     event DelegatesUpdated(uint[] tokenIds, address delegate);
+
+    // ---Modifiers---
+    modifier onlyDebtAmount(uint amount) {
+        require(amount > 0 && amount % debtAmountBase == 0, "Invalid debt amount");
+        _;
+    }
+
+    modifier onlyDebtToken(uint[] calldata tokenIds) {
+        for (uint i; i < tokenIds.length; i++) {
+            (uint tokenAmt, , , ,) = ISystemStake(systemStake).bucketOf(tokenIds[i]);
+            require(tokenAmt == debtAmountBase, "Invalid token amount");
+        }
+        _;
+    }
 
     /**
      * ======================================================================================
@@ -121,6 +138,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         _setupRole(ROLE_ORACLE, _oracle);
 
         systemStake = _systemStake;
+
+        debtAmountBase = IIOTXStake(_iotxStake).redeemAmountBase();
     }
 
     /**
@@ -163,7 +182,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * @dev The contract 'IOTXStake' calls this function upon the user's redeeming request.
      * This function queues the redeemed amount as debt, which can be paid by withdrawal in FIFO order.
      */
-    function joinDebt(address account, uint amount) external whenNotPaused onlyRole(ROLE_STAKE) {
+    function joinDebt(address account, uint amount) external whenNotPaused onlyDebtAmount(amount) onlyRole(ROLE_STAKE) {
         // Update current user reward
         _updateUserReward(account);
 
@@ -177,26 +196,30 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         emit DelegatesUpdated(tokenIds, delegate);
     }
 
-    function unstake(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
+    function unstake(uint[] calldata tokenIds) external whenNotPaused onlyDebtToken(tokenIds) onlyRole(ROLE_ORACLE) {
         if (tokenIds.length > 0) ISystemStake(systemStake).unstake(tokenIds);
     }
 
-    function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyRole(ROLE_ORACLE) {
-        for (uint i = 0; i < tokenIds.length; i++) {
+    function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyDebtToken(tokenIds) onlyRole(ROLE_ORACLE) {
+        uint totalTokenCntToPay = tokenIds.length;
+        uint paidTokenCnt;
+        for (; paidTokenCnt < totalTokenCntToPay;) {
             // Pop a debt in FIFO order
-            Debt storage nextDebt = iotxDebts[headIndex+1];
+            Debt memory nextDebt = iotxDebts[headIndex+1];
             address account = nextDebt.account;
-
-            // Validate NFT amount against the debt
-            uint tokenId = tokenIds[i];
-            (uint amount, , , ,) = ISystemStake(systemStake).bucketOf(tokenId);
-            require(amount == nextDebt.amount, "Debt amount mismatch");
 
             // Update current user reward
             _updateUserReward(account);
 
-            // Settle the user's debt
-            _payDebt(account, amount, tokenId);
+            // Determine token count to pay
+            uint tokenCntToPay;
+            uint remainedTokenCntToPay = totalTokenCntToPay - paidTokenCnt;
+            uint leastTokenCntToPay = nextDebt.amount / debtAmountBase;
+            tokenCntToPay = (leastTokenCntToPay > remainedTokenCntToPay) ? remainedTokenCntToPay:leastTokenCntToPay;
+
+            // Pay the user's debt
+            _payDebt(account, debtAmountBase * tokenCntToPay, tokenIds[paidTokenCnt:(paidTokenCnt+tokenCntToPay)]);
+            paidTokenCnt += tokenCntToPay;
         }
     }
 
@@ -236,15 +259,20 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         emit DebtAdded(account, amount);
     }
 
-    function _payDebt(address account, uint amount, uint tokenId) internal {
+    function _payDebt(address account, uint amount, uint[] calldata tokenIds) internal {
         // Withdraw NFT to user account
-        ISystemStake(systemStake).withdraw(tokenId, payable(account));
+        ISystemStake(systemStake).withdraw(tokenIds, payable(account));
 
         // Update debt states
-        userInfos[account].debt -= amount;
+        UserInfo storage userInfo = userInfos[account];
+        userInfo.debt -= amount;
         totalDebts -= amount;
-        delete iotxDebts[headIndex+1];
-        headIndex += 1;
+
+        // Remove debt entry if has been fully paid
+        if (userInfo.debt == 0) {
+            delete iotxDebts[headIndex+1];
+            headIndex += 1;
+        }
 
         emit DebtPaid(account, amount);
     }
