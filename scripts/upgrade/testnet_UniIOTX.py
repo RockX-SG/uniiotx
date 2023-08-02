@@ -14,15 +14,23 @@ def main():
     deps = project.load(Path.home() / ".brownie" / "packages" / config["dependencies"][0])
     TransparentUpgradeableProxy = deps.TransparentUpgradeableProxy
 
+    # IOTXStake contract address
+    # https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions
+    iotx_stake_transparent = "0xa479659F378d54168CD7859f5025133382EdB3C5"
+
+    # Load accounts
     deployer = accounts.load("IoTeXDeployer")
+    admin = accounts.load("IoTeXAdmin")
+
     gas_limit = '6721975'
 
     uni_iotx_proxy_addr = "0x956a03ecEb344eA15A6CbE8949088992fAD88628"
     uni_iotx_proxy = TransparentUpgradeableProxy.at(uni_iotx_proxy_addr)
 
     uni_iotx_upgraded = UniIOTX.deploy({'from': deployer, 'gas_limit': gas_limit})
+    uni_iotx_upgraded.initialize(iotx_stake_transparent, {'from': admin, 'gas_limit': gas_limit})
     uni_iotx_proxy.upgradeTo(uni_iotx_upgraded, {'from': deployer, 'gas_limit': gas_limit})
 
-    print("Upgraded UniIOTX address:", uni_iotx_upgraded)  # https://testnet.iotexscan.io/address/0x62fFc103523d68E84Cac49585bAb06dc21499421#transactions
+    print("Upgraded UniIOTX address:", uni_iotx_upgraded)  # https://testnet.iotexscan.io/address/0xEa9D88eBb1dBF8A0b41a531e95aa39779d82A9bf#transactions
 
 
