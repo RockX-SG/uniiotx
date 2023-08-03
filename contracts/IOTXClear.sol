@@ -74,8 +74,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     mapping(address => UserInfo) public userInfos; // account -> info
 
     // ---Events---
-    event DebtAdded(address account, uint amount);
-    event DebtPaid(address account, uint amount);
+    event DebtAdded(address account, uint amount, uint debtIndex);
+    event DebtPaid(address account, uint amount, uint debtIndex);
     event RewardClaimed(address claimer, address recipient, uint amount);
     event DelegatesUpdated(uint[] tokenIds, address delegate);
 
@@ -202,23 +202,30 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
     function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyDebtToken(tokenIds) onlyRole(ROLE_ORACLE) {
         uint totalTokenCntToPay = tokenIds.length;
+        require(totalTokenCntToPay > 0 && totalDebts >= totalTokenCntToPay*debtAmountBase, "Invalid total principal for debt payment");
         uint paidTokenCnt;
         for (; paidTokenCnt < totalTokenCntToPay;) {
-            // Pop a debt in FIFO order
-            Debt memory nextDebt = iotxDebts[headIndex+1];
+            // Pop next debt in FIFO order
+            uint nextDebtIndex = headIndex+1;
+            Debt memory nextDebt = iotxDebts[nextDebtIndex];
             address account = nextDebt.account;
 
             // Update current user reward
             _updateUserReward(account);
 
-            // Determine token count to pay
-            uint tokenCntToPay;
+            // Determine token IDs
             uint remainedTokenCntToPay = totalTokenCntToPay - paidTokenCnt;
-            uint leastTokenCntToPay = nextDebt.amount / debtAmountBase;
-            tokenCntToPay = (leastTokenCntToPay > remainedTokenCntToPay) ? remainedTokenCntToPay:leastTokenCntToPay;
+            uint maxTokenCntToPay = nextDebt.amount / debtAmountBase;
+            uint tokenCntToPay = (maxTokenCntToPay > remainedTokenCntToPay) ? remainedTokenCntToPay: maxTokenCntToPay;
+            uint amountToPay = debtAmountBase * tokenCntToPay;
+
+            uint[] memory tokenIdsToPay = new uint[](tokenCntToPay);
+            for (uint i = 0; i < tokenCntToPay; i++) {
+                tokenIdsToPay[i] = tokenIds[paidTokenCnt+i];
+            }
 
             // Pay the user's debt
-            _payDebt(account, debtAmountBase * tokenCntToPay, tokenIds[paidTokenCnt:(paidTokenCnt+tokenCntToPay)]);
+            _payDebt(nextDebtIndex, amountToPay, tokenIdsToPay);
             paidTokenCnt += tokenCntToPay;
         }
     }
@@ -256,25 +263,29 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         userInfos[account].debt += amount;
         totalDebts += amount;
 
-        emit DebtAdded(account, amount);
+        emit DebtAdded(account, amount, rearIndex);
     }
 
-    function _payDebt(address account, uint amount, uint[] calldata tokenIds) internal {
+    function _payDebt(uint nextDebtIndex, uint amountToPay, uint[] memory tokenIds) internal {
+        // Retrieve next debt
+        Debt storage nextDebt = iotxDebts[nextDebtIndex];
+        address account = nextDebt.account;
+
         // Withdraw NFT to user account
         ISystemStake(systemStake).withdraw(tokenIds, payable(account));
 
         // Update debt states
-        UserInfo storage userInfo = userInfos[account];
-        userInfo.debt -= amount;
-        totalDebts -= amount;
+        nextDebt.amount -= amountToPay;
+        userInfos[account].debt -= amountToPay;
+        totalDebts -= amountToPay;
 
-        // Remove debt entry if has been fully paid
-        if (userInfo.debt == 0) {
-            delete iotxDebts[headIndex+1];
+        // Remove debt entry if it has been fully paid
+        if (nextDebt.amount == 0) {
+            delete iotxDebts[nextDebtIndex];
             headIndex += 1;
         }
 
-        emit DebtPaid(account, amount);
+        emit DebtPaid(account, amountToPay, nextDebtIndex);
     }
 
     /**
