@@ -98,3 +98,5 @@ def test_joinDebt(contracts, users, delegates, admin):
     # Only the role of stake has call permission.
     with brownie .reverts():
         iotx_clear.joinDebt(account, amount, {"from": admin})
+
+    # Todo: onlyDebtAmount
