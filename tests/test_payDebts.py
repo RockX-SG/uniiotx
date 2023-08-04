@@ -31,6 +31,7 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
     tx = iotx_clear.payDebts(token_ids, {'from': oracle, 'allow_revert': True})
     user_info = iotx_clear.userInfos(users[0])
     debt = iotx_clear.iotxDebts(1)
+    assert "Withdrawal" in tx.events
     assert "DebtPaid" in tx.events
     assert users[0].balance() == balance_user01
     assert iotx_clear.headIndex() == 1
