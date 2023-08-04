@@ -37,6 +37,7 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
     assert iotx_clear.rearIndex() - iotx_clear.headIndex() == 0
     assert iotx_clear.totalDebts() == 0
     assert iotx_clear.accountedBalance() == reward_incr1 + amt_total
+    assert iotx_clear.balance() == iotx_clear.accountedBalance()
     assert user_info[0] == 0
     assert user_info[1] == amt_total
     assert user_info[2] == reward_user01
