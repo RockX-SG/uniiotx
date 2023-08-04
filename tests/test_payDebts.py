@@ -4,7 +4,7 @@ import pytest
 from configs import *
 from contracts import *
 
-def test_payDebts(w3, contracts, users, delegates, oracle, admin):
+def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts):
     system_staking, uni_iotx, iotx_clear, iotx_stake = contracts[0], contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
@@ -47,29 +47,21 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin):
 
     # ---Revert path testing---
 
-    # # When the contract is on pause, the 'updateDelegates' function will not operate.
-    # iotx_stake.pause({'from': admin})
-    # with brownie .reverts("Pausable: paused"):
-    #     iotx_stake.updateDelegates([token_id], delegates[1], {'from': oracle})
-    # iotx_stake.unpause({'from': admin})
-    #
-    # iotx_clear.pause({'from': admin})
-    # with brownie .reverts("Pausable: paused"):
-    #     iotx_clear.updateDelegates(token_ids, delegates[0], {'from': oracle})
-    # iotx_clear.unpause({'from': admin})
-    #
-    # # Only the role of oracle has call permission.
-    # with brownie .reverts():
-    #     iotx_stake.updateDelegates([token_id], delegates[1], {'from': admin})
-    #
-    # with brownie .reverts():
-    #     iotx_clear.updateDelegates([token_id], delegates[1], {'from': admin})
-    #
-    # # Unable to switch to the same delegate
-    # with brownie .reverts():
-    #     iotx_stake.updateDelegates([token_id], delegates[0], {'from': admin})
-    #
-    # with brownie .reverts():
-    #     iotx_clear.updateDelegates([token_id], delegates[0], {'from': admin})
+    # When the contract is on pause, the 'payDebts' function will not operate.
+    iotx_clear.pause({'from': admin})
+    with brownie .reverts("Pausable: paused"):
+        iotx_clear.payDebts(token_ids, {'from': oracle, 'allow_revert': True})
+    iotx_clear.unpause({'from': admin})
 
+    # Only the role of oracle has call permission.
+    with brownie .reverts():
+        iotx_clear.payDebts(token_ids, {'from': users[0], 'allow_revert': True})
 
+    # Only accept debt tokens whose value is equal to the 'debtAmountBase' value
+    iotx_stake.deposit(stake_amounts[0], deadline, {'from': users[0], 'value': stake_amounts[0], 'allow_revert': True})
+    with brownie .reverts("Invalid token amount"):
+        iotx_clear.payDebts([iotx_stake.tokenQueues(0, 0)], {'from': oracle, 'allow_revert': True})
+
+    iotx_stake.deposit(stake_amounts[1], deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
+    with brownie .reverts("Invalid token amount"):
+        iotx_clear.payDebts([iotx_stake.tokenQueues(1, 0)], {'from': oracle, 'allow_revert': True})
