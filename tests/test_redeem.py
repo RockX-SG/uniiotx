@@ -16,12 +16,12 @@ def test_redeem(w3, contracts, users, delegates, oracle):
     deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_stake.redeemAmountBase()
     for i in range(0, 2):
-        iotx_stake.deposit(amt, deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
+        iotx_stake.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     # The value transferred here will be considered as rewards from the delegate.
     amt_reward = 100
     delegates[0].transfer(iotx_stake, amt_reward)
     uni_iotx.approve(iotx_stake, amt, {'from': users[0], 'allow_revert': True})
-    tx = iotx_stake.redeem(amt, amt, deadline, {'from': users[0], 'allow_revert': True})
+    tx = iotx_stake.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
     token_id = iotx_stake.tokenQueues(2, 0)
     unlocked_amt, _, unlocked_at, _, _ = system_staking.bucketOf(token_id)
     debt = iotx_clear.iotxDebts(1)
@@ -52,7 +52,7 @@ def test_redeem(w3, contracts, users, delegates, oracle):
     assert exchange_ratio1 > 1e18
     max_to_burn = amt * 1e18 / exchange_ratio1
     uni_iotx.approve(iotx_stake, amt, {'from': users[0], 'allow_revert': True})
-    tx = iotx_stake.redeem(amt, max_to_burn, deadline, {'from': users[0], 'allow_revert': True})
+    tx = iotx_stake.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
     exchange_ratio2 = iotx_stake.exchangeRatio()
     assert exchange_ratio2 < exchange_ratio1
     token_id = iotx_stake.tokenQueues(2, 1)
@@ -83,22 +83,13 @@ def test_redeem(w3, contracts, users, delegates, oracle):
     # The transaction of the redeem request should arrive within the deadline time.
     past_deadline = "1690514039"
     with brownie .reverts("Transaction expired"):
-        iotx_stake.redeem(amt, max_to_burn, past_deadline, {'from': users[0], 'allow_revert': True})
-
-    # The change in the exchange ratio should be taken into account.
-    uni_iotx.approve(iotx_stake, amt, {'from': users[0], 'allow_revert': True})
-    with brownie .reverts("Exchange ratio mismatch"):
-        iotx_stake.redeem(amt, max_to_burn, deadline, {'from': users[0], 'allow_revert': True})
-
-    # Users should maintain a sufficient balance in their accounts.
-    max_to_burn = amt * 1e18 / exchange_ratio2
-    with brownie .reverts("ERC20: transfer amount exceeds balance"):
-        iotx_stake.redeem(amt, max_to_burn, deadline, {'from': users[0], 'allow_revert': True})
+        iotx_stake.redeem(amt, past_deadline, {'from': users[0], 'allow_revert': True})
 
     # Users can can only redeem amounts that are multiples of the redeemAmountBase.
     with brownie .reverts("Invalid redeem amount"):
-        iotx_stake.redeem(amt-10, max_to_burn, deadline, {'from': users[0], 'allow_revert': True})
+        iotx_stake.redeem(amt-10, deadline, {'from': users[0], 'allow_revert': True})
     with brownie .reverts("Invalid redeem amount"):
-        iotx_stake.redeem(amt+10, max_to_burn, deadline, {'from': users[0], 'allow_revert': True})
+        iotx_stake.redeem(amt+10, deadline, {'from': users[0], 'allow_revert': True})
 
     # Todo: Handle nonReentrant
+    # Todo: Handle "ERC20: insufficient allowance"

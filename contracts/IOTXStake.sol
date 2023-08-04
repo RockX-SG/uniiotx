@@ -289,8 +289,8 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
      * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
      * @param iotxsToRedeem The number of IOTXs to redeem must be a multiple of the accepted amount of redeeming base.
      */
-    function redeem(uint iotxsToRedeem, uint maxToBurn, uint deadline) external nonReentrant onlyValidTransaction(deadline) returns(uint burned) {
-        burned = _redeem(iotxsToRedeem, maxToBurn);
+    function redeem(uint iotxsToRedeem, uint deadline) external nonReentrant onlyValidTransaction(deadline) returns(uint burned) {
+        burned = _redeem(iotxsToRedeem);
     }
 
     /**
@@ -429,13 +429,12 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         }
     }
 
-    function _redeem(uint iotxsToRedeem, uint maxToBurn) internal returns(uint burned) {
+    function _redeem(uint iotxsToRedeem) internal returns(uint burned) {
         // Check redeem condition
         require(iotxsToRedeem >= redeemAmountBase && iotxsToRedeem % redeemAmountBase == 0, "Invalid redeem amount");
 
         // Burn uniIOTXs
         uint toBurn = _convertIotxToUniIOTX(iotxsToRedeem);
-        require(toBurn <= maxToBurn, "Exchange ratio mismatch");
         IERC20(uniIOTX).safeTransferFrom(msg.sender, address(this), toBurn);
         IUniIOTX(uniIOTX).burn(toBurn);
         burned = toBurn;
