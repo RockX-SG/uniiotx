@@ -12,7 +12,6 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
     # The user's reward should be updated prior to debt payment.
     # Following the debt payment, both the 'accountedBalance' and the user's principal record should be adjusted.
     # The withdrawal of NFT during debt payment should not compromise the accuracy of reward recording.
-    # The value transferred here will be considered as rewards from the delegate.
     deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_stake.redeemAmountBase()
     cnt = 10
@@ -22,11 +21,11 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
     uni_iotx.approve(iotx_stake, amt_total, {'from': users[0], 'allow_revert': True})
     iotx_stake.redeem(amt_total, amt_total, deadline, {'from': users[0], 'allow_revert': True})
     token_ids = iotx_stake.getRedeemedTokenIds(0, cnt)
-    reward_incr1 = 1000
-    delegates[0].transfer(iotx_clear, reward_incr1)
+    mock_reward_incr1 = 1000
+    delegates[0].transfer(iotx_clear, mock_reward_incr1)
     iotx_clear.unstake(token_ids, {'from': oracle, 'allow_revert': True})
     balance_user01 = users[0].balance()
-    reward_rate1 = reward_incr1 * 1e18 / amt_total
+    reward_rate1 = mock_reward_incr1 * 1e18 / amt_total
     reward_user01 = (reward_rate1 - 0) * amt_total / 1e18
     tx = iotx_clear.payDebts(token_ids, {'from': oracle, 'allow_revert': True})
     user_info = iotx_clear.userInfos(users[0])
@@ -37,7 +36,7 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
     assert iotx_clear.headIndex() == 1
     assert iotx_clear.rearIndex() - iotx_clear.headIndex() == 0
     assert iotx_clear.totalDebts() == 0
-    assert iotx_clear.accountedBalance() == reward_incr1 + amt_total
+    assert iotx_clear.accountedBalance() == mock_reward_incr1 + amt_total
     assert iotx_clear.balance() == iotx_clear.accountedBalance()
     assert user_info[0] == 0
     assert user_info[1] == amt_total
