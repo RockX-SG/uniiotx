@@ -38,8 +38,8 @@ def test_joinDebt(contracts, users, delegates, admin):
     assert iotx_clear.iotxDebts(2)[0] == account
     assert iotx_clear.iotxDebts(2)[1] == amount
     assert iotx_clear.userInfos(account)[0] == amount
-    assert iotx_clear.userInfos(account)[1] == 0
-    assert iotx_clear.userInfos(account)[2] == reward_rate1
+    assert iotx_clear.userInfos(account)[2] == 0
+    assert iotx_clear.userInfos(account)[3] == reward_rate1
     assert iotx_clear.accountedBalance() == reward_incr1
     assert iotx_clear.rewardRate() == reward_rate1
 
@@ -60,8 +60,8 @@ def test_joinDebt(contracts, users, delegates, admin):
     assert iotx_clear.iotxDebts(3)[0] == account
     assert iotx_clear.iotxDebts(3)[1] == amount
     assert iotx_clear.userInfos(account)[0] == amount*2
-    assert iotx_clear.userInfos(account)[1] == reward_user0
-    assert iotx_clear.userInfos(account)[2] == reward_rate2
+    assert iotx_clear.userInfos(account)[2] == reward_user0
+    assert iotx_clear.userInfos(account)[3] == reward_rate2
     assert iotx_clear.accountedBalance() == reward_incr1 + reward_incr2
     assert iotx_clear.rewardRate() == reward_rate2
 
@@ -70,7 +70,7 @@ def test_joinDebt(contracts, users, delegates, admin):
     account = users[1]
     reward_rate3 = reward_rate2 + (reward_incr3 * 1e18 / iotx_clear.totalDebts())
     debt_user1 = iotx_clear.userInfos(account)[0]
-    reward_rate_user1 = iotx_clear.userInfos(account)[2]
+    reward_rate_user1 = iotx_clear.userInfos(account)[3]
     reward_user1 = (reward_rate3 - reward_rate_user1) * debt_user1 / 1e18
     tx = iotx_clear.joinDebt(account, amount, {"from": iotx_stake})
     assert "DebtAdded" in tx.events
@@ -82,8 +82,8 @@ def test_joinDebt(contracts, users, delegates, admin):
     assert iotx_clear.iotxDebts(4)[0] == account
     assert iotx_clear.iotxDebts(4)[1] == amount
     assert iotx_clear.userInfos(account)[0] == amount*2
-    assert iotx_clear.userInfos(account)[1] == reward_user1
-    assert iotx_clear.userInfos(account)[2] == reward_rate3
+    assert iotx_clear.userInfos(account)[2] == reward_user1
+    assert iotx_clear.userInfos(account)[3] == reward_rate3
     assert iotx_clear.accountedBalance() == reward_incr1 + reward_incr2 + reward_incr3
     assert iotx_clear.rewardRate() == reward_rate3
 
@@ -99,4 +99,10 @@ def test_joinDebt(contracts, users, delegates, admin):
     with brownie .reverts():
         iotx_clear.joinDebt(account, amount, {"from": admin})
 
-    # Todo: onlyDebtAmount
+    # Only accept valid debt amounts.
+    with brownie .reverts("Invalid debt amount"):
+        iotx_clear.joinDebt(account, 0, {"from": admin})
+    with brownie .reverts("Invalid debt amount"):
+        iotx_clear.joinDebt(account, amount+100, {"from": admin})
+    with brownie .reverts("Invalid debt amount"):
+        iotx_clear.joinDebt(account, amount-100, {"from": admin})
