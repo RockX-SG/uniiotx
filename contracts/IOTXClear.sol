@@ -42,8 +42,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
     struct UserInfo {
         uint debt;   // IOTX value a user requests to redeem but hasn't been withdrawn
-        uint reward;  // The claimable reward which is distributed after redeeming requested
-        uint rewardRate; // Latest rewardRate assigned upon reward update
+        uint principal;  // Claimable principal which is from debt payment
+        uint reward;  // Claimable reward which is distributed after redeeming requested
+        uint rewardRate;  // Latest rewardRate assigned upon reward update
     }
 
     struct Debt {
@@ -76,6 +77,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     // ---Events---
     event DebtAdded(address account, uint amount, uint debtIndex);
     event DebtPaid(address account, uint amount, uint debtIndex);
+    event PrincipalClaimed(address claimer, address recipient, uint amount);
     event RewardClaimed(address claimer, address recipient, uint amount);
     event DelegatesUpdated(uint[] tokenIds, address delegate);
 
@@ -230,6 +232,19 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         }
     }
 
+    function claimPrincipals(uint amount, address recipient) external nonReentrant whenNotPaused {
+        // Check principal
+        UserInfo storage info = userInfos[msg.sender];
+        require(info.principal >= amount, "Insufficient accounted principal");
+
+        // Transfer principal
+        payable(recipient).sendValue(amount);
+        info.principal -= amount;
+        accountedBalance -= amount;
+
+        emit PrincipalClaimed(msg.sender, recipient, amount);
+    }
+
     function claimRewards(uint amount, address recipient) external nonReentrant whenNotPaused {
          // Update reward
         _updateUserReward(msg.sender);
@@ -271,12 +286,16 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         Debt storage nextDebt = iotxDebts[nextDebtIndex];
         address account = nextDebt.account;
 
-        // Withdraw NFT to user account
-        ISystemStake(systemStake).withdraw(tokenIds, payable(account));
+        // Withdraw NFT to this contract
+        ISystemStake(systemStake).withdraw(tokenIds, payable(address(this)));
+        accountedBalance += amountToPay;
 
         // Update debt states
+        UserInfo storage userInfo = userInfos[account];
+        userInfo.debt -= amountToPay;
+        userInfo.principal += amountToPay;
+
         nextDebt.amount -= amountToPay;
-        userInfos[account].debt -= amountToPay;
         totalDebts -= amountToPay;
 
         // Remove debt entry if it has been fully paid
