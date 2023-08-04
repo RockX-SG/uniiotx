@@ -12,14 +12,14 @@ def test_updateDelegates(w3, contracts, users, delegates, oracle, admin):
     # The token ID owner should have the ability to update delegates.
     deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_stake.redeemAmountBase()
-    iotx_stake.deposit(amt, deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
+    iotx_stake.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     token_id = iotx_stake.tokenQueues(iotx_stake.sequenceLength()-1, 0)
     assert system_staking.ownerOf(token_id) == iotx_stake
     tx = iotx_stake.updateDelegates([token_id], delegates[1], {'from': oracle})
     assert "DelegatesUpdated" in tx.events
 
     uni_iotx.approve(iotx_stake, amt, {'from': users[0], 'allow_revert': True})
-    iotx_stake.redeem(amt, amt, deadline, {'from': users[0], 'allow_revert': True})
+    iotx_stake.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
     token_ids = iotx_stake.getRedeemedTokenIds(0, 1)
     assert system_staking.ownerOf(token_ids[0]) == iotx_clear
     tx = iotx_clear.updateDelegates(token_ids, delegates[0], {'from': oracle})

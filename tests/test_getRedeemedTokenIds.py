@@ -10,14 +10,14 @@ def test_getRedeemedTokenIds(w3, contracts, users):
     sequence_length = iotx_stake.sequenceLength()
     amount = iotx_stake.redeemAmountBase()
     deadline = w3.eth.get_block('latest').timestamp+60
-    iotx_stake.deposit(amount, deadline, {'from': users[0], 'value': amount, 'allow_revert': True})
+    iotx_stake.deposit(deadline, {'from': users[0], 'value': amount, 'allow_revert': True})
     token_ids = iotx_stake.getRedeemedTokenIds(0, 1)
     assert len(token_ids) == 0
 
     # Once 'redeem' is called, the value of 'redeemedTokenCount' should increase correspondingly.
     # As a result, we will be able to query its ID.
     uni_iotx.approve(iotx_stake, amount, {'from': users[0], 'allow_revert': True})
-    iotx_stake.redeem(amount, amount, deadline, {'from': users[0], 'allow_revert': True})
+    iotx_stake.redeem(amount, deadline, {'from': users[0], 'allow_revert': True})
     assert iotx_stake.redeemedTokenCount() == 1
     token_ids = iotx_stake.getRedeemedTokenIds(0, 1)
     assert len(token_ids) == 1

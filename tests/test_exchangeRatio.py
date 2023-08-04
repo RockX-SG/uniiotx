@@ -11,7 +11,7 @@ def test_exchangeRatio(w3, contracts, users, delegates, oracle, admin):
     default_exchange_ratio = 1000000000000000000
     deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_stake.redeemAmountBase()
-    iotx_stake.deposit(amt, deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
+    iotx_stake.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     assert iotx_stake.currentReserve() == amt
     assert uni_iotx.totalSupply() == amt
     assert iotx_stake.exchangeRatio() == default_exchange_ratio
@@ -26,7 +26,7 @@ def test_exchangeRatio(w3, contracts, users, delegates, oracle, admin):
 
     # Although the rewards have been received from the delegate, they have not been updated in our contract.
     # As a result, the exchange ratio will remain unchanged for the next 'deposit' request.
-    iotx_stake.deposit(amt, deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
+    iotx_stake.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     assert iotx_stake.currentReserve() == amt*2
     assert uni_iotx.totalSupply() == amt*2
     assert iotx_stake.exchangeRatio() == default_exchange_ratio
@@ -54,7 +54,7 @@ def test_exchangeRatio(w3, contracts, users, delegates, oracle, admin):
 
     # If users make a 'redeem' request, the exchange ratio should decrease accordingly.
     uni_iotx.approve(iotx_stake, amt, {'from': users[0], 'allow_revert': True})
-    iotx_stake.redeem(amt, amt, deadline, {'from': users[0], 'allow_revert': True})
+    iotx_stake.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
     current_reserve3 = iotx_stake.currentReserve()
     total_supply3 = uni_iotx.totalSupply()
     exchange_ratio3 = iotx_stake.exchangeRatio()

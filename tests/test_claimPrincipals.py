@@ -16,9 +16,9 @@ def test_claimPrincipals(w3, contracts, users, delegates, oracle, admin, stake_a
     deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_stake.redeemAmountBase()
 
-    iotx_stake.deposit(amt, deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
+    iotx_stake.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     uni_iotx.approve(iotx_stake, amt, {'from': users[0], 'allow_revert': True})
-    iotx_stake.redeem(amt, amt, deadline, {'from': users[0], 'allow_revert': True})
+    iotx_stake.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
 
     token_ids = iotx_stake.getRedeemedTokenIds(0, 1)
     iotx_clear.unstake(token_ids, {'from': oracle, 'allow_revert': True})

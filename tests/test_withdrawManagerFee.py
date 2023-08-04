@@ -14,7 +14,7 @@ def test_withdrawManagerFee(w3, contracts, users, delegates, admin, oracle):
     # The value transferred here will be considered as rewards from the delegate.
     deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_stake.redeemAmountBase()
-    iotx_stake.deposit(amt, deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
+    iotx_stake.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     amt_reward = 200
     delegates[0].transfer(iotx_stake, amt_reward)
     iotx_stake.updateReward({"from": oracle})

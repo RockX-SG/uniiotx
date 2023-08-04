@@ -11,7 +11,7 @@ def test_currentReserve(w3, contracts, users, delegates, oracle, admin):
     deadline = w3.eth.get_block('latest').timestamp+60
     redeem_amt = iotx_stake.redeemAmountBase()
     amt = redeem_amt + 10
-    iotx_stake.deposit(amt, deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
+    iotx_stake.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     assert iotx_stake.currentReserve() == amt
 
     # The rewards that have not been updated yet should not affect the current reserve.
@@ -31,5 +31,5 @@ def test_currentReserve(w3, contracts, users, delegates, oracle, admin):
 
     # If users make a 'redeem' request, the current reserve should decrease accordingly.
     uni_iotx.approve(iotx_stake, redeem_amt, {'from': users[0], 'allow_revert': True})
-    iotx_stake.redeem(redeem_amt, redeem_amt, deadline, {'from': users[0], 'allow_revert': True})
+    iotx_stake.redeem(redeem_amt, deadline, {'from': users[0], 'allow_revert': True})
     assert iotx_stake.currentReserve() == amt + amt_reward - redeem_amt
