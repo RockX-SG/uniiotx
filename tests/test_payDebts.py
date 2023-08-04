@@ -4,7 +4,7 @@ import pytest
 from configs import *
 from contracts import *
 
-def test_updateDelegates(w3, contracts, users, delegates, oracle, admin):
+def test_payDebts(w3, contracts, users, delegates, oracle, admin):
     system_staking, uni_iotx, iotx_clear, iotx_stake = contracts[0], contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
@@ -29,14 +29,15 @@ def test_updateDelegates(w3, contracts, users, delegates, oracle, admin):
     user_info = iotx_clear.userInfos(users[0])
     debt = iotx_clear.iotxDebts(1)
     assert "DebtPaid" in tx.events
-    assert users[0].balance() == amt_total + balance_user01
+    assert users[0].balance() == balance_user01
     assert iotx_clear.headIndex() == 1
     assert iotx_clear.rearIndex() - iotx_clear.headIndex() == 0
     assert iotx_clear.totalDebts() == 0
-    assert iotx_clear.accountedBalance() == reward_incr1
+    assert iotx_clear.accountedBalance() == reward_incr1 + amt_total
     assert user_info[0] == 0
-    assert user_info[1] == reward_user01
-    assert user_info[2] == reward_rate1
+    assert user_info[1] == amt_total
+    assert user_info[2] == reward_user01
+    assert user_info[3] == reward_rate1
     assert iotx_clear.rewardRate() == reward_rate1
     assert debt[0] == "0x0000000000000000000000000000000000000000"
     assert debt[1] == 0
