@@ -9,6 +9,9 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
 
     # ---Happy path testing---
 
+    # The user's reward should be updated prior to debt payment.
+    # Following the debt payment, both the 'accountedBalance' and the user's principal record should be adjusted.
+    # The withdrawal of NFT during debt payment should not compromise the accuracy of reward recording.
     # The value transferred here will be considered as rewards from the delegate.
     deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_stake.redeemAmountBase()
@@ -41,9 +44,6 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
     assert iotx_clear.rewardRate() == reward_rate1
     assert debt[0] == "0x0000000000000000000000000000000000000000"
     assert debt[1] == 0
-
-    # Todo: add more testing case
-    # Todo: to be optimize
 
     # ---Revert path testing---
 
