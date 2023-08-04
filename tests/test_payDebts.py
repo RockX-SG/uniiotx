@@ -5,7 +5,7 @@ from configs import *
 from contracts import *
 
 def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts):
-    system_staking, uni_iotx, iotx_clear, iotx_stake = contracts[0], contracts[1], contracts[2], contracts[3]
+    uni_iotx, iotx_clear, iotx_stake = contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
 
@@ -66,3 +66,27 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
     iotx_stake.deposit(stake_amounts[1], deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
     with brownie .reverts("Invalid token amount"):
         iotx_clear.payDebts([iotx_stake.tokenQueues(1, 0)], {'from': oracle, 'allow_revert': True})
+
+    # Passing an empty array of token IDs is not allowed
+    iotx_stake.deposit(stake_amounts[0], deadline, {'from': users[0], 'value': stake_amounts[0], 'allow_revert': True})
+    with brownie .reverts("Invalid total principal for debt payment"):
+        iotx_clear.payDebts([], {'from': oracle, 'allow_revert': True})
+
+    # The total value of token IDs must not surpass the total value of the existing debt
+    iotx_stake.deposit(stake_amounts[2], deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
+    token_id = iotx_stake.tokenQueues(2, 10)
+    with brownie .reverts("Invalid total principal for debt payment"):
+        iotx_clear.payDebts([token_id], {'from': oracle, 'allow_revert': True})
+
+    # The token ID for payment will not be reused; therefore it must exist.
+    with brownie .reverts("ERC721: invalid token ID"):
+        iotx_clear.payDebts(token_ids, {'from': oracle, 'allow_revert': True})
+
+    # The corresponding bucket(s) must be unstaked in advance.
+    uni_iotx.approve(iotx_stake, amt, {'from': users[0], 'allow_revert': True})
+    iotx_stake.redeem(amt, amt, deadline, {'from': users[0], 'allow_revert': True})
+    with brownie .reverts("not an unstaked bucket"):
+        iotx_clear.payDebts([token_id], {'from': oracle, 'allow_revert': True})
+
+    # Note: in IoTeX testnet and mainnet, it can revert "not ready to withdraw".
+    # https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol#L279
