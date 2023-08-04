@@ -9,7 +9,10 @@ def test_claimPrincipals(w3, contracts, users, delegates, oracle, admin, stake_a
 
     # ---Happy path testing---
 
-    # Users can claim any principal amount
+    # After repaying their debt, users' can claim their principal.
+    # Users can claim any available principal amount at various times.
+    # Once users have claimed their principals, the individual principal record
+    # and the global 'accountedBalance' should be adjusted accordingly.
     deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_stake.redeemAmountBase()
 
