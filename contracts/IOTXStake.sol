@@ -272,10 +272,10 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     /**
      * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
      */
-    function deposit(uint minToMint, uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
+    function deposit(uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
         require(msg.value > 0, "Invalid deposit amount");
 
-        minted = _mint(minToMint);
+        minted = _mint();
         _stakeAtTopLevel();
         _stakeAndMergeAtSubLevel();
     }
@@ -331,11 +331,10 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
      * ======================================================================================
      */
 
-    function _mint(uint minToMint) internal returns (uint minted) {
+    function _mint() internal returns (uint minted) {
         accountedBalance += msg.value;
 
         uint toMint = _convertIotxToUniIOTX(msg.value);
-        require(toMint >= minToMint, "Exchange ratio mismatch");
         IUniIOTX(uniIOTX).mint(msg.sender, toMint);
         minted = toMint;
 

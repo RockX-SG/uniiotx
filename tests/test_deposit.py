@@ -13,7 +13,7 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     deadline = w3.eth.get_block('latest').timestamp+60
     start_amt = iotx_stake.startAmount()
     small_amt = start_amt / 10
-    tx = iotx_stake.deposit(small_amt, deadline, {'from': users[0], 'value': small_amt, 'allow_revert': True})
+    tx = iotx_stake.deposit(deadline, {'from': users[0], 'value': small_amt, 'allow_revert': True})
     assert iotx_stake.accountedBalance() == small_amt
     assert iotx_stake.balance() == small_amt
     assert iotx_stake.totalPending() == small_amt
@@ -27,7 +27,7 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     # Any deposit request should automatically trigger SystemStaking
     # if it causes the 'totalPending' exceed the 'startAmount'
     extra_amt = start_amt - small_amt
-    tx = iotx_stake.deposit(extra_amt, deadline, {'from': users[0], 'value': extra_amt, 'allow_revert': True})
+    tx = iotx_stake.deposit(deadline, {'from': users[0], 'value': extra_amt, 'allow_revert': True})
     assert iotx_stake.accountedBalance() == 0
     assert iotx_stake.balance() == 0
     assert iotx_stake.totalPending() == 0
@@ -47,8 +47,8 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     # The merge operation at low staking level should be triggered
     # if the amount of staked tokens reaches the 'commonRatio'
     for i in range(0, iotx_stake.commonRatio()-2):
-        iotx_stake.deposit(start_amt, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
-    tx = iotx_stake.deposit(start_amt, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+        iotx_stake.deposit(deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+    tx = iotx_stake.deposit(deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
     assert iotx_stake.accountedBalance() == 0
     assert iotx_stake.balance() == 0
     assert iotx_stake.totalPending() == 0
@@ -67,8 +67,8 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     assert system_staking.ownerOf(token_id) == iotx_stake
 
     for i in range(0, iotx_stake.commonRatio()-2):
-        iotx_stake.deposit(stake_amounts[1], deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
-    tx = iotx_stake.deposit(stake_amounts[1], deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
+        iotx_stake.deposit(deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
+    tx = iotx_stake.deposit(deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
     assert iotx_stake.accountedBalance() == 0
     assert iotx_stake.balance() == 0
     assert iotx_stake.totalPending() == 0
@@ -88,8 +88,8 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
 
     # There should be no merge operation at the top staking level.
     for i in range(0, iotx_stake.commonRatio()-2):
-        iotx_stake.deposit(stake_amounts[2], deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
-    tx = iotx_stake.deposit(stake_amounts[2], deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
+        iotx_stake.deposit(deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
+    tx = iotx_stake.deposit(deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
     assert iotx_stake.accountedBalance() == 0
     assert iotx_stake.balance() == 0
     assert iotx_stake.totalPending() == 0
@@ -113,31 +113,18 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     # When the contract is on pause, the 'deposit' function will not operate.
     iotx_stake.pause({'from': admin})
     with brownie .reverts("Pausable: paused"):
-        iotx_stake.deposit(start_amt, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+        iotx_stake.deposit(deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
     iotx_stake.unpause({'from': admin})
-    iotx_stake.deposit(start_amt, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+    iotx_stake.deposit(deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
 
     # The transaction of the deposit request should arrive within the deadline time.
     past_deadline = "1690514039"
     with brownie .reverts("Transaction expired"):
-        iotx_stake.deposit(start_amt, past_deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+        iotx_stake.deposit(past_deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
 
     # Deposits of zero value are not permitted.
     with brownie .reverts("Invalid deposit amount"):
-        iotx_stake.deposit(0, deadline, {'from': users[0], 'value': 0, 'allow_revert': True})
-
-    # The change in the exchange ratio should be taken into account.
-    # The value transferred here will be considered as rewards from the delegate.
-    # Regular updates to rewards can impact the exchange ratio's value.
-    amt_reward = 100
-    delegates[0].transfer(iotx_stake, amt_reward)
-    iotx_stake.updateReward({'from': oracle})
-    exchange_ratio1 = iotx_stake.exchangeRatio()
-    assert exchange_ratio1 > 1e18
-    with brownie .reverts("Exchange ratio mismatch"):
-        iotx_stake.deposit(start_amt, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
-    min_to_min = start_amt * 1e18 / exchange_ratio1
-    iotx_stake.deposit(min_to_min, deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
+        iotx_stake.deposit(deadline, {'from': users[0], 'value': 0, 'allow_revert': True})
 
     # Todo: Handle nonReentrant
 
