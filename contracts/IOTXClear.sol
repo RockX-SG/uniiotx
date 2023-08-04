@@ -233,9 +233,6 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     function claimPrincipals(uint amount, address recipient) external nonReentrant whenNotPaused {
-        // Update reward
-        _updateUserReward(msg.sender);
-
         // Check principal
         UserInfo storage info = userInfos[msg.sender];
         require(info.principal >= amount, "Insufficient accounted principal");
