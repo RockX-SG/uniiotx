@@ -70,4 +70,17 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
     {
         super._beforeTokenTransfer(from, to, amount);
     }
+
+    /**
+    * @dev Batch transfer amount to recipient
+     * @notice that excessive gas consumption causes transaction revert
+     */
+    function batchTransfer(address[] memory recipients, uint256[] memory amounts) public {
+        require(recipients.length > 0, "uniIOTX: least one recipient address");
+        require(recipients.length == amounts.length, "uniIOTX: number of recipient addresses does not match the number of tokens");
+
+        for(uint256 i = 0; i < recipients.length; ++i) {
+            _transfer(_msgSender(), recipients[i], amounts[i]);
+        }
+    }
 }
