@@ -30,11 +30,14 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
     function initialize(
         address iotxStake
     ) public initializer {
+        // Init
         __ERC20_init("Universal IOTX", "uniIOTX");
         __ERC20Burnable_init();
         __ERC20Snapshot_init();
         __Pausable_init();
+        __AccessControl_init();
 
+        // Roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(ROLE_PAUSE, iotxStake);
         _setupRole(ROLE_MINT, iotxStake);

@@ -131,16 +131,21 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         address _iotxStake,
         address _oracle
     ) public initializer  {
+        // Init
         __Pausable_init();
+        __AccessControl_init();
         __ReentrancyGuard_init();
 
+        // Roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(ROLE_PAUSE, msg.sender);
         _setupRole(ROLE_STAKE, _iotxStake);
         _setupRole(ROLE_ORACLE, _oracle);
 
+        // Collaborative contracts
         systemStake = _systemStake;
 
+        // Debt management parameters
         debtAmountBase = IIOTXStake(_iotxStake).redeemAmountBase();
     }
 

@@ -139,6 +139,11 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         uint _sequenceLength,
         uint _stakeDuration
     ) public initializer {
+        // Init
+        __Pausable_init();
+        __AccessControl_init();
+        __ReentrancyGuard_init();
+
         // Roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(ROLE_FEE_MANAGER, msg.sender);
