@@ -1,5 +1,10 @@
 [
   {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -547,7 +552,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_systemStake",
+        "name": "_systemStaking",
         "type": "address"
       },
       {
@@ -850,7 +855,7 @@
   },
   {
     "inputs": [],
-    "name": "systemStake",
+    "name": "systemStaking",
     "outputs": [
       {
         "internalType": "address",

@@ -1,28 +1,8 @@
 [
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "debtIndex",
-        "type": "uint256"
-      }
-    ],
-    "name": "DebtAdded",
-    "type": "event"
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
   },
   {
     "anonymous": false,
@@ -47,6 +27,31 @@
       }
     ],
     "name": "DebtPaid",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "debtIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "DebtQueued",
     "type": "event"
   },
   {
@@ -417,12 +422,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_systemStake",
+        "name": "_systemStaking",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_iotxStake",
+        "name": "_iotxStaking",
         "type": "address"
       },
       {
@@ -628,7 +633,7 @@
   },
   {
     "inputs": [],
-    "name": "systemStake",
+    "name": "systemStaking",
     "outputs": [
       {
         "internalType": "address",
