@@ -178,7 +178,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     /**
      * @dev This function sets manager's fee in range [0, 1000]
      */
-    function setManagerFeeShares(uint shares) external onlyRole(ROLE_FEE_MANAGER)  {
+    function setManagerFeeShares(uint shares) external onlyRole(DEFAULT_ADMIN_ROLE)  {
         require(shares <= 1000, "Manager fee shares out of range");
         managerFeeShares = shares;
 
