@@ -216,7 +216,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         uint totalTokenCntToPay = tokenIds.length;
         require(totalTokenCntToPay > 0 && totalDebts >= totalTokenCntToPay*debtAmountBase, "Invalid total principal for debt payment");
         uint paidTokenCnt;
-        for (; paidTokenCnt < totalTokenCntToPay;) {
+        while (paidTokenCnt < totalTokenCntToPay) {
             // Pop next debt in FIFO order
             uint nextDebtIndex = headIndex+1;
             Debt memory nextDebt = iotxDebts[nextDebtIndex];
