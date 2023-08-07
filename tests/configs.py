@@ -10,9 +10,9 @@ def w3():
 # Roles
 @pytest.fixture
 def roles(w3):
-    role_pause = w3.keccak(text='ROLE_PAUSE')  # index = 0
-    role_mint = w3.keccak(text='ROLE_MINT')  # index = 1
-    role_stake = w3.keccak(text='ROLE_STAKE')  # index = 2
+    role_pause = w3.keccak(text='ROLE_PAUSER')  # index = 0
+    role_mint = w3.keccak(text='ROLE_MINTER')  # index = 1
+    role_stake = w3.keccak(text='ROLE_STAKER')  # index = 2
     role_fee_manager = w3.keccak(text='ROLE_FEE_MANAGER')  # index = 3
     role_oracle = w3.keccak(text='ROLE_ORACLE')  # index = 4
     role_default_admin = w3.toBytes(hexstr="0x00")  # index = 5
