@@ -364,33 +364,31 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     function _stakeAndMergeAtSubLevel() internal {
-        for (uint level = sequenceLength-2; level >= 0 && level < sequenceLength-1;  ) {
-            // Determine values of stake params
-            (uint amount, uint count) = _getStakeAmountAndCount(level);
-            if (count == 0) {
-                if (level == 0) return;
-                level--;
-                continue;
-            }
-
-            uint stakedCount = tokenQueues[level].length;
-            if ((count+stakedCount) >= commonRatio) {
-                count = commonRatio-stakedCount;
-            }
-
-            // Perform stake
-            _doStake(level, amount, count);
-
-            // Merge tokens if possible
-            if (count+stakedCount == commonRatio) _merge(level);
-
-            // Handle remained amount
-            (, count) = _getStakeAmountAndCount(level);
-            if (count == 0) {
-                if (level == 0) return;
-                level--;
-            }
+        uint nextLevel = sequenceLength-2;
+        while (totalPending >= startAmount) {
+            nextLevel = _tryStake(nextLevel);
         }
+    }
+
+    function _tryStake(uint tryLevel) internal returns (uint nextLevel) {
+        // Verify if there is an adequate total of pending IOTX and ascertain the values of stake parameters.
+        (uint amount, uint count) = _getStakeAmountAndCount(tryLevel);
+        if (count == 0) {
+            return tryLevel-1;
+        }
+
+        uint stakedCount = tokenQueues[tryLevel].length;
+        if ((count+stakedCount) >= commonRatio) {
+            count = commonRatio-stakedCount;
+        }
+
+        // Perform stake
+        _doStake(tryLevel, amount, count);
+
+        // Merge tokens if possible
+        if (count+stakedCount == commonRatio) _merge(tryLevel);
+
+        return tryLevel;
     }
 
     function _doStake(uint level, uint amount, uint count) internal {
