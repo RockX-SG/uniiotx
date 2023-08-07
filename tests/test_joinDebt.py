@@ -17,7 +17,7 @@ def test_joinDebt(contracts, users, delegates, admin):
     account = users[0]
     amount = iotx_stake.redeemAmountBase()
     tx = iotx_clear.joinDebt(account, amount, {"from": iotx_stake})
-    assert "DebtAdded" in tx.events
+    assert "DebtQueued" in tx.events
     assert iotx_clear.totalDebts() == amount
     assert iotx_clear.rearIndex() - iotx_clear.headIndex() == 1
     assert iotx_clear.rearIndex() == 1
@@ -31,7 +31,7 @@ def test_joinDebt(contracts, users, delegates, admin):
     reward_rate1 = reward_incr1 * 1e18 / iotx_clear.totalDebts()
     account = users[1]
     tx = iotx_clear.joinDebt(account, amount, {"from": iotx_stake})
-    assert "DebtAdded" in tx.events
+    assert "DebtQueued" in tx.events
     assert iotx_clear.totalDebts() == amount*2
     assert iotx_clear.rearIndex() - iotx_clear.headIndex() == 2
     assert iotx_clear.rearIndex() == 2
@@ -51,7 +51,7 @@ def test_joinDebt(contracts, users, delegates, admin):
     reward_rate_user0 = iotx_clear.userInfos(account)[2]
     reward_user0 = (reward_rate2 - reward_rate_user0) * debt_user0 / 1e18
     tx = iotx_clear.joinDebt(account, amount, {"from": iotx_stake})
-    assert "DebtAdded" in tx.events
+    assert "DebtQueued" in tx.events
     assert iotx_clear.totalDebts() == amount*3
     assert iotx_clear.rearIndex() - iotx_clear.headIndex() == 3
     assert iotx_clear.rearIndex() == 3
@@ -73,7 +73,7 @@ def test_joinDebt(contracts, users, delegates, admin):
     reward_rate_user1 = iotx_clear.userInfos(account)[3]
     reward_user1 = (reward_rate3 - reward_rate_user1) * debt_user1 / 1e18
     tx = iotx_clear.joinDebt(account, amount, {"from": iotx_stake})
-    assert "DebtAdded" in tx.events
+    assert "DebtQueued" in tx.events
     assert iotx_clear.totalDebts() == amount*4
     assert iotx_clear.rearIndex() - iotx_clear.headIndex() == 4
     assert iotx_clear.rearIndex() == 4

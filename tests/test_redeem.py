@@ -29,7 +29,7 @@ def test_redeem(w3, contracts, users, delegates, oracle):
     assert len(tx.events["Transfer"]) == 3
     assert len(tx.events["Unlocked"]) == 1
     assert len(tx.events["Redeemed"]) == 1
-    assert len(tx.events["DebtAdded"]) == 1
+    assert len(tx.events["DebtQueued"]) == 1
     assert unlocked_amt == amt
     assert unlocked_at != uint256_max
     assert iotx_stake.redeemedTokenCount() == 1
@@ -62,7 +62,7 @@ def test_redeem(w3, contracts, users, delegates, oracle):
     assert len(tx.events["Transfer"]) == 3
     assert len(tx.events["Unlocked"]) == 1
     assert len(tx.events["Redeemed"]) == 1
-    assert len(tx.events["DebtAdded"]) == 1
+    assert len(tx.events["DebtQueued"]) == 1
     assert unlocked_amt == amt
     assert unlocked_at != uint256_max
     assert iotx_stake.redeemedTokenCount() == 2

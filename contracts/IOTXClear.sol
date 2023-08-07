@@ -75,7 +75,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     mapping(address => UserInfo) public userInfos; // account -> info
 
     // ---Events---
-    event DebtAdded(address account, uint amount, uint debtIndex);
+    event DebtQueued(address account, uint amount, uint debtIndex);
     event DebtPaid(address account, uint amount, uint debtIndex);
     event PrincipalClaimed(address claimer, address recipient, uint amount);
     event RewardClaimed(address claimer, address recipient, uint amount);
@@ -199,7 +199,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         _updateUserReward(account);
 
         // Record new user debt
-        _addDebt(account, amount);
+        _enqueueDebt(account, amount);
     }
 
     function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
@@ -217,13 +217,11 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         require(totalTokenCntToPay > 0 && totalDebts >= totalTokenCntToPay*debtAmountBase, "Invalid total principal for debt payment");
         uint paidTokenCnt;
         while (paidTokenCnt < totalTokenCntToPay) {
-            // Pop next debt in FIFO order
-            uint nextDebtIndex = headIndex+1;
-            Debt memory nextDebt = iotxDebts[nextDebtIndex];
-            address account = nextDebt.account;
+            // Peek next debt
+            Debt memory nextDebt = _peekNextDebt();
 
             // Update current user reward
-            _updateUserReward(account);
+            _updateUserReward(nextDebt.account);
 
             // Determine token IDs
             uint remainedTokenCntToPay = totalTokenCntToPay - paidTokenCnt;
@@ -237,7 +235,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
             }
 
             // Pay the user's debt
-            _payDebt(nextDebtIndex, amountToPay, tokenIdsToPay);
+            _payNextDebt(amountToPay, tokenIdsToPay);
             paidTokenCnt += tokenCntToPay;
         }
     }
@@ -279,7 +277,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     * ======================================================================================
     */
 
-    function _addDebt(address account, uint amount) internal {
+    function _enqueueDebt(address account, uint amount) internal {
         // Add a debt in FIFO order
         rearIndex += 1;
         iotxDebts[rearIndex] = Debt({account:account, amount:amount});
@@ -288,11 +286,28 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         userInfos[account].debt += amount;
         totalDebts += amount;
 
-        emit DebtAdded(account, amount, rearIndex);
+        emit DebtQueued(account, amount, rearIndex);
     }
 
-    function _payDebt(uint nextDebtIndex, uint amountToPay, uint[] memory tokenIds) internal {
+    function _peekNextDebt() internal view returns (Debt memory firstDebt) {
+        firstDebt = iotxDebts[headIndex+1];
+    }
+
+    function _dequeueDebt() internal returns (Debt memory debt) {
+        require(!_isEmptyQueue(), "Empty queue");
+        uint firstDebt = headIndex+1;
+        debt = iotxDebts[firstDebt];
+        delete iotxDebts[firstDebt];
+        headIndex += 1;
+    }
+
+    function _isEmptyQueue() internal view returns (bool) {
+        return rearIndex == headIndex;
+    }
+
+    function _payNextDebt(uint amountToPay, uint[] memory tokenIds) internal {
         // Retrieve next debt
+        uint nextDebtIndex = headIndex+1;
         Debt storage nextDebt = iotxDebts[nextDebtIndex];
         address account = nextDebt.account;
 
@@ -310,8 +325,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
         // Remove debt entry if it has been fully paid
         if (nextDebt.amount == 0) {
-            delete iotxDebts[nextDebtIndex];
-            headIndex += 1;
+            _dequeueDebt();
         }
 
         emit DebtPaid(account, amountToPay, nextDebtIndex);
