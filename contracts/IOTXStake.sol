@@ -115,14 +115,14 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     /**
      * @dev This function pauses the contract
      */
-    function pause() public onlyRole(ROLE_PAUSE) {
+    function pause() public onlyRole(ROLE_PAUSER) {
         _pause();
     }
 
     /**
      * @dev This function unpauses the contract
      */
-    function unpause() public onlyRole(ROLE_PAUSE) {
+    function unpause() public onlyRole(ROLE_PAUSER) {
         _unpause();
     }
 
@@ -147,7 +147,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         // Roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(ROLE_FEE_MANAGER, msg.sender);
-        _setupRole(ROLE_PAUSE, msg.sender);
+        _setupRole(ROLE_PAUSER, msg.sender);
         _setupRole(ROLE_ORACLE, _oracle);
 
         // Collaborative contracts

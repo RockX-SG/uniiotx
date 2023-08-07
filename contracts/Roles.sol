@@ -18,8 +18,8 @@
 pragma solidity ^0.8.9;
 
 // Roles
-bytes32 constant ROLE_PAUSE = keccak256("ROLE_PAUSE");
-bytes32 constant ROLE_MINT = keccak256("ROLE_MINT");
-bytes32 constant ROLE_STAKE = keccak256("ROLE_STAKE");
+bytes32 constant ROLE_PAUSER = keccak256("ROLE_PAUSER");
+bytes32 constant ROLE_MINTER = keccak256("ROLE_MINTER");
+bytes32 constant ROLE_STAKER = keccak256("ROLE_STAKER");
 bytes32 constant ROLE_FEE_MANAGER = keccak256("ROLE_FEE_MANAGER");
 bytes32 constant ROLE_ORACLE = keccak256("ROLE_ORACLE");

@@ -112,14 +112,14 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     /**
     * @dev This function pauses the contract
      */
-    function pause() public onlyRole(ROLE_PAUSE) {
+    function pause() public onlyRole(ROLE_PAUSER) {
         _pause();
     }
 
     /**
      * @dev This function unpauses the contract
      */
-    function unpause() public onlyRole(ROLE_PAUSE) {
+    function unpause() public onlyRole(ROLE_PAUSER) {
         _unpause();
     }
 
@@ -138,8 +138,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
         // Roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(ROLE_PAUSE, msg.sender);
-        _setupRole(ROLE_STAKE, _iotxStake);
+        _setupRole(ROLE_PAUSER, msg.sender);
+        _setupRole(ROLE_STAKER, _iotxStake);
         _setupRole(ROLE_ORACLE, _oracle);
 
         // Collaborative contracts
@@ -189,7 +189,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * @dev The contract 'IOTXStake' calls this function upon the user's redeeming request.
      * This function queues the redeemed amount as debt, which can be paid by withdrawal in FIFO order.
      */
-    function joinDebt(address account, uint amount) external whenNotPaused onlyDebtAmount(amount) onlyRole(ROLE_STAKE) {
+    function joinDebt(address account, uint amount) external whenNotPaused onlyDebtAmount(amount) onlyRole(ROLE_STAKER) {
         // Update current user reward
         _updateUserReward(account);
 
