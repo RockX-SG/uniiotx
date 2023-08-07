@@ -5,7 +5,7 @@ from configs import *
 from contracts import *
 
 def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts):
-    uni_iotx, iotx_clear, iotx_stake = contracts[1], contracts[2], contracts[3]
+    uni_iotx, iotx_clear, iotx_staking = contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
 
@@ -17,21 +17,21 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
 
     # Users deposit and redeem assets
     deadline = w3.eth.get_block('latest').timestamp+60
-    amt = iotx_stake.redeemAmountBase()
+    amt = iotx_staking.redeemAmountBase()
     cnt = 10
     amt_total = amt * cnt
     for i in range(0, cnt):
-        iotx_stake.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
+        iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
 
-    uni_iotx.approve(iotx_stake, amt_total, {'from': users[0], 'allow_revert': True})
-    iotx_stake.redeem(amt_total, deadline, {'from': users[0], 'allow_revert': True})
+    uni_iotx.approve(iotx_staking, amt_total, {'from': users[0], 'allow_revert': True})
+    iotx_staking.redeem(amt_total, deadline, {'from': users[0], 'allow_revert': True})
 
     # Mock reward
     mock_reward_incr1 = 1000
     delegates[0].transfer(iotx_clear, mock_reward_incr1)
 
     # Oracle makes the first debt payment
-    token_ids = iotx_stake.getRedeemedTokenIds(0, cnt)
+    token_ids = iotx_staking.getRedeemedTokenIds(0, cnt)
     iotx_clear.unstake(token_ids[0:5], {'from': oracle, 'allow_revert': True})
     reward_rate1 = mock_reward_incr1 * 1e18 / amt_total
     reward_user01 = (reward_rate1 - 0) * amt_total / 1e18
@@ -86,22 +86,22 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
         iotx_clear.payDebts(token_ids, {'from': users[0], 'allow_revert': True})
 
     # Only accept debt tokens whose value is equal to the 'debtAmountBase' value
-    iotx_stake.deposit(deadline, {'from': users[0], 'value': stake_amounts[0], 'allow_revert': True})
+    iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[0], 'allow_revert': True})
     with brownie .reverts("Invalid token amount"):
-        iotx_clear.payDebts([iotx_stake.tokenQueues(0, 0)], {'from': oracle, 'allow_revert': True})
+        iotx_clear.payDebts([iotx_staking.tokenQueues(0, 0)], {'from': oracle, 'allow_revert': True})
 
-    iotx_stake.deposit(deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
+    iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
     with brownie .reverts("Invalid token amount"):
-        iotx_clear.payDebts([iotx_stake.tokenQueues(1, 0)], {'from': oracle, 'allow_revert': True})
+        iotx_clear.payDebts([iotx_staking.tokenQueues(1, 0)], {'from': oracle, 'allow_revert': True})
 
     # Passing an empty array of token IDs is not allowed
-    iotx_stake.deposit(deadline, {'from': users[0], 'value': stake_amounts[0], 'allow_revert': True})
+    iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[0], 'allow_revert': True})
     with brownie .reverts("Invalid total principal for debt payment"):
         iotx_clear.payDebts([], {'from': oracle, 'allow_revert': True})
 
     # The total value of token IDs must not surpass the total value of the existing debt
-    iotx_stake.deposit(deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
-    token_id = iotx_stake.tokenQueues(2, 10)
+    iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
+    token_id = iotx_staking.tokenQueues(2, 10)
     with brownie .reverts("Invalid total principal for debt payment"):
         iotx_clear.payDebts([token_id], {'from': oracle, 'allow_revert': True})
 
@@ -110,8 +110,8 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
         iotx_clear.payDebts(token_ids, {'from': oracle, 'allow_revert': True})
 
     # The corresponding bucket(s) must be unstaked in advance.
-    uni_iotx.approve(iotx_stake, amt, {'from': users[0], 'allow_revert': True})
-    iotx_stake.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
+    uni_iotx.approve(iotx_staking, amt, {'from': users[0], 'allow_revert': True})
+    iotx_staking.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
     with brownie .reverts("not an unstaked bucket"):
         iotx_clear.payDebts([token_id], {'from': oracle, 'allow_revert': True})
 

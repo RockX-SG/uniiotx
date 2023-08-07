@@ -1,4 +1,4 @@
-from brownie import SystemStaking, UniIOTX, IOTXClear, IOTXStake, accounts, Contract, project, config
+from brownie import SystemStaking, UniIOTX, IOTXClear, IOTXStaking, accounts, Contract, project, config
 from pathlib import Path
 from web3 import Web3
 
@@ -53,19 +53,19 @@ def main():
     iotx_clear = IOTXClear.deploy({'from': deployer, 'gas_limit': gas_limit})  # https://testnet.iotexscan.io/address/0x7c193769f46D2B32819eb76E7c9Aeb580260A668#transactions
     iotx_clear_proxy = TransparentUpgradeableProxy.deploy(iotx_clear, deployer, b'', {'from': deployer, 'gas_limit': gas_limit})  # https://testnet.iotexscan.io/address/0x4DC32Ad7BffAF50434b12195D3b59CD66601335D#transactions
 
-    iotx_stake = IOTXStake.deploy({'from': deployer, 'gas_limit': gas_limit})  # https://testnet.iotexscan.io/address/0x171977bf57e93C9be280569F4853325719130C22#transactions
-    iotx_stake_proxy = TransparentUpgradeableProxy.deploy(iotx_stake, deployer, b'', {'from': deployer, 'gas_limit': gas_limit})  # https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions
+    iotx_staking = IOTXStaking.deploy({'from': deployer, 'gas_limit': gas_limit})  # https://testnet.iotexscan.io/address/0x171977bf57e93C9be280569F4853325719130C22#transactions
+    iotx_staking_proxy = TransparentUpgradeableProxy.deploy(iotx_staking, deployer, b'', {'from': deployer, 'gas_limit': gas_limit})  # https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions
 
     uni_iotx_transparent = Contract.from_abi("UniIOTX", uni_iotx_proxy.address, UniIOTX.abi)
     iotx_clear_transparent = Contract.from_abi("IOTXClear", iotx_clear_proxy.address, IOTXClear.abi)
-    iotx_stake_transparent = Contract.from_abi("IOTXStake", iotx_stake_proxy.address, IOTXStake.abi)
+    iotx_staking_transparent = Contract.from_abi("IOTXStaking", iotx_staking_proxy.address, IOTXStaking.abi)
 
     print("Deployed UniIOTX address:", uni_iotx_transparent)  # https://testnet.iotexscan.io/address/0x956a03ecEb344eA15A6CbE8949088992fAD88628#transactions
     print("Deployed IOTXClear address:", iotx_clear_transparent)  # https://testnet.iotexscan.io/address/0x4DC32Ad7BffAF50434b12195D3b59CD66601335D#transactions
-    print("Deployed IOTXStake address:", iotx_stake_transparent)  # https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions
+    print("Deployed IOTXStaking address:", iotx_staking_transparent)  # https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions
 
-    uni_iotx_transparent.initialize(iotx_stake_transparent, {'from': admin})
-    iotx_stake_transparent.initialize(
+    uni_iotx_transparent.initialize(iotx_staking_transparent, {'from': admin})
+    iotx_staking_transparent.initialize(
         system_staking,
         uni_iotx_transparent,
         iotx_clear_transparent,
@@ -76,16 +76,16 @@ def main():
         stake_duration,
         {'from': admin}
     )
-    iotx_clear_transparent.initialize(system_staking, iotx_stake_transparent, oracle, {'from': admin})
+    iotx_clear_transparent.initialize(system_staking, iotx_staking_transparent, oracle, {'from': admin})
 
-    iotx_stake_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
-    iotx_stake_transparent.setGlobalDelegate(delegate, {'from': oracle})
+    iotx_staking_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
+    iotx_staking_transparent.setGlobalDelegate(delegate, {'from': oracle})
 
     # Update ROLE_ORACLE provided by backend developer
     w3 = Web3(Web3.HTTPProvider('https://babel-api.testnet.iotex.io'))
     role_oracle = w3.keccak(text='ROLE_ORACLE')
     oracle_xie = "0x912AD2282799C5d62334017578418471f5aF5353"
-    iotx_stake_transparent.grantRole(role_oracle, oracle_xie, {'from': admin})
+    iotx_staking_transparent.grantRole(role_oracle, oracle_xie, {'from': admin})
     iotx_clear_transparent.grantRole((role_oracle, oracle_xie, {'from': admin}))
 
 

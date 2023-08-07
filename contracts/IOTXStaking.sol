@@ -26,15 +26,15 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./Roles.sol";
 import "../interfaces/IIOTXClear.sol";
 import "../interfaces/IUniIOTX.sol";
-import "../interfaces/IIOTXStake.sol";
-import "../interfaces/ISystemStake.sol";
+import "../interfaces/IIOTXStaking.sol";
+import "../interfaces/ISystemStaking.sol";
 
-contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable {
+contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable {
     // ---Use libraries---
     using SafeERC20 for IERC20;
 
     // ---External dependencies---
-    address public systemStake;
+    address public systemStaking;
     address public uniIOTX;
     address public iotxClear;
 
@@ -135,7 +135,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
      * @dev This function initializes the contract.
      */
     function initialize(
-        address _systemStake,
+        address _systemStaking,
         address _uniIOTX,
         address _iotxClear,
         address _oracle,
@@ -156,7 +156,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         _setupRole(ROLE_ORACLE, _oracle);
 
         // Collaborative contracts
-        systemStake = _systemStake;
+        systemStaking = _systemStaking;
         uniIOTX = _uniIOTX;
         iotxClear = _iotxClear;
 
@@ -170,7 +170,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         // Validate bucket type info
         for (uint level = 0; level < _sequenceLength; level++) {
             uint amount = _startAmount * (_commonRatio**level);
-            bool isActive = ISystemStake(systemStake).isActiveBucketType(amount, _stakeDuration);
+            bool isActive = ISystemStaking(systemStaking).isActiveBucketType(amount, _stakeDuration);
             require(isActive, "inactive bucket type");
         }
     }
@@ -274,7 +274,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
     }
 
     function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
-        ISystemStake(systemStake).changeDelegates(tokenIds, delegate);
+        ISystemStaking(systemStaking).changeDelegates(tokenIds, delegate);
 
         emit DelegatesUpdated(tokenIds, delegate);
     }
@@ -398,7 +398,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         uint totalAmount = amount * count;
 
         // Call system stake service
-        uint firstTokenId = ISystemStake(systemStake).stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
+        uint firstTokenId = ISystemStaking(systemStaking).stake{value:totalAmount}(amount, stakeDuration, globalDelegate, count);
 
         // Record minted & staked tokens
         uint[] storage tq = tokenQueues[level];
@@ -428,7 +428,7 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
             // Call system merge service
             // All tokens will be merged into the first token in tokenIdsToMerge
             // Reference: https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol#L302
-            ISystemStake(systemStake).merge(tq, stakeDuration);
+            ISystemStaking(systemStaking).merge(tq, stakeDuration);
 
             // Move the merged tokens to upper queue
             uint[] storage tqUpper = tokenQueues[i+1];
@@ -460,11 +460,11 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         }
 
         // Call system unlock service
-        ISystemStake(systemStake).unlock(tokenIdsToUnlock);
+        ISystemStaking(systemStaking).unlock(tokenIdsToUnlock);
 
         // Transfer unlocked tokens to IOTXClear contract
         for (uint i = 0; i < count; i++) {
-            ISystemStake(systemStake).safeTransferFrom(address(this), address(iotxClear), tokenIdsToUnlock[i]);
+            ISystemStaking(systemStaking).safeTransferFrom(address(this), address(iotxClear), tokenIdsToUnlock[i]);
         }
 
         // Record corresponding amount of debt with IOTXClear contract

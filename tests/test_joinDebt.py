@@ -6,7 +6,7 @@ from contracts import *
 
 
 def test_joinDebt(contracts, users, delegates, admin):
-    iotx_clear, iotx_stake = contracts[2], contracts[3]
+    iotx_clear, iotx_staking = contracts[2], contracts[3]
 
     # ---Happy path testing---
 
@@ -15,8 +15,8 @@ def test_joinDebt(contracts, users, delegates, admin):
     # The value transferred here will be considered as rewards from the delegate.
 
     account = users[0]
-    amount = iotx_stake.redeemAmountBase()
-    tx = iotx_clear.joinDebt(account, amount, {"from": iotx_stake})
+    amount = iotx_staking.redeemAmountBase()
+    tx = iotx_clear.joinDebt(account, amount, {"from": iotx_staking})
     assert "DebtQueued" in tx.events
     assert iotx_clear.totalDebts() == amount
     assert iotx_clear.rearIndex() - iotx_clear.headIndex() == 1
@@ -30,7 +30,7 @@ def test_joinDebt(contracts, users, delegates, admin):
     delegates[0].transfer(iotx_clear, reward_incr1)
     reward_rate1 = reward_incr1 * 1e18 / iotx_clear.totalDebts()
     account = users[1]
-    tx = iotx_clear.joinDebt(account, amount, {"from": iotx_stake})
+    tx = iotx_clear.joinDebt(account, amount, {"from": iotx_staking})
     assert "DebtQueued" in tx.events
     assert iotx_clear.totalDebts() == amount*2
     assert iotx_clear.rearIndex() - iotx_clear.headIndex() == 2
@@ -50,7 +50,7 @@ def test_joinDebt(contracts, users, delegates, admin):
     debt_user0 = iotx_clear.userInfos(account)[0]
     reward_rate_user0 = iotx_clear.userInfos(account)[2]
     reward_user0 = (reward_rate2 - reward_rate_user0) * debt_user0 / 1e18
-    tx = iotx_clear.joinDebt(account, amount, {"from": iotx_stake})
+    tx = iotx_clear.joinDebt(account, amount, {"from": iotx_staking})
     assert "DebtQueued" in tx.events
     assert iotx_clear.totalDebts() == amount*3
     assert iotx_clear.rearIndex() - iotx_clear.headIndex() == 3
@@ -72,7 +72,7 @@ def test_joinDebt(contracts, users, delegates, admin):
     debt_user1 = iotx_clear.userInfos(account)[0]
     reward_rate_user1 = iotx_clear.userInfos(account)[3]
     reward_user1 = (reward_rate3 - reward_rate_user1) * debt_user1 / 1e18
-    tx = iotx_clear.joinDebt(account, amount, {"from": iotx_stake})
+    tx = iotx_clear.joinDebt(account, amount, {"from": iotx_staking})
     assert "DebtQueued" in tx.events
     assert iotx_clear.totalDebts() == amount*4
     assert iotx_clear.rearIndex() - iotx_clear.headIndex() == 4
@@ -92,7 +92,7 @@ def test_joinDebt(contracts, users, delegates, admin):
     # When the contract is on pause, the 'joinDebt' function will not operate.
     iotx_clear.pause({'from': admin})
     with brownie .reverts("Pausable: paused"):
-        iotx_clear.joinDebt(account, amount, {"from": iotx_stake})
+        iotx_clear.joinDebt(account, amount, {"from": iotx_staking})
     iotx_clear.unpause({'from': admin})
 
     # Only the role of stake has call permission.

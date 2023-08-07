@@ -19,7 +19,7 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-interface IIOTXStake is IERC721Receiver {
+interface IIOTXStaking is IERC721Receiver {
     function exchangeRatio() external returns (uint ratio);
     function currentReserve() external view returns(uint);
     function redeemAmountBase() external returns(uint);

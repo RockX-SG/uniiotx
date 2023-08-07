@@ -5,7 +5,7 @@ from configs import *
 from contracts import *
 
 def test_claimPrincipals(w3, contracts, users, delegates, oracle, admin, stake_amounts):
-    system_staking, uni_iotx, iotx_clear, iotx_stake = contracts[0], contracts[1], contracts[2], contracts[3]
+    system_staking, uni_iotx, iotx_clear, iotx_staking = contracts[0], contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
 
@@ -14,13 +14,13 @@ def test_claimPrincipals(w3, contracts, users, delegates, oracle, admin, stake_a
     # Once users have claimed their principals, the individual principal record
     # and the global 'accountedBalance' should be adjusted accordingly.
     deadline = w3.eth.get_block('latest').timestamp+60
-    amt = iotx_stake.redeemAmountBase()
+    amt = iotx_staking.redeemAmountBase()
 
-    iotx_stake.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
-    uni_iotx.approve(iotx_stake, amt, {'from': users[0], 'allow_revert': True})
-    iotx_stake.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
+    iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
+    uni_iotx.approve(iotx_staking, amt, {'from': users[0], 'allow_revert': True})
+    iotx_staking.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
 
-    token_ids = iotx_stake.getRedeemedTokenIds(0, 1)
+    token_ids = iotx_staking.getRedeemedTokenIds(0, 1)
     iotx_clear.unstake(token_ids, {'from': oracle, 'allow_revert': True})
     iotx_clear.payDebts(token_ids, {'from': oracle, 'allow_revert': True})
 

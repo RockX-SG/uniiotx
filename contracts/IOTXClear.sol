@@ -25,15 +25,15 @@ import "@openzeppelin/contracts/utils/Address.sol";
 
 import "./Roles.sol";
 import "../interfaces/IIOTXClear.sol";
-import "../interfaces/IIOTXStake.sol";
-import "../interfaces/ISystemStake.sol";
+import "../interfaces/IIOTXStaking.sol";
+import "../interfaces/ISystemStaking.sol";
 
 contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable {
     // ---Use libraries---
     using Address for address payable;
 
     // ---External dependencies---
-    address public systemStake;
+    address public systemStaking;
 
     // ---Constants---
     uint public constant MULTIPLIER = 1e18;
@@ -89,7 +89,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
     modifier onlyDebtToken(uint[] calldata tokenIds) {
         for (uint i; i < tokenIds.length; i++) {
-            (uint tokenAmt, , , ,) = ISystemStake(systemStake).bucketOf(tokenIds[i]);
+            (uint tokenAmt, , , ,) = ISystemStaking(systemStaking).bucketOf(tokenIds[i]);
             require(tokenAmt == debtAmountBase, "Invalid token amount");
         }
         _;
@@ -132,8 +132,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * @dev This function initializes the contract
      */
     function initialize(
-        address _systemStake,
-        address _iotxStake,
+        address _systemStaking,
+        address _iotxStaking,
         address _oracle
     ) public initializer  {
         // Init
@@ -144,14 +144,14 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         // Roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(ROLE_PAUSER, msg.sender);
-        _setupRole(ROLE_STAKER, _iotxStake);
+        _setupRole(ROLE_STAKER, _iotxStaking);
         _setupRole(ROLE_ORACLE, _oracle);
 
         // Collaborative contracts
-        systemStake = _systemStake;
+        systemStaking = _systemStaking;
 
         // Debt management parameters
-        debtAmountBase = IIOTXStake(_iotxStake).redeemAmountBase();
+        debtAmountBase = IIOTXStaking(_iotxStaking).redeemAmountBase();
     }
 
     /**
@@ -163,7 +163,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      */
 
     /**
-     * @dev This function is the 'IERC721Receiver' implement for receiving redeemed/unlocked NFT transferred by IOTXStake contract
+     * @dev This function is the 'IERC721Receiver' implement for receiving redeemed/unlocked NFT transferred by IOTXStaking contract
          */
     function onERC721Received(
         address, // operator
@@ -191,7 +191,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      */
 
     /**
-     * @dev The contract 'IOTXStake' calls this function upon the user's redeeming request.
+     * @dev The contract 'IOTXStaking' calls this function upon the user's redeeming request.
      * This function queues the redeemed amount as debt, which can be paid by withdrawal in FIFO order.
      */
     function joinDebt(address account, uint amount) external whenNotPaused onlyDebtAmount(amount) onlyRole(ROLE_STAKER) {
@@ -203,13 +203,13 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
-        ISystemStake(systemStake).changeDelegates(tokenIds, delegate);
+        ISystemStaking(systemStaking).changeDelegates(tokenIds, delegate);
 
         emit DelegatesUpdated(tokenIds, delegate);
     }
 
     function unstake(uint[] calldata tokenIds) external whenNotPaused onlyDebtToken(tokenIds) onlyRole(ROLE_ORACLE) {
-        if (tokenIds.length > 0) ISystemStake(systemStake).unstake(tokenIds);
+        if (tokenIds.length > 0) ISystemStaking(systemStaking).unstake(tokenIds);
     }
 
     function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyDebtToken(tokenIds) onlyRole(ROLE_ORACLE) {
@@ -312,7 +312,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         address account = nextDebt.account;
 
         // Withdraw NFT to this contract
-        ISystemStake(systemStake).withdraw(tokenIds, payable(address(this)));
+        ISystemStaking(systemStaking).withdraw(tokenIds, payable(address(this)));
         accountedBalance += amountToPay;
 
         // Update debt states
