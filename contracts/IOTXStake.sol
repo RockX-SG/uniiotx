@@ -126,6 +126,11 @@ contract IOTXStake is IIOTXStake, Initializable, PausableUpgradeable, AccessCont
         _unpause();
     }
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     /**
      * @dev This function initializes the contract.
      */
