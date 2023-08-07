@@ -23,7 +23,7 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "./Roles.sol";
+import "../interfaces/Roles.sol";
 import "../interfaces/IIOTXClear.sol";
 import "../interfaces/IUniIOTX.sol";
 import "../interfaces/IIOTXStaking.sol";
