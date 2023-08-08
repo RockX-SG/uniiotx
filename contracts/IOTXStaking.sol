@@ -93,7 +93,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
 
     // ---Modifiers---
     modifier onlyValidTransaction(uint deadline) {
-        require(deadline > block.timestamp, "Transaction expired");
+        require(deadline > block.timestamp, "USR001");  // Transaction expired
         _;
     }
 
@@ -171,7 +171,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         for (uint level = 0; level < _sequenceLength; level++) {
             uint amount = _startAmount * (_commonRatio**level);
             bool isActive = ISystemStaking(systemStaking).isActiveBucketType(amount, _stakeDuration);
-            require(isActive, "inactive bucket type");
+            require(isActive, "SYS001");  // Inactive bucket type
         }
     }
 
@@ -179,7 +179,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @dev This function sets manager's fee in range [0, 1000]
      */
     function setManagerFeeShares(uint shares) external onlyRole(DEFAULT_ADMIN_ROLE)  {
-        require(shares <= 1000, "Manager fee shares out of range");
+        require(shares <= 1000, "SYS002");  // Manager fee shares out of range
         managerFeeShares = shares;
 
         emit ManagerFeeSharesSet(shares);
@@ -283,7 +283,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
      */
     function deposit(uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
-        require(msg.value > 0, "Invalid deposit amount");
+        require(msg.value > 0, "USR002");  // Invalid deposit amount
 
         minted = _mint();
         _stakeAtTopLevel();
@@ -322,7 +322,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * 2. Shift the corresponding amount of accountedManagerReward to totalPending.
      */
     function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
-        require(amount <= accountedManagerReward, "Insufficient accounted manager reward");
+        require(amount <= accountedManagerReward, "USR006");  // Insufficient accounted manager reward
 
         uint toMint = _convertIotxToUniIOTX(amount);
         IUniIOTX(uniIOTX).mint(recipient, toMint);
@@ -446,7 +446,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
 
     function _redeem(uint iotxsToRedeem) internal returns(uint burned) {
         // Check redeem condition
-        require(iotxsToRedeem >= redeemAmountBase && iotxsToRedeem % redeemAmountBase == 0, "Invalid redeem amount");
+        require(iotxsToRedeem >= redeemAmountBase && iotxsToRedeem % redeemAmountBase == 0, "USR003");  // Invalid redeem amount
 
         // Burn uniIOTXs
         uint toBurn = _convertIotxToUniIOTX(iotxsToRedeem);

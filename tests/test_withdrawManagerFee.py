@@ -31,7 +31,7 @@ def test_withdrawManagerFee(w3, contracts, users, delegates, admin, oracle):
     # ---Revert path testing---
 
     # Ensure there is an adequate balance for the manager's fee withdrawal.
-    with brownie .reverts("Insufficient accounted manager reward"):
+    with brownie .reverts("USR006"):
         iotx_staking.withdrawManagerFee(manager_reward, admin, {"from": admin})
 
     # Only the role of fee manager has call permission.

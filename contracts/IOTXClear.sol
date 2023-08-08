@@ -83,14 +83,14 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
     // ---Modifiers---
     modifier onlyDebtAmount(uint amount) {
-        require(amount > 0 && amount % debtAmountBase == 0, "Invalid debt amount");
+        require(amount > 0 && amount % debtAmountBase == 0, "SYS003");  // Invalid debt amount
         _;
     }
 
     modifier onlyDebtToken(uint[] calldata tokenIds) {
         for (uint i; i < tokenIds.length; i++) {
             (uint tokenAmt, , , ,) = ISystemStaking(systemStaking).bucketOf(tokenIds[i]);
-            require(tokenAmt == debtAmountBase, "Invalid token amount");
+            require(tokenAmt == debtAmountBase, "USR007");  // Invalid token amount for debt payment
         }
         _;
     }
@@ -230,7 +230,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
     function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyDebtToken(tokenIds) onlyRole(ROLE_ORACLE) {
         uint totalTokenCntToPay = tokenIds.length;
-        require(totalTokenCntToPay > 0 && totalDebts >= totalTokenCntToPay*debtAmountBase, "Invalid total principal for debt payment");
+        require(totalTokenCntToPay > 0 && totalDebts >= totalTokenCntToPay*debtAmountBase, "USR008");  // Invalid total principal for debt payment
         uint paidTokenCnt;
         while (paidTokenCnt < totalTokenCntToPay) {
             // Peek next debt
@@ -259,7 +259,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     function claimPrincipals(uint amount, address recipient) external nonReentrant whenNotPaused {
         // Check principal
         UserInfo storage info = userInfos[msg.sender];
-        require(info.principal >= amount, "Insufficient accounted principal");
+        require(info.principal >= amount, "USR004");  // Insufficient accounted principal
 
         // Transfer principal
         payable(recipient).sendValue(amount);
@@ -275,7 +275,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
         // Check reward
         UserInfo storage info = userInfos[msg.sender];
-        require(info.reward >= amount, "Insufficient accounted reward");
+        require(info.reward >= amount, "USR005");  // Insufficient accounted reward
 
         // Transfer reward
         payable(recipient).sendValue(amount);
@@ -310,7 +310,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     function _dequeueDebt() internal returns (Debt memory debt) {
-        require(!_isEmptyQueue(), "Empty queue");
+        require(!_isEmptyQueue(), "SYS004");  // Empty queue
         uint firstDebt = headIndex+1;
         debt = iotxDebts[firstDebt];
         delete iotxDebts[firstDebt];

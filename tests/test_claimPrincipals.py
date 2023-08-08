@@ -59,7 +59,7 @@ def test_claimPrincipals(w3, contracts, users, delegates, oracle, admin, stake_a
     iotx_clear.unpause({'from': admin})
 
     # Users should possess sufficient principals
-    with brownie .reverts("Insufficient accounted principal"):
+    with brownie .reverts("USR004"):
         iotx_clear.claimPrincipals(amt/2, users[0], {'from': users[0]})
 
     # Todo: Handle nonReentrant

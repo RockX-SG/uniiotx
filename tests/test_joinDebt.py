@@ -100,9 +100,9 @@ def test_joinDebt(contracts, users, delegates, admin):
         iotx_clear.joinDebt(account, amount, {"from": admin})
 
     # Only accept valid debt amounts.
-    with brownie .reverts("Invalid debt amount"):
+    with brownie .reverts("SYS003"):
         iotx_clear.joinDebt(account, 0, {"from": admin})
-    with brownie .reverts("Invalid debt amount"):
+    with brownie .reverts("SYS003"):
         iotx_clear.joinDebt(account, amount+100, {"from": admin})
-    with brownie .reverts("Invalid debt amount"):
+    with brownie .reverts("SYS003"):
         iotx_clear.joinDebt(account, amount-100, {"from": admin})

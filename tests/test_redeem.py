@@ -82,13 +82,13 @@ def test_redeem(w3, contracts, users, delegates, oracle):
 
     # The transaction of the redeem request should arrive within the deadline time.
     past_deadline = "1690514039"
-    with brownie .reverts("Transaction expired"):
+    with brownie .reverts("USR001"):
         iotx_staking.redeem(amt, past_deadline, {'from': users[0], 'allow_revert': True})
 
     # Users can can only redeem amounts that are multiples of the redeemAmountBase.
-    with brownie .reverts("Invalid redeem amount"):
+    with brownie .reverts("USR003"):
         iotx_staking.redeem(amt - 10, deadline, {'from': users[0], 'allow_revert': True})
-    with brownie .reverts("Invalid redeem amount"):
+    with brownie .reverts("USR003"):
         iotx_staking.redeem(amt + 10, deadline, {'from': users[0], 'allow_revert': True})
 
     # Todo: Handle nonReentrant

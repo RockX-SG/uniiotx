@@ -87,22 +87,22 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
 
     # Only accept debt tokens whose value is equal to the 'debtAmountBase' value
     iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[0], 'allow_revert': True})
-    with brownie .reverts("Invalid token amount"):
+    with brownie .reverts("USR007"):
         iotx_clear.payDebts([iotx_staking.tokenQueues(0, 0)], {'from': oracle, 'allow_revert': True})
 
     iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
-    with brownie .reverts("Invalid token amount"):
+    with brownie .reverts("USR007"):
         iotx_clear.payDebts([iotx_staking.tokenQueues(1, 0)], {'from': oracle, 'allow_revert': True})
 
     # Passing an empty array of token IDs is not allowed
     iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[0], 'allow_revert': True})
-    with brownie .reverts("Invalid total principal for debt payment"):
+    with brownie .reverts("USR008"):
         iotx_clear.payDebts([], {'from': oracle, 'allow_revert': True})
 
     # The total value of token IDs must not surpass the total value of the existing debt
     iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
     token_id = iotx_staking.tokenQueues(2, 10)
-    with brownie .reverts("Invalid total principal for debt payment"):
+    with brownie .reverts("USR008"):
         iotx_clear.payDebts([token_id], {'from': oracle, 'allow_revert': True})
 
     # The token ID for payment will not be reused; therefore it must exist.

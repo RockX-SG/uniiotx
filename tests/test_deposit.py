@@ -119,11 +119,11 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
 
     # The transaction of the deposit request should arrive within the deadline time.
     past_deadline = "1690514039"
-    with brownie .reverts("Transaction expired"):
+    with brownie .reverts("USR001"):
         iotx_staking.deposit(past_deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
 
     # Deposits of zero value are not permitted.
-    with brownie .reverts("Invalid deposit amount"):
+    with brownie .reverts("USR002"):
         iotx_staking.deposit(deadline, {'from': users[0], 'value': 0, 'allow_revert': True})
 
     # Todo: Handle nonReentrant
