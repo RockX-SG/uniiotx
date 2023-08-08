@@ -127,7 +127,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         _unpause();
     }
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
+    /**
+     * @dev @custom:oz-upgrades-unsafe-allow constructor
+     */
     constructor() {
         _disableInitializers();
     }

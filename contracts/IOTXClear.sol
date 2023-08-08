@@ -124,7 +124,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         _unpause();
     }
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
+    /**
+     * @dev @custom:oz-upgrades-unsafe-allow constructor
+     */
     constructor() {
         _disableInitializers();
     }
