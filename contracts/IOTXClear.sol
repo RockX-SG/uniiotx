@@ -175,11 +175,27 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     /**
-     * @return The user's total reward that is available for future claims.
+     * @return The user's reward that is available for future claims.
      * @dev The returned value includes the pending reward that hasn't been accounted yet.
      */
     function getReward(address account) external view returns (uint) {
         return userInfos[account].reward + _calcPendingReward(account);
+    }
+
+    /**
+     * @return The user's principal that is available for future claims.
+     * @dev The amount of the paid debt will be added to the user's principal.
+     */
+    function getPrincipal(address account) external view returns (uint) {
+        return userInfos[account].principal;
+    }
+
+    /**
+     * @return The user's remaining debt that needs payment.
+     * @dev The amount of the paid debt will be added to the user's principal.
+     */
+    function getDebt(address account) external view returns (uint) {
+        return userInfos[account].debt;
     }
 
     /**
