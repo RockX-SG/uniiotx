@@ -95,6 +95,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         _;
     }
 
+
     /**
      * ======================================================================================
      *
@@ -154,6 +155,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         debtAmountBase = IIOTXStaking(_iotxStaking).redeemAmountBase();
     }
 
+
     /**
      * ======================================================================================
      *
@@ -198,6 +200,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         return userInfos[account].debt;
     }
 
+
     /**
      * ======================================================================================
      *
@@ -217,6 +220,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         // Record new user debt
         _enqueueDebt(account, amount);
     }
+
 
     /**
      * ======================================================================================
@@ -264,6 +268,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         }
     }
 
+
     /**
      * ======================================================================================
      *
@@ -300,6 +305,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
         emit RewardClaimed(msg.sender, recipient, amount);
     }
+
 
     /**
     * ======================================================================================

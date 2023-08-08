@@ -97,6 +97,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         _;
     }
 
+
     /**
      * ======================================================================================
      *
@@ -185,6 +186,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         emit ManagerFeeSharesSet(shares);
     }
 
+
     /**
      * ======================================================================================
      *
@@ -259,6 +261,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         }
     }
 
+
     /**
      * ======================================================================================
      *
@@ -297,6 +300,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         }
     }
 
+
     /**
      * ======================================================================================
      *
@@ -316,8 +320,6 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         _stakeAndMergeAtSubLevel();
     }
 
-
-
     /**
      * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
      * @param iotxsToRedeem The number of IOTXs to redeem must be a multiple of the accepted amount of redeeming base.
@@ -325,6 +327,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     function redeem(uint iotxsToRedeem, uint deadline) external nonReentrant onlyValidTransaction(deadline) returns(uint burned) {
         burned = _redeem(iotxsToRedeem);
     }
+
 
     /**
      * ======================================================================================
@@ -350,6 +353,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
 
         emit ManagerFeeWithdrawed(amount, toMint, recipient);
     }
+
 
     /**
      * ======================================================================================
