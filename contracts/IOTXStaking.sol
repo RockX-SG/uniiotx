@@ -84,7 +84,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     event Minted(address user, uint minted);
     event Redeemed(address user, uint burned, uint[] tokenIds);
     event Staked(uint firstTokenId, uint amount, address delegate, uint count);
-    event Merged(uint[] tokenIds, uint amount);
+    event Merged(uint fromLevel, uint toLevel, uint amount);
     event RewardUpdated(uint amount);
     event ManagerFeeSharesSet(uint shares);
     event ManagerFeeWithdrawed(uint amount, uint minted, address recipient);
@@ -418,10 +418,12 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     function _merge(uint fromLevel) internal {
+        uint steps;
+
         for (uint i = fromLevel; i < sequenceLength-1; i++) {
             // Check merge condition
             uint[] storage tq = tokenQueues[i];
-            if (tq.length < commonRatio) continue;
+            if (tq.length < commonRatio) break;
 
             // Call system merge service
             // All tokens will be merged into the first token in tokenIdsToMerge
@@ -433,8 +435,13 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
             tqUpper.push(tq[0]);
             delete tokenQueues[i];
 
-            emit Merged(tq, startAmount * (commonRatio**(i+1)));
+            steps++;
         }
+
+        uint toLevel = fromLevel + steps;
+        uint mergeAmount = startAmount * (commonRatio**toLevel);
+
+        emit Merged(fromLevel, toLevel, mergeAmount);
     }
 
     function _redeem(uint iotxsToRedeem) internal returns(uint burned) {
