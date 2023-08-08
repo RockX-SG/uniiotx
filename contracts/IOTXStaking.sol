@@ -262,7 +262,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     /**
      * ======================================================================================
      *
-     * EXTERNAL FUNCTIONS
+     * EXTERNAL FUNCTIONS FOR ORACLE
      *
      * ======================================================================================
      */
@@ -279,28 +279,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         emit DelegatesUpdated(tokenIds, delegate);
     }
 
-    /**
-     * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
-     */
-    function deposit(uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
-        require(msg.value > 0, "USR002");  // Invalid deposit amount
-
-        minted = _mint();
-        _stakeAtTopLevel();
-        _stakeAndMergeAtSubLevel();
-    }
-
     function stake() external whenNotPaused onlyRole(ROLE_ORACLE) {
         _stakeAtTopLevel();
         _stakeAndMergeAtSubLevel();
-    }
-
-    /**
-     * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
-     * @param iotxsToRedeem The number of IOTXs to redeem must be a multiple of the accepted amount of redeeming base.
-     */
-    function redeem(uint iotxsToRedeem, uint deadline) external nonReentrant onlyValidTransaction(deadline) returns(uint burned) {
-        burned = _redeem(iotxsToRedeem);
     }
 
     /**
@@ -315,6 +296,43 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
             emit RewardUpdated(reward);
         }
     }
+
+    /**
+     * ======================================================================================
+     *
+     * EXTERNAL FUNCTIONS FOR USERS
+     *
+     * ======================================================================================
+     */
+
+    /**
+     * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
+     */
+    function deposit(uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
+        require(msg.value > 0, "USR002");  // Invalid deposit amount
+
+        minted = _mint();
+        _stakeAtTopLevel();
+        _stakeAndMergeAtSubLevel();
+    }
+
+
+
+    /**
+     * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
+     * @param iotxsToRedeem The number of IOTXs to redeem must be a multiple of the accepted amount of redeeming base.
+     */
+    function redeem(uint iotxsToRedeem, uint deadline) external nonReentrant onlyValidTransaction(deadline) returns(uint burned) {
+        burned = _redeem(iotxsToRedeem);
+    }
+
+    /**
+     * ======================================================================================
+     *
+     * EXTERNAL FUNCTIONS FOR FEE_MANAGER
+     *
+     * ======================================================================================
+     */
 
     /**
      * @dev This function handles manager reward in this way:

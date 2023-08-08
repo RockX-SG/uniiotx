@@ -201,7 +201,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     /**
      * ======================================================================================
      *
-     * EXTERNAL FUNCTIONS
+     * EXTERNAL FUNCTIONS FOR STAKER
      *
      * ======================================================================================
      */
@@ -217,6 +217,14 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         // Record new user debt
         _enqueueDebt(account, amount);
     }
+
+    /**
+     * ======================================================================================
+     *
+     * EXTERNAL FUNCTIONS FOR ORACLE
+     *
+     * ======================================================================================
+     */
 
     function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
         ISystemStaking(systemStaking).changeDelegates(tokenIds, delegate);
@@ -255,6 +263,14 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
             paidTokenCnt += tokenCntToPay;
         }
     }
+
+    /**
+     * ======================================================================================
+     *
+     * EXTERNAL FUNCTIONS FOR USERS
+     *
+     * ======================================================================================
+     */
 
     function claimPrincipals(uint amount, address recipient) external nonReentrant whenNotPaused {
         // Check principal
