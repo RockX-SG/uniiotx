@@ -208,30 +208,30 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @return ratio The exchange ratio of uniIOTX to IOTX, multiplied by 'MULTIPLIER' (1e18).
      * @dev The factors that affect the returned result are the same as those of the 'currentReserve' function.
+     * @return ratio The exchange ratio of uniIOTX to IOTX, multiplied by 'MULTIPLIER' (1e18).
      */
     function exchangeRatio() external view returns (uint ratio) {
         return _exchangeRatio();
     }
 
     /**
-     * @return The current reserve of IOTXs in our liquid staking protocol.
      * @dev The returned amount is determined by the following contributions:
      * 1. User deposits/stakes their principal.
      * 2. Rewards generated from delegation, excluding manager rewards, are added to the reserve.
      * 3. The manager fee is withdrawn and included in the totalPending amount.
      * 4. When users make a 'redeem' call, the totalStaked amount decreases.
      * 5. The Oracle service should regularly call the 'updateReward' function to account for new rewards.
+     * @return The current reserve of IOTXs in our liquid staking protocol.
      */
     function currentReserve() external view returns(uint) {
         return _currentReserve();
     }
 
     /**
-     * @return An [i, j) slice of already redeemed/unlocked token id, which is indexed from 0 in this contract.
-     * @param i, j The valid index values for i and j are determined by this conditional check: i < j && j <= redeemedTokenCount
      * @dev It recommended to check the value of 'redeemedTokenCount' beforehand to prevent the passed j from going out of range.
+     * @param i, j The valid index values for i and j are determined by this conditional check: i < j && j <= redeemedTokenCount
+     * @return An [i, j) slice of already redeemed/unlocked token id, which is indexed from 0 in this contract.
      */
     function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory) {
         if (i < j && j <= redeemedTokenCount) {
@@ -247,8 +247,8 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @return count The current staked token count of the specified token queue
      * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength]
+     * @return count The current staked token count of the specified token queue
      */
     function getStakedTokenCount(uint tokenQueueIndex) external view returns (uint count) {
         if (tokenQueueIndex < sequenceLength) {
@@ -270,18 +270,27 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * ======================================================================================
      */
 
+    /**
+     * @dev This function sets the global delegate for upcoming deposit activities.
+     */
     function setGlobalDelegate(address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
         globalDelegate = delegate;
 
         emit GlobalDelegateSet(delegate);
     }
 
+    /**
+     * @dev This function updates the delegates of token IDs.
+     */
     function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
         ISystemStaking(systemStaking).changeDelegates(tokenIds, delegate);
 
         emit DelegatesUpdated(tokenIds, delegate);
     }
 
+    /**
+     * @dev This function stakes any pending IOTXs and merges staked buckets when conditions are fulfilled.
+     */
     function stake() external whenNotPaused onlyRole(ROLE_ORACLE) {
         _stakeAtTopLevel();
         _stakeAndMergeAtSubLevel();
@@ -310,7 +319,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      */
 
     /**
-     * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
+     * @dev This function mints uniIOTXs for the user, stakes any pending IOTXs and
+     * merges staked buckets when conditions are fulfilled.
+     * @return minted The quantity of minted uniIOTXs
      */
     function deposit(uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
         require(msg.value > 0, "USR002");  // Invalid deposit amount
@@ -321,8 +332,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @dev This function keeps the exchange ratio invariant to avoid user arbitrage.
+     * @dev This function unlocks staked bucket(s) and subsequently calls the 'IOTXClear' contract to record the debt.
      * @param iotxsToRedeem The number of IOTXs to redeem must be a multiple of the accepted amount of redeeming base.
+     * @return burned the quantity of burned uniIOTXs.
      */
     function redeem(uint iotxsToRedeem, uint deadline) external nonReentrant onlyValidTransaction(deadline) returns(uint burned) {
         burned = _redeem(iotxsToRedeem);
@@ -363,6 +375,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * ======================================================================================
      */
 
+    /**
+     * @dev This function mints uniIOTXs for the user based on their sent value and the latest exchange ratio.
+     */
     function _mint() internal returns (uint minted) {
         accountedBalance += msg.value;
 
@@ -375,6 +390,10 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         emit Minted(msg.sender, minted);
     }
 
+    /**
+     * @dev This function stakes IOTXs at the highest level, utilizing the maximum staking amount,
+     * without incorporating any merging behaviors.
+     */
     function _stakeAtTopLevel() internal {
         // Determine values of stake params
         uint level = sequenceLength-1;
@@ -385,6 +404,10 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         _doStake(level, amount, count);
     }
 
+    /**
+     * @dev This function stakes IOTXs at lower levels, using smaller staking amounts.
+     * It may incorporate merging behaviors if conditions are met.
+     */
     function _stakeAndMergeAtSubLevel() internal {
         uint nextLevel = sequenceLength-2;
         while (totalPending >= startAmount) {
@@ -392,6 +415,11 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         }
     }
 
+    /**
+     * @dev This function verifies if the pending IOTXs are adequate for staking at the specified level.
+     * If adequate , it triggers the '_doStake' function to execute the actual staking.
+     * Otherwise, it will return a lower try level.
+     */
     function _tryStake(uint tryLevel) internal returns (uint nextLevel) {
         // Verify if there is an adequate total of pending IOTX and ascertain the values of stake parameters.
         (uint amount, uint count) = _getStakeAmountAndCount(tryLevel);
@@ -413,6 +441,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         return tryLevel;
     }
 
+    /**
+     * @dev This function carries out the actual staking activity.
+     */
     function _doStake(uint level, uint amount, uint count) internal {
         // Calculate total amount
         uint totalAmount = amount * count;
@@ -434,11 +465,18 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         emit Staked(firstTokenId, amount, globalDelegate, count);
     }
 
+    /**
+     * @dev This function computes and return the available staking amount and count at the specified level,
+     * considering the current total pending amount.
+     */
     function _getStakeAmountAndCount(uint level) internal view returns(uint amount, uint count) {
         amount = startAmount * (commonRatio**level);
         count = totalPending / amount;
     }
 
+    /**
+     * @dev This function combines lower-level tokens into upper-level ones.
+     */
     function _merge(uint fromLevel) internal {
         uint steps;
 
@@ -466,6 +504,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         emit Merged(fromLevel, toLevel, mergeAmount);
     }
 
+    /**
+     * @dev This function unlocks staked buckets and triggers the 'IOTXClear' contract to record corresponding debts.
+     */
     function _redeem(uint iotxsToRedeem) internal returns(uint burned) {
         // Check redeem condition
         require(iotxsToRedeem >= redeemAmountBase && iotxsToRedeem % redeemAmountBase == 0, "USR003");  // Invalid redeem amount
@@ -515,6 +556,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         }
     }
 
+    /**
+     * @dev This function computes and returns the exchange ratio of uniIOTX to IOTX, multiplied by 'MULTIPLIER' (1e18).
+     */
     function _exchangeRatio() internal view returns (uint ratio) {
         uint uniIOTXAmount = IUniIOTX(uniIOTX).totalSupply();
         if (uniIOTXAmount == 0) {
@@ -523,10 +567,16 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         ratio = _currentReserve() * MULTIPLIER / uniIOTXAmount;
     }
 
+    /**
+     * @dev This function computes and provides the current reserved IOTXs.
+     */
     function _currentReserve() internal view returns(uint) {
         return totalPending + totalStaked;
     }
 
+    /**
+     * @dev This function synchronizes the contract balance, calculating the increase in balance as the returned reward.
+     */
     function _syncReward() internal returns (uint reward) {
         uint thisBalance = address(this).balance;
         uint diff = thisBalance - accountedBalance;
@@ -534,6 +584,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         reward = diff;
     }
 
+    /**
+     * @dev This function divides the specified reward amount between users and the manager.
+     */
     function _splitReward(uint reward) internal returns (uint userReward) {
         uint fee = reward * managerFeeShares / 1000;
         accountedManagerReward += fee;
@@ -541,6 +594,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         accountedUserReward += userReward;
     }
 
+    /**
+     * @dev This function incorporates the specified reward amount into the 'totalPending' value.
+     */
     function _compoundReward(uint amount) internal {
         totalPending += amount;
     }

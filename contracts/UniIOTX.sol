@@ -32,6 +32,9 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
         _disableInitializers();
     }
 
+    /**
+     * @dev This function initializes the contract
+     */
     function initialize(
         address iotxStaker
     ) public initializer {
@@ -48,22 +51,37 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
         _setupRole(ROLE_MINTER, iotxStaker);
     }
 
+    /**
+     * @dev This function burns the specified quantity of uniIOTXs for the 'MINTER'
+     */
     function burn(uint amount) public override onlyRole(ROLE_MINTER) {
         _burn(_msgSender(), amount);
     }
 
+    /**
+     * @dev This function mints the specified quantity of uniIOTXs for the 'MINTER'
+     */
     function mint(address to, uint amount) public onlyRole(ROLE_MINTER) {
         _mint(to, amount);
     }
 
+    /**
+     * @dev This function captures a snapshot.
+     */
     function snapshot() public onlyRole(ROLE_MINTER) {
         _snapshot();
     }
 
+    /**
+     * @dev This function pauses the contract
+     */
     function pause() public onlyRole(ROLE_PAUSER) {
         _pause();
     }
 
+    /**
+     * @dev This function unpauses the contract
+     */
     function unpause() public onlyRole(ROLE_PAUSER) {
         _unpause();
     }
@@ -77,7 +95,7 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
     }
 
     /**
-    * @dev Batch transfer amount to recipient
+     * @dev This function batch transfers amount to recipient
      * @notice that excessive gas consumption causes transaction revert
      */
     function batchTransfer(address[] memory recipients, uint256[] memory amounts) public {

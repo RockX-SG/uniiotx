@@ -177,24 +177,24 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     /**
-     * @return The user's reward that is available for future claims.
      * @dev The returned value includes the pending reward that hasn't been accounted yet.
+     * @return The user's reward that is available for future claims.
      */
     function getReward(address account) external view returns (uint) {
         return userInfos[account].reward + _calcPendingReward(account);
     }
 
     /**
-     * @return The user's principal that is available for future claims.
      * @dev The amount of the paid debt will be added to the user's principal.
+     * @return The user's principal that is available for future claims.
      */
     function getPrincipal(address account) external view returns (uint) {
         return userInfos[account].principal;
     }
 
     /**
-     * @return The user's remaining debt that needs payment.
      * @dev The amount of the paid debt will be added to the user's principal.
+     * @return The user's remaining debt that needs payment.
      */
     function getDebt(address account) external view returns (uint) {
         return userInfos[account].debt;
@@ -230,16 +230,25 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * ======================================================================================
      */
 
+    /**
+     * @dev This function updates the delegates of token IDs.
+     */
     function updateDelegates(uint[] calldata tokenIds, address delegate) external whenNotPaused onlyRole(ROLE_ORACLE) {
         ISystemStaking(systemStaking).changeDelegates(tokenIds, delegate);
 
         emit DelegatesUpdated(tokenIds, delegate);
     }
 
+    /**
+     * @dev This function unstakes unlocked tokens, allowing them to be used for future debt payment.
+     */
     function unstake(uint[] calldata tokenIds) external whenNotPaused onlyDebtToken(tokenIds) onlyRole(ROLE_ORACLE) {
         if (tokenIds.length > 0) ISystemStaking(systemStaking).unstake(tokenIds);
     }
 
+    /**
+     * @dev This function withdraws the specified tokens for debt payment.
+     */
     function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyDebtToken(tokenIds) onlyRole(ROLE_ORACLE) {
         uint totalTokenCntToPay = tokenIds.length;
         require(totalTokenCntToPay > 0 && totalDebts >= totalTokenCntToPay*debtAmountBase, "USR008");  // Invalid total principal for debt payment
@@ -277,6 +286,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * ======================================================================================
      */
 
+    /**
+     * @dev This function allows users to claim their principals to the specified recipient.
+     */
     function claimPrincipals(uint amount, address recipient) external nonReentrant whenNotPaused {
         // Check principal
         UserInfo storage info = userInfos[msg.sender];
@@ -290,6 +302,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         emit PrincipalClaimed(msg.sender, recipient, amount);
     }
 
+    /**
+     * @dev This function allows users to claim their rewards to the specified recipient.
+     */
     function claimRewards(uint amount, address recipient) external nonReentrant whenNotPaused {
          // Update reward
         _updateUserReward(msg.sender);
@@ -315,6 +330,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     * ======================================================================================
     */
 
+    /**
+     * @dev This function appends a debt item to the FIFO queue.
+     */
     function _enqueueDebt(address account, uint amount) internal {
         // Add a debt in FIFO order
         rearIndex += 1;
@@ -327,10 +345,17 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         emit DebtQueued(account, amount, rearIndex);
     }
 
+    /**
+     * @dev This function retrieves a debt item from the FIFO queue for the next payment,
+     * without removing it from the queue.
+     */
     function _peekNextDebt() internal view returns (Debt memory firstDebt) {
         firstDebt = iotxDebts[headIndex+1];
     }
 
+    /**
+     * @dev This function removes a debt item from the FIFO queue.
+     */
     function _dequeueDebt() internal returns (Debt memory debt) {
         require(!_isEmptyQueue(), "SYS004");  // Empty queue
         uint firstDebt = headIndex+1;
@@ -339,10 +364,16 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         headIndex += 1;
     }
 
+    /**
+     * @dev This function checks if the FIFO queue is empty.
+     */
     function _isEmptyQueue() internal view returns (bool) {
         return rearIndex == headIndex;
     }
 
+    /**
+     * @dev This function pays the next debt based on the FIFO queue.
+     */
     function _payNextDebt(uint amountToPay, uint[] memory tokenIds) internal {
         // Retrieve next debt
         uint nextDebtIndex = headIndex+1;
@@ -379,6 +410,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         info.rewardRate = rewardRate;
     }
 
+    /**
+     * @dev This function synchronizes this contract balance and updates the shared 'rewardRate'.
+     */
     function _updateSharedReward() internal {
         if (address(this).balance > accountedBalance && totalDebts > 0) {
             uint incrReward = address(this).balance - accountedBalance;
@@ -387,6 +421,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         }
     }
 
+    /**
+     * @dev This function calculates the user's pending reward that has not yet been synchronized and accounted for.
+     */
     function _calcPendingReward(address account) internal view returns (uint) {
         UserInfo memory info = userInfos[account];
         if (info.debt > 0 && address(this).balance > accountedBalance) {
