@@ -23,6 +23,6 @@ def main():
     iotx_staking_upgraded = IOTXStaking.deploy({'from': deployer, 'gas_limit': gas_limit})
     iotx_staking_proxy.upgradeTo(iotx_staking_upgraded, {'from': deployer, 'gas_limit': gas_limit})
 
-    print("Upgraded IOTXStakeing address:", iotx_staking_upgraded)  # https://testnet.iotexscan.io/address/0x6378a9C643Cd85C0745860592335bab6740Ca517#transactions
+    print("Upgraded IOTXStakeing address:", iotx_staking_upgraded)  # https://testnet.iotexscan.io/address/0x506772E82Bb195D3Ec1371dc94cE069AC0Ca2E29#transactions
 
 

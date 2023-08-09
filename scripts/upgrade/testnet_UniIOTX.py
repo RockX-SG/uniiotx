@@ -23,6 +23,6 @@ def main():
     uni_iotx_upgraded = UniIOTX.deploy({'from': deployer, 'gas_limit': gas_limit})
     uni_iotx_proxy.upgradeTo(uni_iotx_upgraded, {'from': deployer, 'gas_limit': gas_limit})
 
-    print("Upgraded UniIOTX address:", uni_iotx_upgraded)  # https://testnet.iotexscan.io/address/0xEa9D88eBb1dBF8A0b41a531e95aa39779d82A9bf#transactions
+    print("Upgraded UniIOTX address:", uni_iotx_upgraded)  # https://testnet.iotexscan.io/address/0x21F70d97202B52d010e0fa1A7DcD074db0baCE9F#transactions
 
 
