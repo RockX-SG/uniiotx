@@ -77,21 +77,21 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     uint public redeemedTokenCount;
 
     // The balance synchronized from this contract fluctuates due to several factors:
-    // 1. When users deposit IOTXs for liquid staking service, it increases.
-    // 2. When pending IOTXs are staked with delegates, it decreases.
-    // 3. When rewards are distributed by delegates, it increases.
+    // 1. It increases when users deposit IOTXs for liquid staking service.
+    // 2. It increases when rewards are distributed by delegates.
+    // 3. It decreases when pending IOTXs are staked with delegates.
     uint public accountedBalance;
 
     // The total pending IOTXs fluctuates due to several factors:
-    // 1. When users deposit IOTXs for liquid staking service, it increases.
-    // 2. When pending IOTXs are staked with delegates, it decreases.
-    // 3. When users' rewards are compounded, it increases.
-    // 4. When the manager fee is withdrawn, it increases.
+    // 1. It increases when users deposit IOTXs for liquid staking service.
+    // 2. It increases when users' rewards are compounded..
+    // 3. It increases when the manager fee is withdrawn.
+    // 4. It decreases when pending IOTXs are staked with delegates.
     uint public totalPending;
 
     // The total staked IOTXs fluctuates due to several factors:
-    // 1. When pending IOTXs are staked with delegates, it increases.
-    // 2. WHen users request to redeem IOTXs, it decreases.
+    // 1.It increases when pending IOTXs are staked with delegates.
+    // 2. It decreases when users request to redeem IOTXs.
     uint public totalStaked;
 
     // The manager fee share ranges from 0 to 1000, as regulated by the default Admin.
