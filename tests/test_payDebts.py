@@ -38,13 +38,13 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
     tx = iotx_clear.payDebts(token_ids[0:5], {'from': oracle, 'allow_revert': True})
     assert "Withdrawal" in tx.events
     assert "DebtPaid" in tx.events
-    assert iotx_clear.headIndex() == 0
+    assert iotx_clear.getPaidDebtItemCount() == 0
     assert iotx_clear.totalDebts() == amt_total/2
     assert iotx_clear.accountedBalance() == mock_reward_incr1 + amt_total/2
     assert iotx_clear.balance() == iotx_clear.accountedBalance()
 
     user_info = iotx_clear.userInfos(users[0])
-    debt_item1 = iotx_clear.iotxDebts(1)
+    debt_item1 = iotx_clear.getUnpaidDebtItem(1)
     assert user_info[0] == amt_total/2
     assert user_info[1] == amt_total/2
     assert user_info[2] == reward_user01
@@ -58,13 +58,13 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
     tx = iotx_clear.payDebts(token_ids[5:cnt], {'from': oracle, 'allow_revert': True})
     assert "Withdrawal" in tx.events
     assert "DebtPaid" in tx.events
-    assert iotx_clear.headIndex() == 1
+    assert iotx_clear.getPaidDebtItemCount() == 1
     assert iotx_clear.totalDebts() == 0
     assert iotx_clear.accountedBalance() == mock_reward_incr1 + amt_total
     assert iotx_clear.balance() == iotx_clear.accountedBalance()
 
     user_info = iotx_clear.userInfos(users[0])
-    debt_item1 = iotx_clear.iotxDebts(1)
+    debt_item1 = iotx_clear.getUnpaidDebtItem(1)
     assert user_info[0] == 0
     assert user_info[1] == amt_total
     assert user_info[2] == reward_user01

@@ -99,9 +99,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     // 4. The total number of added debts is represented by: rearIndex.
     // 5. The total number of paid debts is represented by: headIndex.
     // 6. The total number of unpaid debts can be calculated as: rearIndex - headIndex.
-    mapping(uint=>Debt) public iotxDebts;
-    uint public headIndex;
-    uint public rearIndex;
+    mapping(uint=>Debt) private iotxDebts;
+    uint private headIndex;
+    uint private rearIndex;
 
     // The map for user information management:
     // 1. The KEY is the user's account address.
@@ -234,6 +234,39 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      */
     function getDebt(address account) external view returns (uint) {
         return userInfos[account].debt;
+    }
+
+    /**
+     * @return The total number of debt items, encompassing both paid and outstanding payments.
+     */
+    function getTotalDebtItemCount() external view returns (uint) {
+        return rearIndex;
+    }
+
+    /**
+    * @return The number of debt items that have been paid.
+     */
+    function getPaidDebtItemCount() external view returns (uint) {
+        return headIndex;
+    }
+
+    /**
+     * @return The number of debt items awaiting payment.
+     */
+    function getUnpaidDebtItemCount() external view returns (uint) {
+        return rearIndex-headIndex;
+    }
+
+    /**
+     * @param unpaidDebtIndex The index of the unpaid debt item in the FIFO queue
+     * should range between (paidDebtItemCount, totalDebtItemCount].
+     * @return The queued unpaid debt item.
+     */
+    function getUnpaidDebtItem(uint unpaidDebtIndex) external view returns (Debt memory) {
+        if (headIndex < unpaidDebtIndex && unpaidDebtIndex <= rearIndex) {
+            return iotxDebts[unpaidDebtIndex];
+        }
+        return Debt({account:0x0000000000000000000000000000000000000000, amount:0});
     }
 
 
