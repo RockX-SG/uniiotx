@@ -213,6 +213,35 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     /**
+     * @return The balance that has been synchronized and accounted for this contract.
+     */
+    function getAccountedBalance() external view returns (uint) {
+        return accountedBalance;
+    }
+
+    /**
+     * @return The total amount of outstanding debts.
+     */
+    function getTotalDebts() external view returns (uint) {
+        return totalDebts;
+    }
+
+    /**
+     * @return The reward rate, which is accumulated and shared among users.
+     */
+    function getRewardRate() external view returns (uint) {
+        return rewardRate;
+    }
+
+    /**
+     * @dev The permissible amount of new debt should be in multiples of the base debt amount..
+     * @return The base amount for joining a new debt item.
+     */
+    function getDebtAmountBase() external view returns (uint) {
+        return debtAmountBase;
+    }
+
+    /**
      * @dev The returned value includes the pending reward that hasn't been accounted yet.
      * @return The user's reward that is available for future claims.
      */

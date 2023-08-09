@@ -55,7 +55,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     uint public commonRatio;
     uint public sequenceLength;
 
-    // Users can deposit any amount of IOTXs, but can only redeem amounts that are multiples of the redeemAmountBase.
+    // Users can deposit any amount of IOTXs, but can only redeem amounts that are in multiples of the redeemAmountBase.
     // This value is determined at contract initialization using the formula:
     // redeemAmountBase = startAmount * (commonRatio ** (sequenceLength-1))
     // Once set, it remains immutable.
@@ -256,6 +256,82 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
+     * @return The array of IOTX amounts that remain constant and active for each staking activity.
+     */
+    function getStakeAmounts() external view returns (uint[] memory) {
+        uint[] memory amounts = new uint[](sequenceLength);
+        for (uint level = 0; level < sequenceLength; level++) {
+            uint amount = startAmount * (commonRatio**level);
+            amounts[level] = amount;
+        }
+        return amounts;
+    }
+
+    /**
+     * @return The global delegate that is utilized for upcoming staking requests.
+     */
+    function getGlobalDelegate() external view returns (address) {
+        return globalDelegate;
+    }
+
+    /**
+     * @notice The amount to be redeemed must be in multiples of the 'redeemAmountBase'.
+     * @return The base amount that remains constant for each redeeming request.
+     */
+    function getRedeemAmountBase() external view returns (uint) {
+        return redeemAmountBase;
+    }
+
+    /**
+     * @return The stake duration in seconds that remains constant for each staking request.
+     */
+    function getStakeDuration() external view returns (uint) {
+        return stakeDuration;
+    }
+
+    /**
+     * @return The balance that has been synchronized and accounted for this contract.
+     */
+    function getAccountedBalance() external view returns (uint) {
+        return accountedBalance;
+    }
+
+    /**
+     * @return The total amount of IOTX awaiting staking.
+     */
+    function getTotalPending() external view returns (uint) {
+        return totalPending;
+    }
+
+    /**
+     * @return The total amount of staked IOTX.
+     */
+    function getTotalStaked() external view returns (uint) {
+        return totalStaked;
+    }
+
+    /**
+     * @return The current manager fee shares.
+     */
+    function getManagerFeeShares() external view returns (uint) {
+        return managerFeeShares;
+    }
+
+    /**
+     * @return The amount of the user's shared reward that has been automatically compounded for upcoming staking requests.
+     */
+    function getUserReward() external view returns (uint) {
+        return accountedUserReward;
+    }
+
+    /**
+     * @return The amount of the manager's reward that is available for upcoming withdrawal.
+     */
+    function getManagerReward() external view returns (uint) {
+        return accountedUserReward;
+    }
+
+    /**
      * @dev If an invalid tokenQueueIndex is given, a zero value will be returned.
      * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength).
      * @return The length of the queried token queue.
@@ -383,7 +459,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
 
     /**
      * @dev This function distributes recently accrued rewards from delegates among users and the manager.
-     * It also automatically reinvests the users' share into totalStaking for future stakes.
+     * It also automatically reinvests the users' share into totalStaking for upcoming staking activities.
      */
     function updateReward() external onlyRole(ROLE_ORACLE) {
         uint reward = _syncReward();
