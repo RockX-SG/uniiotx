@@ -28,9 +28,23 @@ var (
 	_ = event.NewSubscription
 )
 
+// IOTXClearDebt is an auto generated low-level Go binding around an user-defined struct.
+type IOTXClearDebt struct {
+	Account common.Address
+	Amount  *big.Int
+}
+
+// IOTXClearUserInfo is an auto generated low-level Go binding around an user-defined struct.
+type IOTXClearUserInfo struct {
+	Debt       *big.Int
+	Principal  *big.Int
+	Reward     *big.Int
+	RewardRate *big.Int
+}
+
 // IOTXClearMetaData contains all meta data concerning the IOTXClear contract.
 var IOTXClearMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"debtIndex\",\"type\":\"uint256\"}],\"name\":\"DebtPaid\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"debtIndex\",\"type\":\"uint256\"}],\"name\":\"DebtQueued\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"DelegatesUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"claimer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"PrincipalClaimed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"claimer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"RewardClaimed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MULTIPLIER\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"claimPrincipals\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"claimRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"debtAmountBase\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getDebt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getPrincipal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"headIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_systemStaking\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_iotxStaking\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_oracle\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"iotxDebts\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"joinDebt\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC721Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"payDebts\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rearIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rewardRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"systemStaking\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalDebts\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unpause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"unstake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"updateDelegates\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"userInfos\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"debt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"principal\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"reward\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rewardRate\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]",
+	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"debtIndex\",\"type\":\"uint256\"}],\"name\":\"DebtPaid\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"debtIndex\",\"type\":\"uint256\"}],\"name\":\"DebtQueued\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"DelegatesUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"claimer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"PrincipalClaimed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"claimer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"RewardClaimed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"claimPrincipals\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"claimRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"debtAmountBase\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAccountedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getDebt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDebtAmountBase\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPaidDebtItemCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getPrincipal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getRewardRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalDebtItemCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalDebts\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"unpaidDebtIndex\",\"type\":\"uint256\"}],\"name\":\"getUnpaidDebtItem\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"internalType\":\"structIOTXClear.Debt\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getUnpaidDebtItemCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getUserInfo\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"debt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"principal\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"reward\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rewardRate\",\"type\":\"uint256\"}],\"internalType\":\"structIOTXClear.UserInfo\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_systemStaking\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_iotxStaking\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_oracle\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"joinDebt\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC721Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"payDebts\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rewardRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"systemStaking\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalDebts\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unpause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"unstake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"updateDelegates\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]",
 }
 
 // IOTXClearABI is the input ABI used to generate the binding from.
@@ -210,37 +224,6 @@ func (_IOTXClear *IOTXClearCallerSession) DEFAULTADMINROLE() ([32]byte, error) {
 	return _IOTXClear.Contract.DEFAULTADMINROLE(&_IOTXClear.CallOpts)
 }
 
-// MULTIPLIER is a free data retrieval call binding the contract method 0x059f8b16.
-//
-// Solidity: function MULTIPLIER() view returns(uint256)
-func (_IOTXClear *IOTXClearCaller) MULTIPLIER(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXClear.contract.Call(opts, &out, "MULTIPLIER")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// MULTIPLIER is a free data retrieval call binding the contract method 0x059f8b16.
-//
-// Solidity: function MULTIPLIER() view returns(uint256)
-func (_IOTXClear *IOTXClearSession) MULTIPLIER() (*big.Int, error) {
-	return _IOTXClear.Contract.MULTIPLIER(&_IOTXClear.CallOpts)
-}
-
-// MULTIPLIER is a free data retrieval call binding the contract method 0x059f8b16.
-//
-// Solidity: function MULTIPLIER() view returns(uint256)
-func (_IOTXClear *IOTXClearCallerSession) MULTIPLIER() (*big.Int, error) {
-	return _IOTXClear.Contract.MULTIPLIER(&_IOTXClear.CallOpts)
-}
-
 // AccountedBalance is a free data retrieval call binding the contract method 0x0937eb54.
 //
 // Solidity: function accountedBalance() view returns(uint256)
@@ -303,6 +286,37 @@ func (_IOTXClear *IOTXClearCallerSession) DebtAmountBase() (*big.Int, error) {
 	return _IOTXClear.Contract.DebtAmountBase(&_IOTXClear.CallOpts)
 }
 
+// GetAccountedBalance is a free data retrieval call binding the contract method 0x33e5761f.
+//
+// Solidity: function getAccountedBalance() view returns(uint256)
+func (_IOTXClear *IOTXClearCaller) GetAccountedBalance(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXClear.contract.Call(opts, &out, "getAccountedBalance")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetAccountedBalance is a free data retrieval call binding the contract method 0x33e5761f.
+//
+// Solidity: function getAccountedBalance() view returns(uint256)
+func (_IOTXClear *IOTXClearSession) GetAccountedBalance() (*big.Int, error) {
+	return _IOTXClear.Contract.GetAccountedBalance(&_IOTXClear.CallOpts)
+}
+
+// GetAccountedBalance is a free data retrieval call binding the contract method 0x33e5761f.
+//
+// Solidity: function getAccountedBalance() view returns(uint256)
+func (_IOTXClear *IOTXClearCallerSession) GetAccountedBalance() (*big.Int, error) {
+	return _IOTXClear.Contract.GetAccountedBalance(&_IOTXClear.CallOpts)
+}
+
 // GetDebt is a free data retrieval call binding the contract method 0x9a78e72e.
 //
 // Solidity: function getDebt(address account) view returns(uint256)
@@ -332,6 +346,68 @@ func (_IOTXClear *IOTXClearSession) GetDebt(account common.Address) (*big.Int, e
 // Solidity: function getDebt(address account) view returns(uint256)
 func (_IOTXClear *IOTXClearCallerSession) GetDebt(account common.Address) (*big.Int, error) {
 	return _IOTXClear.Contract.GetDebt(&_IOTXClear.CallOpts, account)
+}
+
+// GetDebtAmountBase is a free data retrieval call binding the contract method 0x8dc43dd3.
+//
+// Solidity: function getDebtAmountBase() view returns(uint256)
+func (_IOTXClear *IOTXClearCaller) GetDebtAmountBase(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXClear.contract.Call(opts, &out, "getDebtAmountBase")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetDebtAmountBase is a free data retrieval call binding the contract method 0x8dc43dd3.
+//
+// Solidity: function getDebtAmountBase() view returns(uint256)
+func (_IOTXClear *IOTXClearSession) GetDebtAmountBase() (*big.Int, error) {
+	return _IOTXClear.Contract.GetDebtAmountBase(&_IOTXClear.CallOpts)
+}
+
+// GetDebtAmountBase is a free data retrieval call binding the contract method 0x8dc43dd3.
+//
+// Solidity: function getDebtAmountBase() view returns(uint256)
+func (_IOTXClear *IOTXClearCallerSession) GetDebtAmountBase() (*big.Int, error) {
+	return _IOTXClear.Contract.GetDebtAmountBase(&_IOTXClear.CallOpts)
+}
+
+// GetPaidDebtItemCount is a free data retrieval call binding the contract method 0xf3ec464e.
+//
+// Solidity: function getPaidDebtItemCount() view returns(uint256)
+func (_IOTXClear *IOTXClearCaller) GetPaidDebtItemCount(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXClear.contract.Call(opts, &out, "getPaidDebtItemCount")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetPaidDebtItemCount is a free data retrieval call binding the contract method 0xf3ec464e.
+//
+// Solidity: function getPaidDebtItemCount() view returns(uint256)
+func (_IOTXClear *IOTXClearSession) GetPaidDebtItemCount() (*big.Int, error) {
+	return _IOTXClear.Contract.GetPaidDebtItemCount(&_IOTXClear.CallOpts)
+}
+
+// GetPaidDebtItemCount is a free data retrieval call binding the contract method 0xf3ec464e.
+//
+// Solidity: function getPaidDebtItemCount() view returns(uint256)
+func (_IOTXClear *IOTXClearCallerSession) GetPaidDebtItemCount() (*big.Int, error) {
+	return _IOTXClear.Contract.GetPaidDebtItemCount(&_IOTXClear.CallOpts)
 }
 
 // GetPrincipal is a free data retrieval call binding the contract method 0x7abdd2d1.
@@ -396,6 +472,37 @@ func (_IOTXClear *IOTXClearCallerSession) GetReward(account common.Address) (*bi
 	return _IOTXClear.Contract.GetReward(&_IOTXClear.CallOpts, account)
 }
 
+// GetRewardRate is a free data retrieval call binding the contract method 0x7e1a3786.
+//
+// Solidity: function getRewardRate() view returns(uint256)
+func (_IOTXClear *IOTXClearCaller) GetRewardRate(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXClear.contract.Call(opts, &out, "getRewardRate")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetRewardRate is a free data retrieval call binding the contract method 0x7e1a3786.
+//
+// Solidity: function getRewardRate() view returns(uint256)
+func (_IOTXClear *IOTXClearSession) GetRewardRate() (*big.Int, error) {
+	return _IOTXClear.Contract.GetRewardRate(&_IOTXClear.CallOpts)
+}
+
+// GetRewardRate is a free data retrieval call binding the contract method 0x7e1a3786.
+//
+// Solidity: function getRewardRate() view returns(uint256)
+func (_IOTXClear *IOTXClearCallerSession) GetRewardRate() (*big.Int, error) {
+	return _IOTXClear.Contract.GetRewardRate(&_IOTXClear.CallOpts)
+}
+
 // GetRoleAdmin is a free data retrieval call binding the contract method 0x248a9ca3.
 //
 // Solidity: function getRoleAdmin(bytes32 role) view returns(bytes32)
@@ -427,6 +534,161 @@ func (_IOTXClear *IOTXClearCallerSession) GetRoleAdmin(role [32]byte) ([32]byte,
 	return _IOTXClear.Contract.GetRoleAdmin(&_IOTXClear.CallOpts, role)
 }
 
+// GetTotalDebtItemCount is a free data retrieval call binding the contract method 0x8ffe1db4.
+//
+// Solidity: function getTotalDebtItemCount() view returns(uint256)
+func (_IOTXClear *IOTXClearCaller) GetTotalDebtItemCount(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXClear.contract.Call(opts, &out, "getTotalDebtItemCount")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetTotalDebtItemCount is a free data retrieval call binding the contract method 0x8ffe1db4.
+//
+// Solidity: function getTotalDebtItemCount() view returns(uint256)
+func (_IOTXClear *IOTXClearSession) GetTotalDebtItemCount() (*big.Int, error) {
+	return _IOTXClear.Contract.GetTotalDebtItemCount(&_IOTXClear.CallOpts)
+}
+
+// GetTotalDebtItemCount is a free data retrieval call binding the contract method 0x8ffe1db4.
+//
+// Solidity: function getTotalDebtItemCount() view returns(uint256)
+func (_IOTXClear *IOTXClearCallerSession) GetTotalDebtItemCount() (*big.Int, error) {
+	return _IOTXClear.Contract.GetTotalDebtItemCount(&_IOTXClear.CallOpts)
+}
+
+// GetTotalDebts is a free data retrieval call binding the contract method 0x477562a7.
+//
+// Solidity: function getTotalDebts() view returns(uint256)
+func (_IOTXClear *IOTXClearCaller) GetTotalDebts(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXClear.contract.Call(opts, &out, "getTotalDebts")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetTotalDebts is a free data retrieval call binding the contract method 0x477562a7.
+//
+// Solidity: function getTotalDebts() view returns(uint256)
+func (_IOTXClear *IOTXClearSession) GetTotalDebts() (*big.Int, error) {
+	return _IOTXClear.Contract.GetTotalDebts(&_IOTXClear.CallOpts)
+}
+
+// GetTotalDebts is a free data retrieval call binding the contract method 0x477562a7.
+//
+// Solidity: function getTotalDebts() view returns(uint256)
+func (_IOTXClear *IOTXClearCallerSession) GetTotalDebts() (*big.Int, error) {
+	return _IOTXClear.Contract.GetTotalDebts(&_IOTXClear.CallOpts)
+}
+
+// GetUnpaidDebtItem is a free data retrieval call binding the contract method 0x36d0f761.
+//
+// Solidity: function getUnpaidDebtItem(uint256 unpaidDebtIndex) view returns((address,uint256))
+func (_IOTXClear *IOTXClearCaller) GetUnpaidDebtItem(opts *bind.CallOpts, unpaidDebtIndex *big.Int) (IOTXClearDebt, error) {
+	var out []interface{}
+	err := _IOTXClear.contract.Call(opts, &out, "getUnpaidDebtItem", unpaidDebtIndex)
+
+	if err != nil {
+		return *new(IOTXClearDebt), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(IOTXClearDebt)).(*IOTXClearDebt)
+
+	return out0, err
+
+}
+
+// GetUnpaidDebtItem is a free data retrieval call binding the contract method 0x36d0f761.
+//
+// Solidity: function getUnpaidDebtItem(uint256 unpaidDebtIndex) view returns((address,uint256))
+func (_IOTXClear *IOTXClearSession) GetUnpaidDebtItem(unpaidDebtIndex *big.Int) (IOTXClearDebt, error) {
+	return _IOTXClear.Contract.GetUnpaidDebtItem(&_IOTXClear.CallOpts, unpaidDebtIndex)
+}
+
+// GetUnpaidDebtItem is a free data retrieval call binding the contract method 0x36d0f761.
+//
+// Solidity: function getUnpaidDebtItem(uint256 unpaidDebtIndex) view returns((address,uint256))
+func (_IOTXClear *IOTXClearCallerSession) GetUnpaidDebtItem(unpaidDebtIndex *big.Int) (IOTXClearDebt, error) {
+	return _IOTXClear.Contract.GetUnpaidDebtItem(&_IOTXClear.CallOpts, unpaidDebtIndex)
+}
+
+// GetUnpaidDebtItemCount is a free data retrieval call binding the contract method 0xd2e349ae.
+//
+// Solidity: function getUnpaidDebtItemCount() view returns(uint256)
+func (_IOTXClear *IOTXClearCaller) GetUnpaidDebtItemCount(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXClear.contract.Call(opts, &out, "getUnpaidDebtItemCount")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetUnpaidDebtItemCount is a free data retrieval call binding the contract method 0xd2e349ae.
+//
+// Solidity: function getUnpaidDebtItemCount() view returns(uint256)
+func (_IOTXClear *IOTXClearSession) GetUnpaidDebtItemCount() (*big.Int, error) {
+	return _IOTXClear.Contract.GetUnpaidDebtItemCount(&_IOTXClear.CallOpts)
+}
+
+// GetUnpaidDebtItemCount is a free data retrieval call binding the contract method 0xd2e349ae.
+//
+// Solidity: function getUnpaidDebtItemCount() view returns(uint256)
+func (_IOTXClear *IOTXClearCallerSession) GetUnpaidDebtItemCount() (*big.Int, error) {
+	return _IOTXClear.Contract.GetUnpaidDebtItemCount(&_IOTXClear.CallOpts)
+}
+
+// GetUserInfo is a free data retrieval call binding the contract method 0x6386c1c7.
+//
+// Solidity: function getUserInfo(address account) view returns((uint256,uint256,uint256,uint256))
+func (_IOTXClear *IOTXClearCaller) GetUserInfo(opts *bind.CallOpts, account common.Address) (IOTXClearUserInfo, error) {
+	var out []interface{}
+	err := _IOTXClear.contract.Call(opts, &out, "getUserInfo", account)
+
+	if err != nil {
+		return *new(IOTXClearUserInfo), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(IOTXClearUserInfo)).(*IOTXClearUserInfo)
+
+	return out0, err
+
+}
+
+// GetUserInfo is a free data retrieval call binding the contract method 0x6386c1c7.
+//
+// Solidity: function getUserInfo(address account) view returns((uint256,uint256,uint256,uint256))
+func (_IOTXClear *IOTXClearSession) GetUserInfo(account common.Address) (IOTXClearUserInfo, error) {
+	return _IOTXClear.Contract.GetUserInfo(&_IOTXClear.CallOpts, account)
+}
+
+// GetUserInfo is a free data retrieval call binding the contract method 0x6386c1c7.
+//
+// Solidity: function getUserInfo(address account) view returns((uint256,uint256,uint256,uint256))
+func (_IOTXClear *IOTXClearCallerSession) GetUserInfo(account common.Address) (IOTXClearUserInfo, error) {
+	return _IOTXClear.Contract.GetUserInfo(&_IOTXClear.CallOpts, account)
+}
+
 // HasRole is a free data retrieval call binding the contract method 0x91d14854.
 //
 // Solidity: function hasRole(bytes32 role, address account) view returns(bool)
@@ -456,82 +718,6 @@ func (_IOTXClear *IOTXClearSession) HasRole(role [32]byte, account common.Addres
 // Solidity: function hasRole(bytes32 role, address account) view returns(bool)
 func (_IOTXClear *IOTXClearCallerSession) HasRole(role [32]byte, account common.Address) (bool, error) {
 	return _IOTXClear.Contract.HasRole(&_IOTXClear.CallOpts, role, account)
-}
-
-// HeadIndex is a free data retrieval call binding the contract method 0x91c00bb1.
-//
-// Solidity: function headIndex() view returns(uint256)
-func (_IOTXClear *IOTXClearCaller) HeadIndex(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXClear.contract.Call(opts, &out, "headIndex")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// HeadIndex is a free data retrieval call binding the contract method 0x91c00bb1.
-//
-// Solidity: function headIndex() view returns(uint256)
-func (_IOTXClear *IOTXClearSession) HeadIndex() (*big.Int, error) {
-	return _IOTXClear.Contract.HeadIndex(&_IOTXClear.CallOpts)
-}
-
-// HeadIndex is a free data retrieval call binding the contract method 0x91c00bb1.
-//
-// Solidity: function headIndex() view returns(uint256)
-func (_IOTXClear *IOTXClearCallerSession) HeadIndex() (*big.Int, error) {
-	return _IOTXClear.Contract.HeadIndex(&_IOTXClear.CallOpts)
-}
-
-// IotxDebts is a free data retrieval call binding the contract method 0x5c14675e.
-//
-// Solidity: function iotxDebts(uint256 ) view returns(address account, uint256 amount)
-func (_IOTXClear *IOTXClearCaller) IotxDebts(opts *bind.CallOpts, arg0 *big.Int) (struct {
-	Account common.Address
-	Amount  *big.Int
-}, error) {
-	var out []interface{}
-	err := _IOTXClear.contract.Call(opts, &out, "iotxDebts", arg0)
-
-	outstruct := new(struct {
-		Account common.Address
-		Amount  *big.Int
-	})
-	if err != nil {
-		return *outstruct, err
-	}
-
-	outstruct.Account = *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-	outstruct.Amount = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
-
-	return *outstruct, err
-
-}
-
-// IotxDebts is a free data retrieval call binding the contract method 0x5c14675e.
-//
-// Solidity: function iotxDebts(uint256 ) view returns(address account, uint256 amount)
-func (_IOTXClear *IOTXClearSession) IotxDebts(arg0 *big.Int) (struct {
-	Account common.Address
-	Amount  *big.Int
-}, error) {
-	return _IOTXClear.Contract.IotxDebts(&_IOTXClear.CallOpts, arg0)
-}
-
-// IotxDebts is a free data retrieval call binding the contract method 0x5c14675e.
-//
-// Solidity: function iotxDebts(uint256 ) view returns(address account, uint256 amount)
-func (_IOTXClear *IOTXClearCallerSession) IotxDebts(arg0 *big.Int) (struct {
-	Account common.Address
-	Amount  *big.Int
-}, error) {
-	return _IOTXClear.Contract.IotxDebts(&_IOTXClear.CallOpts, arg0)
 }
 
 // OnERC721Received is a free data retrieval call binding the contract method 0x150b7a02.
@@ -594,37 +780,6 @@ func (_IOTXClear *IOTXClearSession) Paused() (bool, error) {
 // Solidity: function paused() view returns(bool)
 func (_IOTXClear *IOTXClearCallerSession) Paused() (bool, error) {
 	return _IOTXClear.Contract.Paused(&_IOTXClear.CallOpts)
-}
-
-// RearIndex is a free data retrieval call binding the contract method 0x4af4abb5.
-//
-// Solidity: function rearIndex() view returns(uint256)
-func (_IOTXClear *IOTXClearCaller) RearIndex(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXClear.contract.Call(opts, &out, "rearIndex")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// RearIndex is a free data retrieval call binding the contract method 0x4af4abb5.
-//
-// Solidity: function rearIndex() view returns(uint256)
-func (_IOTXClear *IOTXClearSession) RearIndex() (*big.Int, error) {
-	return _IOTXClear.Contract.RearIndex(&_IOTXClear.CallOpts)
-}
-
-// RearIndex is a free data retrieval call binding the contract method 0x4af4abb5.
-//
-// Solidity: function rearIndex() view returns(uint256)
-func (_IOTXClear *IOTXClearCallerSession) RearIndex() (*big.Int, error) {
-	return _IOTXClear.Contract.RearIndex(&_IOTXClear.CallOpts)
 }
 
 // RewardRate is a free data retrieval call binding the contract method 0x7b0a47ee.
@@ -749,61 +904,6 @@ func (_IOTXClear *IOTXClearSession) TotalDebts() (*big.Int, error) {
 // Solidity: function totalDebts() view returns(uint256)
 func (_IOTXClear *IOTXClearCallerSession) TotalDebts() (*big.Int, error) {
 	return _IOTXClear.Contract.TotalDebts(&_IOTXClear.CallOpts)
-}
-
-// UserInfos is a free data retrieval call binding the contract method 0x43b0215f.
-//
-// Solidity: function userInfos(address ) view returns(uint256 debt, uint256 principal, uint256 reward, uint256 rewardRate)
-func (_IOTXClear *IOTXClearCaller) UserInfos(opts *bind.CallOpts, arg0 common.Address) (struct {
-	Debt       *big.Int
-	Principal  *big.Int
-	Reward     *big.Int
-	RewardRate *big.Int
-}, error) {
-	var out []interface{}
-	err := _IOTXClear.contract.Call(opts, &out, "userInfos", arg0)
-
-	outstruct := new(struct {
-		Debt       *big.Int
-		Principal  *big.Int
-		Reward     *big.Int
-		RewardRate *big.Int
-	})
-	if err != nil {
-		return *outstruct, err
-	}
-
-	outstruct.Debt = *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-	outstruct.Principal = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
-	outstruct.Reward = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
-	outstruct.RewardRate = *abi.ConvertType(out[3], new(*big.Int)).(**big.Int)
-
-	return *outstruct, err
-
-}
-
-// UserInfos is a free data retrieval call binding the contract method 0x43b0215f.
-//
-// Solidity: function userInfos(address ) view returns(uint256 debt, uint256 principal, uint256 reward, uint256 rewardRate)
-func (_IOTXClear *IOTXClearSession) UserInfos(arg0 common.Address) (struct {
-	Debt       *big.Int
-	Principal  *big.Int
-	Reward     *big.Int
-	RewardRate *big.Int
-}, error) {
-	return _IOTXClear.Contract.UserInfos(&_IOTXClear.CallOpts, arg0)
-}
-
-// UserInfos is a free data retrieval call binding the contract method 0x43b0215f.
-//
-// Solidity: function userInfos(address ) view returns(uint256 debt, uint256 principal, uint256 reward, uint256 rewardRate)
-func (_IOTXClear *IOTXClearCallerSession) UserInfos(arg0 common.Address) (struct {
-	Debt       *big.Int
-	Principal  *big.Int
-	Reward     *big.Int
-	RewardRate *big.Int
-}, error) {
-	return _IOTXClear.Contract.UserInfos(&_IOTXClear.CallOpts, arg0)
 }
 
 // ClaimPrincipals is a paid mutator transaction binding the contract method 0xdc8e238b.

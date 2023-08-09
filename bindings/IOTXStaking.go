@@ -30,7 +30,7 @@ var (
 
 // IOTXStakingMetaData contains all meta data concerning the IOTXStaking contract.
 var IOTXStakingMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"DelegatesUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"GlobalDelegateSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"shares\",\"type\":\"uint256\"}],\"name\":\"ManagerFeeSharesSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"minted\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"ManagerFeeWithdrawed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fromLevel\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"toLevel\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Merged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"minted\",\"type\":\"uint256\"}],\"name\":\"Minted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"burned\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"Redeemed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"RewardUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"firstTokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"Staked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"DEFAULT_EXCHANGE_RATIO\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"MULTIPLIER\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedManagerReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedUserReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"commonRatio\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"currentReserve\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"minted\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"exchangeRatio\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"ratio\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"i\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"j\",\"type\":\"uint256\"}],\"name\":\"getRedeemedTokenIds\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenQueueIndex\",\"type\":\"uint256\"}],\"name\":\"getStakedTokenCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"count\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"globalDelegate\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_systemStaking\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_uniIOTX\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_iotxClear\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_oracle\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_startAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_commonRatio\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_sequenceLength\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_stakeDuration\",\"type\":\"uint256\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"iotxClear\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"managerFeeShares\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC721Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"iotxsToRedeem\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"}],\"name\":\"redeem\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"burned\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"redeemAmountBase\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"redeemedTokenCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"sequenceLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"setGlobalDelegate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"shares\",\"type\":\"uint256\"}],\"name\":\"setManagerFeeShares\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"stake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"stakeDuration\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"startAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"systemStaking\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"tokenQueues\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalPending\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalStaked\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"uniIOTX\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unpause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"updateDelegates\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"updateReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"withdrawManagerFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]",
+	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"DelegatesUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"GlobalDelegateSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"shares\",\"type\":\"uint256\"}],\"name\":\"ManagerFeeSharesSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"minted\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"ManagerFeeWithdrawed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fromLevel\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"toLevel\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Merged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"minted\",\"type\":\"uint256\"}],\"name\":\"Minted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"burned\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"}],\"name\":\"Redeemed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"RewardUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"firstTokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"Staked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"Unpaused\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedManagerReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"accountedUserReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"commonRatio\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"currentReserve\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"minted\",\"type\":\"uint256\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"exchangeRatio\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"ratio\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAccountedBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getGlobalDelegate\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getManagerFeeShares\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getManagerReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getRedeemAmountBase\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getRedeemedTokenCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"i\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"j\",\"type\":\"uint256\"}],\"name\":\"getRedeemedTokenIds\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getStakeAmounts\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getStakeDuration\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenQueueIndex\",\"type\":\"uint256\"}],\"name\":\"getStakedTokenCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"count\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenQueueIndex\",\"type\":\"uint256\"}],\"name\":\"getStakedTokenIds\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenQueueIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"tokenIndex\",\"type\":\"uint256\"}],\"name\":\"getTokenId\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenQueueIndex\",\"type\":\"uint256\"}],\"name\":\"getTokenQueueLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalPending\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalStaked\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getUserReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"globalDelegate\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_systemStaking\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_uniIOTX\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_iotxClear\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_oracle\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_startAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_commonRatio\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_sequenceLength\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_stakeDuration\",\"type\":\"uint256\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"iotxClear\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"managerFeeShares\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"onERC721Received\",\"outputs\":[{\"internalType\":\"bytes4\",\"name\":\"\",\"type\":\"bytes4\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"iotxsToRedeem\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"}],\"name\":\"redeem\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"burned\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"redeemAmountBase\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"redeemedTokenCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"sequenceLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"setGlobalDelegate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"shares\",\"type\":\"uint256\"}],\"name\":\"setManagerFeeShares\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"stake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"stakeDuration\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"startAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"systemStaking\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalPending\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalStaked\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"uniIOTX\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"unpause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"tokenIds\",\"type\":\"uint256[]\"},{\"internalType\":\"address\",\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"updateDelegates\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"updateReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"}],\"name\":\"withdrawManagerFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]",
 }
 
 // IOTXStakingABI is the input ABI used to generate the binding from.
@@ -208,68 +208,6 @@ func (_IOTXStaking *IOTXStakingSession) DEFAULTADMINROLE() ([32]byte, error) {
 // Solidity: function DEFAULT_ADMIN_ROLE() view returns(bytes32)
 func (_IOTXStaking *IOTXStakingCallerSession) DEFAULTADMINROLE() ([32]byte, error) {
 	return _IOTXStaking.Contract.DEFAULTADMINROLE(&_IOTXStaking.CallOpts)
-}
-
-// DEFAULTEXCHANGERATIO is a free data retrieval call binding the contract method 0x1bb42235.
-//
-// Solidity: function DEFAULT_EXCHANGE_RATIO() view returns(uint256)
-func (_IOTXStaking *IOTXStakingCaller) DEFAULTEXCHANGERATIO(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStaking.contract.Call(opts, &out, "DEFAULT_EXCHANGE_RATIO")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// DEFAULTEXCHANGERATIO is a free data retrieval call binding the contract method 0x1bb42235.
-//
-// Solidity: function DEFAULT_EXCHANGE_RATIO() view returns(uint256)
-func (_IOTXStaking *IOTXStakingSession) DEFAULTEXCHANGERATIO() (*big.Int, error) {
-	return _IOTXStaking.Contract.DEFAULTEXCHANGERATIO(&_IOTXStaking.CallOpts)
-}
-
-// DEFAULTEXCHANGERATIO is a free data retrieval call binding the contract method 0x1bb42235.
-//
-// Solidity: function DEFAULT_EXCHANGE_RATIO() view returns(uint256)
-func (_IOTXStaking *IOTXStakingCallerSession) DEFAULTEXCHANGERATIO() (*big.Int, error) {
-	return _IOTXStaking.Contract.DEFAULTEXCHANGERATIO(&_IOTXStaking.CallOpts)
-}
-
-// MULTIPLIER is a free data retrieval call binding the contract method 0x059f8b16.
-//
-// Solidity: function MULTIPLIER() view returns(uint256)
-func (_IOTXStaking *IOTXStakingCaller) MULTIPLIER(opts *bind.CallOpts) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStaking.contract.Call(opts, &out, "MULTIPLIER")
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// MULTIPLIER is a free data retrieval call binding the contract method 0x059f8b16.
-//
-// Solidity: function MULTIPLIER() view returns(uint256)
-func (_IOTXStaking *IOTXStakingSession) MULTIPLIER() (*big.Int, error) {
-	return _IOTXStaking.Contract.MULTIPLIER(&_IOTXStaking.CallOpts)
-}
-
-// MULTIPLIER is a free data retrieval call binding the contract method 0x059f8b16.
-//
-// Solidity: function MULTIPLIER() view returns(uint256)
-func (_IOTXStaking *IOTXStakingCallerSession) MULTIPLIER() (*big.Int, error) {
-	return _IOTXStaking.Contract.MULTIPLIER(&_IOTXStaking.CallOpts)
 }
 
 // AccountedBalance is a free data retrieval call binding the contract method 0x0937eb54.
@@ -458,6 +396,192 @@ func (_IOTXStaking *IOTXStakingCallerSession) ExchangeRatio() (*big.Int, error) 
 	return _IOTXStaking.Contract.ExchangeRatio(&_IOTXStaking.CallOpts)
 }
 
+// GetAccountedBalance is a free data retrieval call binding the contract method 0x33e5761f.
+//
+// Solidity: function getAccountedBalance() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCaller) GetAccountedBalance(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getAccountedBalance")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetAccountedBalance is a free data retrieval call binding the contract method 0x33e5761f.
+//
+// Solidity: function getAccountedBalance() view returns(uint256)
+func (_IOTXStaking *IOTXStakingSession) GetAccountedBalance() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetAccountedBalance(&_IOTXStaking.CallOpts)
+}
+
+// GetAccountedBalance is a free data retrieval call binding the contract method 0x33e5761f.
+//
+// Solidity: function getAccountedBalance() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCallerSession) GetAccountedBalance() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetAccountedBalance(&_IOTXStaking.CallOpts)
+}
+
+// GetGlobalDelegate is a free data retrieval call binding the contract method 0x79df5f41.
+//
+// Solidity: function getGlobalDelegate() view returns(address)
+func (_IOTXStaking *IOTXStakingCaller) GetGlobalDelegate(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getGlobalDelegate")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// GetGlobalDelegate is a free data retrieval call binding the contract method 0x79df5f41.
+//
+// Solidity: function getGlobalDelegate() view returns(address)
+func (_IOTXStaking *IOTXStakingSession) GetGlobalDelegate() (common.Address, error) {
+	return _IOTXStaking.Contract.GetGlobalDelegate(&_IOTXStaking.CallOpts)
+}
+
+// GetGlobalDelegate is a free data retrieval call binding the contract method 0x79df5f41.
+//
+// Solidity: function getGlobalDelegate() view returns(address)
+func (_IOTXStaking *IOTXStakingCallerSession) GetGlobalDelegate() (common.Address, error) {
+	return _IOTXStaking.Contract.GetGlobalDelegate(&_IOTXStaking.CallOpts)
+}
+
+// GetManagerFeeShares is a free data retrieval call binding the contract method 0x2a67bbe5.
+//
+// Solidity: function getManagerFeeShares() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCaller) GetManagerFeeShares(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getManagerFeeShares")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetManagerFeeShares is a free data retrieval call binding the contract method 0x2a67bbe5.
+//
+// Solidity: function getManagerFeeShares() view returns(uint256)
+func (_IOTXStaking *IOTXStakingSession) GetManagerFeeShares() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetManagerFeeShares(&_IOTXStaking.CallOpts)
+}
+
+// GetManagerFeeShares is a free data retrieval call binding the contract method 0x2a67bbe5.
+//
+// Solidity: function getManagerFeeShares() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCallerSession) GetManagerFeeShares() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetManagerFeeShares(&_IOTXStaking.CallOpts)
+}
+
+// GetManagerReward is a free data retrieval call binding the contract method 0x865112c1.
+//
+// Solidity: function getManagerReward() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCaller) GetManagerReward(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getManagerReward")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetManagerReward is a free data retrieval call binding the contract method 0x865112c1.
+//
+// Solidity: function getManagerReward() view returns(uint256)
+func (_IOTXStaking *IOTXStakingSession) GetManagerReward() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetManagerReward(&_IOTXStaking.CallOpts)
+}
+
+// GetManagerReward is a free data retrieval call binding the contract method 0x865112c1.
+//
+// Solidity: function getManagerReward() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCallerSession) GetManagerReward() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetManagerReward(&_IOTXStaking.CallOpts)
+}
+
+// GetRedeemAmountBase is a free data retrieval call binding the contract method 0xf2be86b3.
+//
+// Solidity: function getRedeemAmountBase() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCaller) GetRedeemAmountBase(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getRedeemAmountBase")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetRedeemAmountBase is a free data retrieval call binding the contract method 0xf2be86b3.
+//
+// Solidity: function getRedeemAmountBase() view returns(uint256)
+func (_IOTXStaking *IOTXStakingSession) GetRedeemAmountBase() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetRedeemAmountBase(&_IOTXStaking.CallOpts)
+}
+
+// GetRedeemAmountBase is a free data retrieval call binding the contract method 0xf2be86b3.
+//
+// Solidity: function getRedeemAmountBase() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCallerSession) GetRedeemAmountBase() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetRedeemAmountBase(&_IOTXStaking.CallOpts)
+}
+
+// GetRedeemedTokenCount is a free data retrieval call binding the contract method 0xefa9058b.
+//
+// Solidity: function getRedeemedTokenCount() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCaller) GetRedeemedTokenCount(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getRedeemedTokenCount")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetRedeemedTokenCount is a free data retrieval call binding the contract method 0xefa9058b.
+//
+// Solidity: function getRedeemedTokenCount() view returns(uint256)
+func (_IOTXStaking *IOTXStakingSession) GetRedeemedTokenCount() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetRedeemedTokenCount(&_IOTXStaking.CallOpts)
+}
+
+// GetRedeemedTokenCount is a free data retrieval call binding the contract method 0xefa9058b.
+//
+// Solidity: function getRedeemedTokenCount() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCallerSession) GetRedeemedTokenCount() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetRedeemedTokenCount(&_IOTXStaking.CallOpts)
+}
+
 // GetRedeemedTokenIds is a free data retrieval call binding the contract method 0x69ced3c0.
 //
 // Solidity: function getRedeemedTokenIds(uint256 i, uint256 j) view returns(uint256[])
@@ -520,6 +644,68 @@ func (_IOTXStaking *IOTXStakingCallerSession) GetRoleAdmin(role [32]byte) ([32]b
 	return _IOTXStaking.Contract.GetRoleAdmin(&_IOTXStaking.CallOpts, role)
 }
 
+// GetStakeAmounts is a free data retrieval call binding the contract method 0x64d5bae4.
+//
+// Solidity: function getStakeAmounts() view returns(uint256[])
+func (_IOTXStaking *IOTXStakingCaller) GetStakeAmounts(opts *bind.CallOpts) ([]*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getStakeAmounts")
+
+	if err != nil {
+		return *new([]*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]*big.Int)).(*[]*big.Int)
+
+	return out0, err
+
+}
+
+// GetStakeAmounts is a free data retrieval call binding the contract method 0x64d5bae4.
+//
+// Solidity: function getStakeAmounts() view returns(uint256[])
+func (_IOTXStaking *IOTXStakingSession) GetStakeAmounts() ([]*big.Int, error) {
+	return _IOTXStaking.Contract.GetStakeAmounts(&_IOTXStaking.CallOpts)
+}
+
+// GetStakeAmounts is a free data retrieval call binding the contract method 0x64d5bae4.
+//
+// Solidity: function getStakeAmounts() view returns(uint256[])
+func (_IOTXStaking *IOTXStakingCallerSession) GetStakeAmounts() ([]*big.Int, error) {
+	return _IOTXStaking.Contract.GetStakeAmounts(&_IOTXStaking.CallOpts)
+}
+
+// GetStakeDuration is a free data retrieval call binding the contract method 0x9f1bfc6c.
+//
+// Solidity: function getStakeDuration() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCaller) GetStakeDuration(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getStakeDuration")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetStakeDuration is a free data retrieval call binding the contract method 0x9f1bfc6c.
+//
+// Solidity: function getStakeDuration() view returns(uint256)
+func (_IOTXStaking *IOTXStakingSession) GetStakeDuration() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetStakeDuration(&_IOTXStaking.CallOpts)
+}
+
+// GetStakeDuration is a free data retrieval call binding the contract method 0x9f1bfc6c.
+//
+// Solidity: function getStakeDuration() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCallerSession) GetStakeDuration() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetStakeDuration(&_IOTXStaking.CallOpts)
+}
+
 // GetStakedTokenCount is a free data retrieval call binding the contract method 0x2291f70a.
 //
 // Solidity: function getStakedTokenCount(uint256 tokenQueueIndex) view returns(uint256 count)
@@ -549,6 +735,192 @@ func (_IOTXStaking *IOTXStakingSession) GetStakedTokenCount(tokenQueueIndex *big
 // Solidity: function getStakedTokenCount(uint256 tokenQueueIndex) view returns(uint256 count)
 func (_IOTXStaking *IOTXStakingCallerSession) GetStakedTokenCount(tokenQueueIndex *big.Int) (*big.Int, error) {
 	return _IOTXStaking.Contract.GetStakedTokenCount(&_IOTXStaking.CallOpts, tokenQueueIndex)
+}
+
+// GetStakedTokenIds is a free data retrieval call binding the contract method 0xa59ec997.
+//
+// Solidity: function getStakedTokenIds(uint256 tokenQueueIndex) view returns(uint256[])
+func (_IOTXStaking *IOTXStakingCaller) GetStakedTokenIds(opts *bind.CallOpts, tokenQueueIndex *big.Int) ([]*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getStakedTokenIds", tokenQueueIndex)
+
+	if err != nil {
+		return *new([]*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]*big.Int)).(*[]*big.Int)
+
+	return out0, err
+
+}
+
+// GetStakedTokenIds is a free data retrieval call binding the contract method 0xa59ec997.
+//
+// Solidity: function getStakedTokenIds(uint256 tokenQueueIndex) view returns(uint256[])
+func (_IOTXStaking *IOTXStakingSession) GetStakedTokenIds(tokenQueueIndex *big.Int) ([]*big.Int, error) {
+	return _IOTXStaking.Contract.GetStakedTokenIds(&_IOTXStaking.CallOpts, tokenQueueIndex)
+}
+
+// GetStakedTokenIds is a free data retrieval call binding the contract method 0xa59ec997.
+//
+// Solidity: function getStakedTokenIds(uint256 tokenQueueIndex) view returns(uint256[])
+func (_IOTXStaking *IOTXStakingCallerSession) GetStakedTokenIds(tokenQueueIndex *big.Int) ([]*big.Int, error) {
+	return _IOTXStaking.Contract.GetStakedTokenIds(&_IOTXStaking.CallOpts, tokenQueueIndex)
+}
+
+// GetTokenId is a free data retrieval call binding the contract method 0x3112de9a.
+//
+// Solidity: function getTokenId(uint256 tokenQueueIndex, uint256 tokenIndex) view returns(uint256 tokenId)
+func (_IOTXStaking *IOTXStakingCaller) GetTokenId(opts *bind.CallOpts, tokenQueueIndex *big.Int, tokenIndex *big.Int) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getTokenId", tokenQueueIndex, tokenIndex)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetTokenId is a free data retrieval call binding the contract method 0x3112de9a.
+//
+// Solidity: function getTokenId(uint256 tokenQueueIndex, uint256 tokenIndex) view returns(uint256 tokenId)
+func (_IOTXStaking *IOTXStakingSession) GetTokenId(tokenQueueIndex *big.Int, tokenIndex *big.Int) (*big.Int, error) {
+	return _IOTXStaking.Contract.GetTokenId(&_IOTXStaking.CallOpts, tokenQueueIndex, tokenIndex)
+}
+
+// GetTokenId is a free data retrieval call binding the contract method 0x3112de9a.
+//
+// Solidity: function getTokenId(uint256 tokenQueueIndex, uint256 tokenIndex) view returns(uint256 tokenId)
+func (_IOTXStaking *IOTXStakingCallerSession) GetTokenId(tokenQueueIndex *big.Int, tokenIndex *big.Int) (*big.Int, error) {
+	return _IOTXStaking.Contract.GetTokenId(&_IOTXStaking.CallOpts, tokenQueueIndex, tokenIndex)
+}
+
+// GetTokenQueueLength is a free data retrieval call binding the contract method 0x797fa5c2.
+//
+// Solidity: function getTokenQueueLength(uint256 tokenQueueIndex) view returns(uint256)
+func (_IOTXStaking *IOTXStakingCaller) GetTokenQueueLength(opts *bind.CallOpts, tokenQueueIndex *big.Int) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getTokenQueueLength", tokenQueueIndex)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetTokenQueueLength is a free data retrieval call binding the contract method 0x797fa5c2.
+//
+// Solidity: function getTokenQueueLength(uint256 tokenQueueIndex) view returns(uint256)
+func (_IOTXStaking *IOTXStakingSession) GetTokenQueueLength(tokenQueueIndex *big.Int) (*big.Int, error) {
+	return _IOTXStaking.Contract.GetTokenQueueLength(&_IOTXStaking.CallOpts, tokenQueueIndex)
+}
+
+// GetTokenQueueLength is a free data retrieval call binding the contract method 0x797fa5c2.
+//
+// Solidity: function getTokenQueueLength(uint256 tokenQueueIndex) view returns(uint256)
+func (_IOTXStaking *IOTXStakingCallerSession) GetTokenQueueLength(tokenQueueIndex *big.Int) (*big.Int, error) {
+	return _IOTXStaking.Contract.GetTokenQueueLength(&_IOTXStaking.CallOpts, tokenQueueIndex)
+}
+
+// GetTotalPending is a free data retrieval call binding the contract method 0x3bd05400.
+//
+// Solidity: function getTotalPending() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCaller) GetTotalPending(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getTotalPending")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetTotalPending is a free data retrieval call binding the contract method 0x3bd05400.
+//
+// Solidity: function getTotalPending() view returns(uint256)
+func (_IOTXStaking *IOTXStakingSession) GetTotalPending() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetTotalPending(&_IOTXStaking.CallOpts)
+}
+
+// GetTotalPending is a free data retrieval call binding the contract method 0x3bd05400.
+//
+// Solidity: function getTotalPending() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCallerSession) GetTotalPending() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetTotalPending(&_IOTXStaking.CallOpts)
+}
+
+// GetTotalStaked is a free data retrieval call binding the contract method 0x0917e776.
+//
+// Solidity: function getTotalStaked() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCaller) GetTotalStaked(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getTotalStaked")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetTotalStaked is a free data retrieval call binding the contract method 0x0917e776.
+//
+// Solidity: function getTotalStaked() view returns(uint256)
+func (_IOTXStaking *IOTXStakingSession) GetTotalStaked() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetTotalStaked(&_IOTXStaking.CallOpts)
+}
+
+// GetTotalStaked is a free data retrieval call binding the contract method 0x0917e776.
+//
+// Solidity: function getTotalStaked() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCallerSession) GetTotalStaked() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetTotalStaked(&_IOTXStaking.CallOpts)
+}
+
+// GetUserReward is a free data retrieval call binding the contract method 0xd793d83e.
+//
+// Solidity: function getUserReward() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCaller) GetUserReward(opts *bind.CallOpts) (*big.Int, error) {
+	var out []interface{}
+	err := _IOTXStaking.contract.Call(opts, &out, "getUserReward")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
+}
+
+// GetUserReward is a free data retrieval call binding the contract method 0xd793d83e.
+//
+// Solidity: function getUserReward() view returns(uint256)
+func (_IOTXStaking *IOTXStakingSession) GetUserReward() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetUserReward(&_IOTXStaking.CallOpts)
+}
+
+// GetUserReward is a free data retrieval call binding the contract method 0xd793d83e.
+//
+// Solidity: function getUserReward() view returns(uint256)
+func (_IOTXStaking *IOTXStakingCallerSession) GetUserReward() (*big.Int, error) {
+	return _IOTXStaking.Contract.GetUserReward(&_IOTXStaking.CallOpts)
 }
 
 // GlobalDelegate is a free data retrieval call binding the contract method 0x11e4bc2d.
@@ -952,37 +1324,6 @@ func (_IOTXStaking *IOTXStakingSession) SystemStaking() (common.Address, error) 
 // Solidity: function systemStaking() view returns(address)
 func (_IOTXStaking *IOTXStakingCallerSession) SystemStaking() (common.Address, error) {
 	return _IOTXStaking.Contract.SystemStaking(&_IOTXStaking.CallOpts)
-}
-
-// TokenQueues is a free data retrieval call binding the contract method 0x4777aa71.
-//
-// Solidity: function tokenQueues(uint256 , uint256 ) view returns(uint256)
-func (_IOTXStaking *IOTXStakingCaller) TokenQueues(opts *bind.CallOpts, arg0 *big.Int, arg1 *big.Int) (*big.Int, error) {
-	var out []interface{}
-	err := _IOTXStaking.contract.Call(opts, &out, "tokenQueues", arg0, arg1)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// TokenQueues is a free data retrieval call binding the contract method 0x4777aa71.
-//
-// Solidity: function tokenQueues(uint256 , uint256 ) view returns(uint256)
-func (_IOTXStaking *IOTXStakingSession) TokenQueues(arg0 *big.Int, arg1 *big.Int) (*big.Int, error) {
-	return _IOTXStaking.Contract.TokenQueues(&_IOTXStaking.CallOpts, arg0, arg1)
-}
-
-// TokenQueues is a free data retrieval call binding the contract method 0x4777aa71.
-//
-// Solidity: function tokenQueues(uint256 , uint256 ) view returns(uint256)
-func (_IOTXStaking *IOTXStakingCallerSession) TokenQueues(arg0 *big.Int, arg1 *big.Int) (*big.Int, error) {
-	return _IOTXStaking.Contract.TokenQueues(&_IOTXStaking.CallOpts, arg0, arg1)
 }
 
 // TotalPending is a free data retrieval call binding the contract method 0x3f90916a.
