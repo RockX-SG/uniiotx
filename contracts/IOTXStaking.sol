@@ -44,11 +44,13 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
 
     // ---State variables---
 
+    // The global delegate for upcoming deposit activities.
     address public globalDelegate;
 
     // The geometric sequence of the staking amount that can be staked onto the IoTeX network by our liquid staking protocol.
     // Every value populated in this sequence must be a valid bucket amount predefined by the IoTeX network.
     // Every value in this sequence corresponds to a unique indexed level in the range of [0, sequenceLength-1]
+    // Once set, the sequence remains immutable.
     uint public startAmount;
     uint public commonRatio;
     uint public sequenceLength;
@@ -59,26 +61,49 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     // Once set, it remains immutable.
     uint public redeemAmountBase;
 
+    // The global stake duration for upcoming deposit activities.
+    // This value is determined at contract initialization.
+    // Once set, it remains immutable.
     uint public stakeDuration;
 
-    // Token queue map: The KEY corresponds to the bucket amount level defined as above;  the VALUE is a dynamic array of token IDs.
+    // Token queue map for token ID management:
+    // 1. The KEY corresponds to the bucket amount level defined as above.
+    // 2. The VALUE is a dynamic array of token IDs.
     mapping(uint => uint[]) public tokenQueues;
 
-    // Redeemed token count. It can change only when redeeming operation performed.
-    // Note: The staked token count at top staking level is: tokenQueues[sequenceLength-1].length - redeemedTokenCount
+    // The number of redeemed tokens can change only when a redeeming operation is performed.
+    // In addition, the staked token count at the highest staking level can be calculated using this formula:
+    // tokenQueues[sequenceLength-1].length - redeemedTokenCount
     uint public redeemedTokenCount;
 
+    // The balance synchronized from this contract fluctuates due to several factors:
+    // 1. When users deposit IOTXs for liquid staking service, it increases.
+    // 2. When pending IOTXs are staked with delegates, it decreases.
+    // 3. When rewards are distributed by delegates, it increases.
     uint public accountedBalance;
 
-    // Exchange ratio related variables
-    // Track user deposits & redeem (uniIOTX mint & burn)
-    uint public totalPending;               // Total pending IOTXs awaiting to be staked
-    uint public totalStaked;            // Track current staked iotxs for delegates
+    // The total pending IOTXs fluctuates due to several factors:
+    // 1. When users deposit IOTXs for liquid staking service, it increases.
+    // 2. When pending IOTXs are staked with delegates, it decreases.
+    // 3. When users' rewards are compounded, it increases.
+    // 4. When the manager fee is withdrawn, it increases.
+    uint public totalPending;
 
-    uint public managerFeeShares; // Shares range: [0, 1000]
+    // The total staked IOTXs fluctuates due to several factors:
+    // 1. When pending IOTXs are staked with delegates, it increases.
+    // 2. WHen users request to redeem IOTXs, it decreases.
+    uint public totalStaked;
 
-    uint public accountedUserReward;           // Accounted shared user reward
-    uint public accountedManagerReward;        // Accounted manager's reward
+    // The manager fee share ranges from 0 to 1000, as regulated by the default Admin.
+    uint public managerFeeShares;
+
+    // The accounted user rewards will increase when the rewards are divided.
+    // The total is equivalent to the amount of automatic compounding.
+    uint public accountedUserReward;
+
+    // The accounted manger rewards will increase when the rewards are divided.
+    // However, the quantity will decrease when the manager's fee is deducted.
+    uint public accountedManagerReward;
 
     // ---Events---
     event Minted(address user, uint minted);
