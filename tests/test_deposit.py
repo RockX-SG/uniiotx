@@ -38,7 +38,7 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     assert "Minted" in tx.events
     assert "Staked" in tx.events
     assert len(tx.events["Staked"]) == 2
-    token_id = iotx_staking.tokenQueues(0, 0)
+    token_id = iotx_staking.getTokenId(0, 0)
     amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
     assert (amt, dur, delegate) == (start_amt, iotx_staking.stakeDuration(), iotx_staking.globalDelegate())
     assert system_staking.balanceOf(iotx_staking) == 1
@@ -60,7 +60,7 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     assert "Minted" in tx.events
     assert "Staked" in tx.events
     assert len(tx.events["Staked"]) == 2
-    assert token_id == iotx_staking.tokenQueues(1, 0)
+    assert token_id == iotx_staking.getTokenId(1, 0)
     amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
     assert (amt, dur, delegate) == (stake_amounts[1], iotx_staking.stakeDuration(), iotx_staking.globalDelegate())
     assert system_staking.balanceOf(iotx_staking) == 1
@@ -80,7 +80,7 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     assert "Minted" in tx.events
     assert "Staked" in tx.events
     assert len(tx.events["Staked"]) == 2
-    assert token_id == iotx_staking.tokenQueues(2, 0)
+    assert token_id == iotx_staking.getTokenId(2, 0)
     amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
     assert (amt, dur, delegate) == (stake_amounts[2], iotx_staking.stakeDuration(), iotx_staking.globalDelegate())
     assert system_staking.balanceOf(iotx_staking) == 1
@@ -103,7 +103,7 @@ def test_deposit(w3, contracts, stake_amounts, users, delegates, oracle, admin):
     assert len(tx.events["Staked"]) == 2
     assert system_staking.balanceOf(iotx_staking) == 10
     for i in range(0, 10):
-        token_id = iotx_staking.tokenQueues(2, i)
+        token_id = iotx_staking.getTokenId(2, i)
         amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
         assert (amt, dur, delegate) == (stake_amounts[2], iotx_staking.stakeDuration(), iotx_staking.globalDelegate())
         assert system_staking.ownerOf(token_id) == iotx_staking

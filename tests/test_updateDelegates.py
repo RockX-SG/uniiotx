@@ -13,7 +13,7 @@ def test_updateDelegates(w3, contracts, users, delegates, oracle, admin):
     deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_staking.redeemAmountBase()
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
-    token_id = iotx_staking.tokenQueues(iotx_staking.sequenceLength() - 1, 0)
+    token_id = iotx_staking.getTokenId(iotx_staking.sequenceLength() - 1, 0)
     assert system_staking.ownerOf(token_id) == iotx_staking
     tx = iotx_staking.updateDelegates([token_id], delegates[1], {'from': oracle})
     assert "DelegatesUpdated" in tx.events

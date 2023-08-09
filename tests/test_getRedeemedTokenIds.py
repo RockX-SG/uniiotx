@@ -21,7 +21,7 @@ def test_getRedeemedTokenIds(w3, contracts, users):
     assert iotx_staking.redeemedTokenCount() == 1
     token_ids = iotx_staking.getRedeemedTokenIds(0, 1)
     assert len(token_ids) == 1
-    assert token_ids[0] == iotx_staking.tokenQueues(sequence_length - 1, 0)
+    assert token_ids[0] == iotx_staking.getTokenId(sequence_length - 1, 0)
 
     # An empty result should be returned if inappropriate index values for i and j are passed
     # Todo: To optimize the implementation, we can use table-driven testing.

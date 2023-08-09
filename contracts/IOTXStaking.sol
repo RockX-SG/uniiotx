@@ -69,7 +69,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     // Token queue map for token ID management:
     // 1. The KEY corresponds to the bucket amount level defined as above.
     // 2. The VALUE is a dynamic array of token IDs.
-    mapping(uint => uint[]) public tokenQueues;
+    mapping(uint => uint[]) private tokenQueues;
 
     // The number of redeemed tokens can change only when a redeeming operation is performed.
     // In addition, the staked token count at the highest staking level can be calculated using this formula:
@@ -256,6 +256,79 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
+     * @dev If an invalid tokenQueueIndex is given, a zero value will be returned.
+     * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength).
+     * @return The length of the queried token queue.
+     */
+    function getTokenQueueLength(uint tokenQueueIndex) external view returns (uint) {
+        if (tokenQueueIndex < sequenceLength) {
+            return tokenQueues[tokenQueueIndex].length;
+        }
+        return 0;
+    }
+
+    /**
+     * @dev If an invalid tokenQueueIndex is given, a zero value will be returned.
+     * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength).
+     * @return count The current staked token count of the specified token queue.
+     */
+    function getStakedTokenCount(uint tokenQueueIndex) external view returns (uint count) {
+        if (tokenQueueIndex < sequenceLength) {
+            uint queueLen = tokenQueues[tokenQueueIndex].length;
+            if (tokenQueueIndex == sequenceLength-1) {
+                count = queueLen - redeemedTokenCount;
+            } else {
+                count = queueLen;
+            }
+        }
+    }
+
+    /**
+     * @return The number of redeemed token IDs.
+     */
+    function getRedeemedTokenCount() external view returns (uint) {
+        return redeemedTokenCount;
+    }
+
+    /**
+     * @dev If an invalid tokenQueueIndex and tokenIndex are given, a zero value will be returned.
+     * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength).
+     * @param tokenIndex The token index is within the range of [0, tokenQueue.Length) in the specified token queue..
+     * @return tokenId The queried token ID.
+     */
+    function getTokenId(uint tokenQueueIndex, uint tokenIndex) external view returns (uint tokenId) {
+        if (tokenQueueIndex < sequenceLength && tokenIndex < tokenQueues[tokenQueueIndex].length) {
+            return tokenQueues[tokenQueueIndex][tokenIndex];
+        }
+        return 0;
+    }
+
+    /**
+     * @dev If an invalid tokenQueueIndex is given, an empty array will be returned.
+     * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength)
+     * @return The staked token IDs for the specified index.
+     */
+    function getStakedTokenIds(uint tokenQueueIndex) external view returns (uint[] memory) {
+        if (tokenQueueIndex < sequenceLength) {
+            uint[] memory tq = tokenQueues[tokenQueueIndex];
+            uint queueLen = tq.length;
+            if (tokenQueueIndex == sequenceLength-1) {
+                uint stakedCount = queueLen - redeemedTokenCount;
+                uint[] memory tokenIds = new uint[](stakedCount);
+                for (uint i = 0; i < stakedCount; i++) {
+                    tokenIds[i] = tq[redeemedTokenCount+i];
+                }
+                return tokenIds;
+            } else {
+                return tq;
+            }
+        }
+        uint[] memory tokenIds = new uint[](0);
+        return tokenIds;
+    }
+
+    /**
+     * @dev If an invalid tokenQueueIndex is given, an empty array will be returned.
      * @dev It recommended to check the value of 'redeemedTokenCount' beforehand to prevent the passed j from going out of range.
      * @param i, j The valid index values for i and j are determined by this conditional check: i < j && j <= redeemedTokenCount
      * @return An [i, j) slice of already redeemed/unlocked token id, which is indexed from 0 in this contract.
@@ -271,21 +344,6 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         }
         uint[] memory tokenIds = new uint[](0);
         return tokenIds;
-    }
-
-    /**
-     * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength]
-     * @return count The current staked token count of the specified token queue
-     */
-    function getStakedTokenCount(uint tokenQueueIndex) external view returns (uint count) {
-        if (tokenQueueIndex < sequenceLength) {
-            uint queueLen = tokenQueues[tokenQueueIndex].length;
-            if (tokenQueueIndex == sequenceLength-1) {
-                count = queueLen - redeemedTokenCount;
-            } else {
-                count = queueLen;
-            }
-        }
     }
 
 
