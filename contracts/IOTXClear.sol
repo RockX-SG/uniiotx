@@ -40,28 +40,56 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
     // ---Type declarations---
 
+    // A struct type for recording users' debt, principal and reward.
     struct UserInfo {
-        uint debt;   // IOTX value a user requests to redeem but hasn't been withdrawn
-        uint principal;  // Claimable principal which is from debt payment
-        uint reward;  // Claimable reward which is distributed after redeeming requested
-        uint rewardRate;  // Latest rewardRate assigned upon reward update
+        // The remaining amount of the user's debt. Its value fluctuates due to several factors:
+        // 1. When a user request to redeem IOTXs from the 'IOTXStake' contract, it increases.
+        // 2. When a debt payment is made, it decreases.
+        uint debt;
+        // The claimable amount of the users' principal. Its value fluctuates due to several factors:
+        // 1. When a debt payment is made, it increases.
+        // 2. When the user claims principal, it decreases.
+        uint principal;
+        // The claimable amount of the users' reward. Its value fluctuates due to several factors:
+        // When the delegate distributes rewards, it increases;
+        // When the user claim a reward, it decreases.
+        uint reward;
+        // Users' reward rate depends on the shared 'rewardRate'.
+        // It is updated whenever '_updateUserReward' is called.
+        uint rewardRate;
     }
 
+    // A struct type for managing debt items in a FIFO queue.
     struct Debt {
         address account;
         uint amount;
     }
 
     // ---State variables---
+
+    // The balance synchronized from this contract fluctuates due to several factors:
+    // 1. When the Oracle triggers debt payment, it increases.
+    // 2. When rewards are distributed by delegates, it increases.
+    // 3. When users claim their rewards or principal, in increases.
     uint public accountedBalance;
 
-    uint public totalDebts;  // Current total unpaid debts caused by redeeming requests
-    uint public rewardRate;    // Accumulated reward rate calculated against totalDebts, multiplied by MULTIPLIER
+    // The total debt fluctuates due to several factors:
+    // 1. When a new debt item is added, it increases.
+    // 2. When a debt payment is made, it decreases.
+    uint public totalDebts;
 
+    // The accumulated reward rate is influenced by the incremental reward and total debt.
+    // It's calculated using the following formula: rewardRate += incrReward * MULTIPLIER / totalDebts
+    uint public rewardRate;
 
+    // The permissible amount of new debt should be in multiples of the base debt amount.
+    // This base value is determined at contract initialization.
+    // Once set, it remains immutable.
     uint public debtAmountBase;
 
-    // Simulating a First-In-First-Out (FIFO) queue of debts
+    // Simulating a First-In-First-Out (FIFO) queue of debts.
+    // A 'joinDebt' request will add a new debt item to the end of the queue.
+    // A 'payDebts' request will settle the debt from the front end of the queue.
     // Index for adding new debt: rearIndex + 1
     // Index for the next debt payment: headIndex + 1
     // Total count of added debts: rearIndex
@@ -71,8 +99,10 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     uint public headIndex;
     uint public rearIndex;
 
-    // User infos
-    mapping(address => UserInfo) public userInfos; // account -> info
+    // The map for user information management:
+    // 1. The KEY is the user's account address.
+    // 2. The VALUE is of type UserInfo.
+    mapping(address => UserInfo) public userInfos;
 
     // ---Events---
     event DebtQueued(address account, uint amount, uint debtIndex);
