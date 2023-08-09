@@ -43,7 +43,7 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
     assert iotx_clear.accountedBalance() == mock_reward_incr1 + amt_total/2
     assert iotx_clear.balance() == iotx_clear.accountedBalance()
 
-    user_info = iotx_clear.userInfos(users[0])
+    user_info = iotx_clear.getUserInfo(users[0])
     debt_item1 = iotx_clear.getUnpaidDebtItem(1)
     assert user_info[0] == amt_total/2
     assert user_info[1] == amt_total/2
@@ -63,7 +63,7 @@ def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts)
     assert iotx_clear.accountedBalance() == mock_reward_incr1 + amt_total
     assert iotx_clear.balance() == iotx_clear.accountedBalance()
 
-    user_info = iotx_clear.userInfos(users[0])
+    user_info = iotx_clear.getUserInfo(users[0])
     debt_item1 = iotx_clear.getUnpaidDebtItem(1)
     assert user_info[0] == 0
     assert user_info[1] == amt_total

@@ -106,7 +106,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     // The map for user information management:
     // 1. The KEY is the user's account address.
     // 2. The VALUE is of type UserInfo.
-    mapping(address => UserInfo) public userInfos;
+    mapping(address => UserInfo) private userInfos;
 
     // ---Events---
     event DebtQueued(address account, uint amount, uint debtIndex);
@@ -269,6 +269,12 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         return Debt({account:0x0000000000000000000000000000000000000000, amount:0});
     }
 
+    /**
+     * @return The user information of the given account.
+     */
+    function getUserInfo(address account) external view returns (UserInfo memory) {
+        return userInfos[account];
+    }
 
     /**
      * ======================================================================================

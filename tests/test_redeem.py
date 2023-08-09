@@ -25,7 +25,7 @@ def test_redeem(w3, contracts, users, delegates, oracle):
     token_id = iotx_staking.getTokenId(2, 0)
     unlocked_amt, _, unlocked_at, _, _ = system_staking.bucketOf(token_id)
     debt = iotx_clear.getUnpaidDebtItem(1)
-    user_info = iotx_clear.userInfos(users[0])
+    user_info = iotx_clear.getUserInfo(users[0])
     assert len(tx.events["Transfer"]) == 3
     assert len(tx.events["Unlocked"]) == 1
     assert len(tx.events["Redeemed"]) == 1
@@ -58,7 +58,7 @@ def test_redeem(w3, contracts, users, delegates, oracle):
     token_id = iotx_staking.getTokenId(2, 1)
     unlocked_amt, _, unlocked_at, _, _ = system_staking.bucketOf(token_id)
     debt = iotx_clear.getUnpaidDebtItem(2)
-    user_info = iotx_clear.userInfos(users[0])
+    user_info = iotx_clear.getUserInfo(users[0])
     assert len(tx.events["Transfer"]) == 3
     assert len(tx.events["Unlocked"]) == 1
     assert len(tx.events["Redeemed"]) == 1

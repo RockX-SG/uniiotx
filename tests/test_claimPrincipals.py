@@ -26,13 +26,13 @@ def test_claimPrincipals(w3, contracts, users, delegates, oracle, admin, stake_a
 
     accounted_balance0 = iotx_clear.accountedBalance()
     user0_balance0 = users[0].balance()
-    user0_principal0 = iotx_clear.userInfos(users[0])[1]
+    user0_principal0 = iotx_clear.getUserInfo(users[0])[1]
     tx = iotx_clear.claimPrincipals(amt/2, users[0], {'from': users[0]})
     assert "PrincipalClaimed" in tx.events
 
     accounted_balance1 = iotx_clear.accountedBalance()
     user0_balance1 = users[0].balance()
-    user0_principal1 = iotx_clear.userInfos(users[0])[1]
+    user0_principal1 = iotx_clear.getUserInfo(users[0])[1]
 
     assert accounted_balance1 == accounted_balance0 - amt / 2
     assert user0_balance1 == user0_balance0 + amt/2
@@ -43,7 +43,7 @@ def test_claimPrincipals(w3, contracts, users, delegates, oracle, admin, stake_a
 
     accounted_balance2 = iotx_clear.accountedBalance()
     user0_balance2 = users[0].balance()
-    user0_principal2 = iotx_clear.userInfos(users[0])[1]
+    user0_principal2 = iotx_clear.getUserInfo(users[0])[1]
 
     assert accounted_balance2 == accounted_balance1 - amt / 2
     assert user0_balance2 == user0_balance1 + amt/2
