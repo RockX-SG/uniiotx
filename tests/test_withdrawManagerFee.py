@@ -21,7 +21,7 @@ def test_withdrawManagerFee(w3, contracts, users, delegates, admin, oracle):
     manager_reward = iotx_staking.managerFeeShares() * amt_reward / 1000
     user_reward = amt_reward - manager_reward
     assert manager_reward == 20
-    to_min = manager_reward / 2 * iotx_staking.MULTIPLIER() / iotx_staking.exchangeRatio()
+    to_min = manager_reward / 2 * 1e18 / iotx_staking.exchangeRatio()
     tx = iotx_staking.withdrawManagerFee(manager_reward / 2, admin, {"from": admin})
     assert "ManagerFeeWithdrawed" in tx.events
     assert iotx_staking.accountedManagerReward() == manager_reward / 2

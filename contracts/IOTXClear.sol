@@ -29,18 +29,15 @@ import "../interfaces/IIOTXStaking.sol";
 import "../interfaces/ISystemStaking.sol";
 
 contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable {
-    // ---Use libraries---
     using Address for address payable;
 
-    // ---External dependencies---
     address public systemStaking;
 
-    // ---Constants---
-    uint public constant MULTIPLIER = 1e18;
+    uint private constant MULTIPLIER = 1e18;
 
-    // ---Type declarations---
-
-    // A struct type for recording users' debt, principal and reward.
+    /**
+     * @dev A struct type for recording users' debt, principal and reward.
+     */
     struct UserInfo {
         // The remaining amount of the user's debt. Its value fluctuates due to several factors:
         // 1. It increases when a user request to redeem IOTXs from the 'IOTXStake' contract.
@@ -59,63 +56,73 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         uint rewardRate;
     }
 
-    // A struct type for managing debt items in a FIFO queue.
+    /**
+     * @dev A struct type for managing debt items in a FIFO queue.
+     */
     struct Debt {
         address account;
         uint amount;
     }
 
-    // ---State variables---
-
-    // The balance synchronized from this contract fluctuates due to several factors:
-    // 1. It increases when the Oracle triggers debt payment.
-    // 2. It increases when rewards are distributed by delegates.
-    // 3. It decreases when users claim their rewards or principal..
+    /**
+     * @dev The balance synchronized from this contract fluctuates due to several factors:
+     * 1. It increases when the Oracle triggers debt payment.
+     * 2. It increases when rewards are distributed by delegates.
+     * 3. It decreases when users claim their rewards or principal..
+     */
     uint public accountedBalance;
 
-    // The total debt fluctuates due to several factors:
-    // 1. It increases when a new debt item is added.
-    // 2. It decreases when a debt payment is made.
+    /**
+     * @dev The total debt fluctuates due to several factors:
+     * 1. It increases when a new debt item is added.
+     * 2. It decreases when a debt payment is made.
+     */
     uint public totalDebts;
 
-    // The accumulated reward rate is influenced by the incremental reward and total debt.
-    // It's calculated using the following formula: rewardRate += incrReward * MULTIPLIER / totalDebts
+    /**
+     * @dev The accumulated reward rate is influenced by the incremental reward and total debt.
+     * It's calculated using the following formula: rewardRate += incrReward * 1e18 / totalDebts
+     */
     uint public rewardRate;
 
-    // The permissible amount of new debt should be in multiples of the base debt amount.
-    // This base value is determined at contract initialization.
-    // Once set, it remains immutable.
+    /**
+     * @dev The permissible amount of new debt should be in multiples of the base debt amount.
+     * This base value is determined at contract initialization.
+     * Once set, it remains immutable.
+     */
     uint public debtAmountBase;
 
-    // Simulating a First-In-First-Out (FIFO) queue of debts.
-    //
-    // A 'joinDebt' request will add a new debt item to the end of the queue.
-    // A 'payDebts' request will settle the debt from the front end of the queue.
-    //
-    // Here are the key features of this FIFO queue:
-    // 1. Each debt item is given a unique index.
-    // 2. The index for adding a new debt: rearIndex + 1.
-    // 3. The index for the next debt payment is: headIndex + 1.
-    // 4. The total number of added debts is represented by: rearIndex.
-    // 5. The total number of paid debts is represented by: headIndex.
-    // 6. The total number of unpaid debts can be calculated as: rearIndex - headIndex.
+    /**
+     * @dev Simulating a First-In-First-Out (FIFO) queue of debts.
+     *
+     * A 'joinDebt' request will add a new debt item to the end of the queue.
+     * A 'payDebts' request will settle the debt from the front end of the queue.
+     *
+     * Here are the key features of this FIFO queue:
+     * 1. Each debt item is given a unique index.
+     * 2. The index for adding a new debt: rearIndex + 1.
+     * 3. The index for the next debt payment is: headIndex + 1.
+     * 4. The total number of added debts is represented by: rearIndex.
+     * 5. The total number of paid debts is represented by: headIndex.
+     * 6. The total number of unpaid debts can be calculated as: rearIndex - headIndex.
+     */
     mapping(uint=>Debt) private iotxDebts;
     uint private headIndex;
     uint private rearIndex;
 
-    // The map for user information management:
-    // 1. The KEY is the user's account address.
-    // 2. The VALUE is of type UserInfo.
+    /**
+     * @dev The map for user information management:
+     * 1. The KEY is the user's account address.
+     * 2. The VALUE is of type UserInfo.
+     */
     mapping(address => UserInfo) private userInfos;
 
-    // ---Events---
     event DebtQueued(address account, uint amount, uint debtIndex);
     event DebtPaid(address account, uint amount, uint debtIndex);
     event PrincipalClaimed(address claimer, address recipient, uint amount);
     event RewardClaimed(address claimer, address recipient, uint amount);
     event DelegatesUpdated(uint[] tokenIds, address delegate);
 
-    // ---Modifiers---
     modifier onlyDebtAmount(uint amount) {
         require(amount > 0 && amount % debtAmountBase == 0, "SYS003");  // Invalid debt amount
         _;
@@ -139,13 +146,13 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      */
 
     /**
-    * @dev This function is exclusively designed to receive staking rewards generated after the 'joinDebt' function is evoked.
+     * @dev This function is exclusively designed to receive staking rewards generated after the 'joinDebt' function is evoked.
      * Any IOTXs inadvertently sent to this contract will be considered as rewards.
      */
     receive() external payable { }
 
     /**
-    * @dev This function pauses the contract
+     * @dev This function pauses the contract
      */
     function pause() public onlyRole(ROLE_PAUSER) {
         _pause();
@@ -202,7 +209,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
     /**
      * @dev This function is the 'IERC721Receiver' implement for receiving redeemed/unlocked NFT transferred by IOTXStaking contract
-         */
+     */
     function onERC721Received(
         address, // operator
         address, // from
@@ -273,7 +280,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     /**
-    * @return The number of debt items that have been paid.
+     * @return The number of debt items that have been paid.
      */
     function getPaidDebtItemCount() external view returns (uint) {
         return headIndex;
@@ -427,12 +434,12 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
 
     /**
-    * ======================================================================================
-    *
-    * INTERNAL FUNCTIONS
-    *
-    * ======================================================================================
-    */
+     * ======================================================================================
+     *
+     * INTERNAL FUNCTIONS
+     *
+     * ======================================================================================
+     */
 
     /**
      * @dev This function appends a debt item to the FIFO queue.

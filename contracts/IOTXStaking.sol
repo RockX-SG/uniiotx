@@ -30,82 +30,101 @@ import "../interfaces/IIOTXStaking.sol";
 import "../interfaces/ISystemStaking.sol";
 
 contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable {
-    // ---Use libraries---
     using SafeERC20 for IERC20;
 
-    // ---External dependencies---
     address public systemStaking;
     address public uniIOTX;
     address public iotxClear;
 
-    // ---Constants---
-    uint public constant DEFAULT_EXCHANGE_RATIO = 1;
-    uint public constant MULTIPLIER = 1e18;
+    uint private constant DEFAULT_EXCHANGE_RATIO = 1;
+    uint private constant MULTIPLIER = 1e18;
 
-    // ---State variables---
-
-    // The global delegate for upcoming deposit activities.
+    /**
+     * @dev The global delegate for upcoming deposit activities.
+     */
     address public globalDelegate;
 
-    // The geometric sequence of the staking amount that can be staked onto the IoTeX network by our liquid staking protocol.
-    // Every value populated in this sequence must be a valid bucket amount predefined by the IoTeX network.
-    // Every value in this sequence corresponds to a unique indexed level in the range of [0, sequenceLength-1]
-    // Once set, the sequence remains immutable.
+    /**
+     * @dev The startAmount, commonRatio and sequenceLength collectively constitute a geometric sequence
+     * for the staking amount that can be committed to the IoTeX network through our liquid staking protocol.
+     * Each value in this sequence must be a valid bucket amount, as predefined by the IoTeX network.
+     * Each value in this sequence corresponds to a unique indexed level within the range of [0, sequenceLength-1]
+     * Once set, the sequence remains immutable.
+     */
     uint public startAmount;
     uint public commonRatio;
     uint public sequenceLength;
 
-    // Users can deposit any amount of IOTXs, but can only redeem amounts that are in multiples of the redeemAmountBase.
-    // This value is determined at contract initialization using the formula:
-    // redeemAmountBase = startAmount * (commonRatio ** (sequenceLength-1))
-    // Once set, it remains immutable.
+    /**
+     * @dev Users can deposit any amount of IOTXs, but can only redeem amounts that are in multiples of the redeemAmountBase.
+     * This value is determined at contract initialization using the formula:
+     * redeemAmountBase = startAmount * (commonRatio ** (sequenceLength-1))
+     * Once set, it remains immutable.
+     */
     uint public redeemAmountBase;
 
-    // The global stake duration for upcoming deposit activities.
-    // This value is determined at contract initialization.
-    // Once set, it remains immutable.
+    /**
+     * @dev The global stake duration for upcoming deposit activities.
+     * This value is determined at contract initialization.
+     * Once set, it remains immutable.
+     */
     uint public stakeDuration;
 
-    // Token queue map for token ID management:
-    // 1. The KEY corresponds to the bucket amount level defined as above.
-    // 2. The VALUE is a dynamic array of token IDs.
+    /**
+     * @dev Token queue map for token ID management:
+     * 1. The KEY corresponds to the bucket amount level defined as above.
+     * 2. The VALUE is a dynamic array of token IDs.
+     */
     mapping(uint => uint[]) private tokenQueues;
 
-    // The number of redeemed tokens can change only when a redeeming operation is performed.
-    // In addition, the staked token count at the highest staking level can be calculated using this formula:
-    // tokenQueues[sequenceLength-1].length - redeemedTokenCount
+    /**
+     * @dev The number of redeemed tokens can change only when a redeeming operation is performed.
+     * In addition, the staked token count at the highest staking level can be calculated using this formula:
+     * tokenQueues[sequenceLength-1].length - redeemedTokenCount
+     */
     uint public redeemedTokenCount;
 
-    // The balance synchronized from this contract fluctuates due to several factors:
-    // 1. It increases when users deposit IOTXs for liquid staking service.
-    // 2. It increases when rewards are distributed by delegates.
-    // 3. It decreases when pending IOTXs are staked with delegates.
+    /**
+     * @dev The balance synchronized from this contract fluctuates due to several factors:
+     * 1. It increases when users deposit IOTXs for liquid staking service.
+     * 2. It increases when rewards are distributed by delegates.
+     * 3. It decreases when pending IOTXs are staked with delegates.
+     */
     uint public accountedBalance;
 
-    // The total pending IOTXs fluctuates due to several factors:
-    // 1. It increases when users deposit IOTXs for liquid staking service.
-    // 2. It increases when users' rewards are compounded..
-    // 3. It increases when the manager fee is withdrawn.
-    // 4. It decreases when pending IOTXs are staked with delegates.
+    /**
+     * @dev The total pending IOTXs fluctuates due to several factors:
+     * 1. It increases when users deposit IOTXs for liquid staking service.
+     * 2. It increases when users' rewards are compounded..
+     * 3. It increases when the manager fee is withdrawn.
+     * 4. It decreases when pending IOTXs are staked with delegates.
+     */
     uint public totalPending;
 
-    // The total staked IOTXs fluctuates due to several factors:
-    // 1.It increases when pending IOTXs are staked with delegates.
-    // 2. It decreases when users request to redeem IOTXs.
+    /**
+     * @dev The total staked IOTXs fluctuates due to several factors:
+     * 1.It increases when pending IOTXs are staked with delegates.
+     * 2. It decreases when users request to redeem IOTXs.
+     */
     uint public totalStaked;
 
-    // The manager fee share ranges from 0 to 1000, as regulated by the default Admin.
+    /**
+     * @dev The manager fee share ranges from 0 to 1000, as regulated by the default Admin.
+     */
     uint public managerFeeShares;
 
-    // The accounted user rewards will increase when the rewards are divided.
-    // The total is equivalent to the amount of automatic compounding.
+    /**
+     * @dev The accounted user rewards will increase when the rewards are divided.
+     * The total is equivalent to the amount of automatic compounding.
+     */
     uint public accountedUserReward;
 
-    // The accounted manger rewards will increase when the rewards are divided.
-    // However, the quantity will decrease when the manager's fee is deducted.
+    /**
+     * @dev The accounted manger rewards will increase when the rewards are divided.
+     * However, the quantity will decrease when the manager's fee is deducted.
+     */
     uint public accountedManagerReward;
 
-    // ---Events---
     event Minted(address user, uint minted);
     event Redeemed(address user, uint burned, uint[] tokenIds);
     event Staked(uint firstTokenId, uint amount, address delegate, uint count);
@@ -116,7 +135,6 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     event GlobalDelegateSet(address delegate);
     event DelegatesUpdated(uint[] tokenIds, address delegate);
 
-    // ---Modifiers---
     modifier onlyValidTransaction(uint deadline) {
         require(deadline > block.timestamp, "USR001");  // Transaction expired
         _;
@@ -236,7 +254,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
 
     /**
      * @dev The factors that affect the returned result are the same as those of the 'currentReserve' function.
-     * @return ratio The exchange ratio of uniIOTX to IOTX, multiplied by 'MULTIPLIER' (1e18).
+     * @return ratio The exchange ratio of uniIOTX to IOTX, multiplied by 1e18.
      */
     function exchangeRatio() external view returns (uint ratio) {
         return _exchangeRatio();
@@ -718,7 +736,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @dev This function computes and returns the exchange ratio of uniIOTX to IOTX, multiplied by 'MULTIPLIER' (1e18).
+     * @dev This function computes and returns the exchange ratio of uniIOTX to IOTX, multiplied by 1e18.
      */
     function _exchangeRatio() internal view returns (uint ratio) {
         uint uniIOTXAmount = IUniIOTX(uniIOTX).totalSupply();

@@ -25,11 +25,8 @@ def test_init_status(roles, owner, admin, delegates, oracle, start_amount, commo
 
     assert uni_iotx.symbol() == "uniIOTX"
 
-    assert iotx_clear.MULTIPLIER() == 1000000000000000000
     assert iotx_clear.debtAmountBase() == iotx_staking.redeemAmountBase()
 
-    assert iotx_staking.DEFAULT_EXCHANGE_RATIO() == 1
-    assert iotx_staking.MULTIPLIER() == 1000000000000000000
     assert iotx_staking.globalDelegate() == delegates[0].address
     assert iotx_staking.startAmount() == start_amount
     assert iotx_staking.commonRatio() == common_ratio
