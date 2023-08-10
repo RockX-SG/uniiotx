@@ -23,6 +23,6 @@ def main():
     iotx_clear_upgraded = IOTXClear.deploy({'from': deployer, 'gas_limit': gas_limit})
     iotx_clear_proxy.upgradeTo(iotx_clear_upgraded, {'from': deployer, 'gas_limit': gas_limit})
 
-    print("Upgraded IOTXClear address:", iotx_clear_upgraded)  # https://testnet.iotexscan.io/address/0x9CB111C1301eD4cEE3bb5d3714080BE353a59B92#transactions
+    print("Upgraded IOTXClear address:", iotx_clear_upgraded)  # https://testnet.iotexscan.io/address/0x417F9e4B006a5AED672413fD6DCd1AFD549546ED#transactions
 
 
