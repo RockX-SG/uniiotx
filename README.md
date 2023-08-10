@@ -22,7 +22,7 @@ For further information, please visit the [Brownie Network Management](https://e
 and [IoTeX Ethereum API Compatibility](https://docs.iotex.io/reference/babel-web3-api) websites.
 
 ### Account Configuration
-You can add a new account by executing the following command: `brownie accounts new {INSERT-ACCOUNT-NAME}`
+You can add a new account by running the following command: `brownie accounts new {INSERT-ACCOUNT-NAME}`
 
 Make sure to replace {INSERT-ACCOUNT-NAME} with your name of choice. The following account names are used to
 [deploy](https://github.com/RockX-SG/uniiotx/blob/main/scripts/deploy/testnet.py) 
@@ -61,6 +61,8 @@ Here are commonly used commands related to unit testing:
 - To evaluate unit test coverage, add the `--coverage` flag: `brownie test --coverage`
 
 For further information, please visit the [Brownie Writing Unit Tests](https://eth-brownie.readthedocs.io/en/stable/tests-pytest-intro.html) websites.
+
+**Todo:** Fix problems associated with executing the test suite. 
 
 ### Error Codes from Contracts
 1. SYS001: INACTIVE_BUCKET_TYPE
