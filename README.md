@@ -47,9 +47,9 @@ For further information, please visit the [Installing and Updating NVM](https://
 
 #### Abigen Installation
 We use Abigen to creates ABIs for Go native applications. You can run the following commands for installation:
-- To download source package: `wget -O $HOME/go-ethereum-1.10.17.tar.gz https://github.com/ethereum/go-ethereum/archive/refs/tags/v1.10.17.tar.gz`
+- To download the source package: `wget -O $HOME/go-ethereum-1.10.17.tar.gz https://github.com/ethereum/go-ethereum/archive/refs/tags/v1.10.17.tar.gz`
 - To extract the archive: `cd $HOME && tar -C $HOME -xzf go-ethereum-1.10.17.tar.gz`
-- To build: `cd $HOME/go-ethereum-1.10.17/cmd/abigen && go build .`
+- To build the Abigen program: `cd $HOME/go-ethereum-1.10.17/cmd/abigen && go build .`
 - To add the executable binary to the PATH environment variable: `export PATH=$PATH:$HOME/go-ethereum-1.10.17/cmd/abigen`
 
 After the installation, please restart your terminal or run the command: `source ~/.bashrc` for the changes to take effect.
@@ -90,9 +90,7 @@ To view the complete list of accounts, you can run the following command: `brown
 For further information, please visit the [Brownie Working wih Accounts](https://eth-brownie.readthedocs.io/en/stable/core-accounts.html) websites.
 
 ### Unit Testing
-Before running unit tests, programmers must have [Ganache](https://github.com/trufflesuite/ganache) installed.
-
-All unit testing files can be found at [uniiotx/tests](https://github.com/RockX-SG/uniiotx/tree/main/tests).
+We currently conduct unit tests based on [Ganache](https://github.com/trufflesuite/ganache). All the files for unit testing can be located at [uniiotx/tests](https://github.com/RockX-SG/uniiotx/tree/main/tests).
 Specifically:
 - The file [uniiotx/tests/configs.py](https://github.com/RockX-SG/uniiotx/blob/main/tests/configs.py) contains all global variables, including various accounts.
 - The file [uniiotx/tests/contracts.py](https://github.com/RockX-SG/uniiotx/blob/main/tests/contracts.py) includes a universal function for deploying all contracts.
