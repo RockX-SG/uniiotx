@@ -8,7 +8,8 @@ Next State:  integration test on IoTeX testnet && unit test on local testnet.
 ### Prerequisites
 This project, which includes [Solidity](https://soliditylang.org/) contracts, was developed using [Brownie](https://github.com/eth-brownie/brownie) on the [Pop!_OS](https://pop.system76.com/).
 It is dependent on the following projects:
-[Python](https://www.python.org/), [Golang](https://go.dev/), [Ganache](https://github.com/trufflesuite/ganache), [Node.js](https://nodejs.org/en), [NPM](https://www.npmjs.com/), [NVM](https://github.com/nvm-sh/nvm).
+[Python](https://www.python.org/), [Golang](https://go.dev/), [Ganache](https://github.com/trufflesuite/ganache), [Node.js](https://nodejs.org/en), [NPM](https://www.npmjs.com/), [NVM](https://github.com/nvm-sh/nvm), 
+[Abigen](https://github.com/ethereum/go-ethereum/tree/master/cmd/abigen)
 
 These are the currently adopted versions:
 - Pop!_OS: v22.04 LTS
@@ -20,8 +21,10 @@ These are the currently adopted versions:
 - Node.js: v20.5.0
 - NPM: v9.8.1
 - NVM: v0.39.0
+- Abigen: v1.10.17
 
-We assume that you have installed the necessary software on your development operating system other than Ganache and Abigen.
+We assume that you have installed the necessary software on your development operating system other than 
+Ganache, Node.js, NPM, NVM and Abigen.
 
 #### Ganache Installation
 Firstly, you need to install [Node.js](https://nodejs.org/en) and [NPM](https://www.npmjs.com/). We highly recommend using
