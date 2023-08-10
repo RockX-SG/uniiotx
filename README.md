@@ -6,11 +6,11 @@ Current State: deployed at IoTeX testnet via [scripts/deploy/testnet](https://gi
 Next State:  integration test on IoTeX testnet && unit test on local testnet.
 
 ### Network Configuration
-To add IoTeX Testnet and Mainnet configurations, execute the following commands separately:
+To add IoTeX Testnet and Mainnet configurations, run the following commands separately:
 
-For IoTeX Testnet: `brownie networks add IoTeX iotex-testnet host=https://babel-api.testnet.iotex.io chainid=4690` 
+- For IoTeX Testnet: `brownie networks add IoTeX iotex-testnet host=https://babel-api.testnet.iotex.io chainid=4690` 
 
-For IoTeX Mainnet: `brownie networks add IoTeX iotex-mainnet host=https://babel-api.mainnet.iotex.io chainid=4689`
+- For IoTeX Mainnet: `brownie networks add IoTeX iotex-mainnet host=https://babel-api.mainnet.iotex.io chainid=4689`
 
 If you successfully added the network, you'll see a success message along with the network details in the terminal.
 
@@ -27,7 +27,9 @@ You can add a new account by executing the following command: `brownie accounts 
 Make sure to replace {INSERT-ACCOUNT-NAME} with your name of choice. The following account names are used to
 [deploy](https://github.com/RockX-SG/uniiotx/blob/main/scripts/deploy/testnet.py) 
 and [upgrade](https://github.com/RockX-SG/uniiotx/tree/main/scripts/upgrade) contracts on IoTeX Testnet: 
-IoTeXAdmin, IoTeXDeployer, IoTeXOracle.
+- IoTeXAdmin 
+- IoTeXDeployer 
+- IoTeXOracle
 
 You'll be prompted to enter in your private key and a password to encrypt the account with. If the account was configured successfully,
 you'll see your account address printed to the terminal.
@@ -37,6 +39,25 @@ To view the complete list of accounts, you can run the following command: `brown
 ![accounts_list](/docs/accounts_list.png) <br>
 
 For further information, please visit the [Brownie Working wih Accounts](https://eth-brownie.readthedocs.io/en/stable/core-accounts.html) websites.
+
+### Unit Testing
+Before running unit tests, programmers must have [Ganache](https://github.com/trufflesuite/ganache) installed.
+
+All unit testing files can be found at [uniiotx/tests](https://github.com/RockX-SG/uniiotx/tree/main/tests).
+
+Here are commonly used commands related to unit testing:
+
+- To run the complete test suite: `brownie test`.
+
+- To run a specific test: `brownie test tests/test_deposit.py`.
+
+- To debug the project during test execution, add the `--interactive` flag: `brownie test --interactive`.
+
+- To generate a gas profile report, add the `--gas` flag: `brownie test --gas`
+
+- To evaluate unit test coverage, add the `--coverage` flag: `brownie test --coverage`
+
+For further information, please visit the [Brownie Writing Unit Tests](https://eth-brownie.readthedocs.io/en/stable/tests-pytest-intro.html) websites.
 
 ### Error Codes from Contracts
 1. SYS001: INACTIVE_BUCKET_TYPE
