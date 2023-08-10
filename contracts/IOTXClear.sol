@@ -241,7 +241,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     /**
-     * @dev The permissible amount of new debt should be in multiples of the base debt amount..
+     * @dev The permissible amount of new debt should be in multiples of the base debt amount.
      * @return The base amount for joining a new debt item.
      */
     function getDebtAmountBase() external view returns (uint) {
