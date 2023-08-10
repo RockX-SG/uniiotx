@@ -15,7 +15,8 @@ For IoTeX Mainnet: `brownie networks add IoTeX iotex-mainnet host=https://babel-
 If you successfully added the network, you'll see a success message along with the network details in the terminal.
 
 To view the complete list of supported networks, you can run the following command:<br>
-`brownie networks list`<br>
+`brownie networks list`
+
 ![network_config](/docs/network_config.png) <br>
 
 For further information, please visit the [Brownie Network Management](https://eth-brownie.readthedocs.io/en/stable/network-management.html#) 
