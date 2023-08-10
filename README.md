@@ -5,7 +5,7 @@ Current State: deployed at IoTeX testnet via [scripts/deploy/testnet](https://gi
 
 Next State:  integration test on IoTeX testnet && unit test on local testnet.
 
-### IoTeX Network Configurations
+### Network Configuration
 To add IoTeX Testnet and Mainnet configurations, execute the following commands separately:
 
 For IoTeX Testnet: `brownie networks add IoTeX iotex-testnet host=https://babel-api.testnet.iotex.io chainid=4690` 
@@ -21,6 +21,19 @@ To view the complete list of supported networks, you can run the following comma
 For further information, please visit the [Brownie Network Management](https://eth-brownie.readthedocs.io/en/stable/network-management.html#) 
 and [IoTeX Ethereum API Compatibility](https://docs.iotex.io/reference/babel-web3-api) websites.
 
+### Account Configuration
+You can add a new account by executing the following command: `brownie accounts new {INSERT-ACCOUNT-NAME}`
+
+Make sure to replace {INSERT-ACCOUNT-NAME} with your name of choice. 
+
+You'll be prompted to enter in your private key and a password to encrypt the account with. If the account was configured successfully,
+you'll see your account address printed to the terminal.
+
+To view the complete list of accounts, you can run the following command: `brownie accounts list`
+
+![accounts_list](/docs/accounts_list.png) <br>
+
+For further information, please visit the [Brownie Working wih Accounts](https://eth-brownie.readthedocs.io/en/stable/core-accounts.html)
 
 ### Error Codes from Contracts
 1. SYS001: INACTIVE_BUCKET_TYPE
