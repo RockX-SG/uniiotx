@@ -24,7 +24,10 @@ and [IoTeX Ethereum API Compatibility](https://docs.iotex.io/reference/babel-web
 ### Account Configuration
 You can add a new account by executing the following command: `brownie accounts new {INSERT-ACCOUNT-NAME}`
 
-Make sure to replace {INSERT-ACCOUNT-NAME} with your name of choice. 
+Make sure to replace {INSERT-ACCOUNT-NAME} with your name of choice. The following account names are used to
+[deploy](https://github.com/RockX-SG/uniiotx/blob/main/scripts/deploy/testnet.py) 
+and [upgrade](https://github.com/RockX-SG/uniiotx/tree/main/scripts/upgrade) contracts on IoTeX Testnet: 
+IoTeXAdmin, IoTeXDeployer, IoTeXOracle.
 
 You'll be prompted to enter in your private key and a password to encrypt the account with. If the account was configured successfully,
 you'll see your account address printed to the terminal.
@@ -33,7 +36,7 @@ To view the complete list of accounts, you can run the following command: `brown
 
 ![accounts_list](/docs/accounts_list.png) <br>
 
-For further information, please visit the [Brownie Working wih Accounts](https://eth-brownie.readthedocs.io/en/stable/core-accounts.html)
+For further information, please visit the [Brownie Working wih Accounts](https://eth-brownie.readthedocs.io/en/stable/core-accounts.html) websites.
 
 ### Error Codes from Contracts
 1. SYS001: INACTIVE_BUCKET_TYPE
