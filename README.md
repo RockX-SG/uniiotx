@@ -5,6 +5,55 @@ Current State: deployed at IoTeX testnet via [scripts/deploy/testnet](https://gi
 
 Next State:  integration test on IoTeX testnet && unit test on local testnet.
 
+### Prerequisites
+This project, which includes [Solidity](https://soliditylang.org/) contracts, was developed using [Brownie](https://github.com/eth-brownie/brownie) on the [Pop!_OS](https://pop.system76.com/).
+It is dependent on the following projects:
+[Python](https://www.python.org/), [Golang](https://go.dev/), [Ganache](https://github.com/trufflesuite/ganache), [Node.js](https://nodejs.org/en), [NPM](https://www.npmjs.com/), [NVM](https://github.com/nvm-sh/nvm).
+
+These are the currently adopted versions:
+- Pop!_OS: v22.04 LTS
+- Solidity: v0.8.9
+- Python: v3.10.6
+- Golang: v1.20.4
+- Brownie: v1.19.3
+- Ganache: v7.9.0
+- Node.js: v20.5.0
+- NPM: v9.8.1
+- NVM: v0.39.0
+
+We assume that you have installed the necessary software on your development operating system other than Ganache and Abigen.
+
+#### Ganache Installation
+Firstly, you need to install [Node.js](https://nodejs.org/en) and [NPM](https://www.npmjs.com/). We highly recommend using
+[NVM](https://github.com/nvm-sh/nvm) for the installation of these two dependencies. 
+
+You can run the following commands to install NVM, Node.js and NPM step by step:
+- To install the latest version of NVM: `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash`<br>
+After the installation, please restart your terminal or run the command: `source ~/.bashrc` for the changes to take effect.
+- To install the latest version of Node.js: `nvm install node`
+- To upgrade NPM to the latest version: `npm install -g npm@latest`
+
+You can run the subsequent command to verify the version you've recently installed:
+  - `nvm --version`
+  - `node --version`
+  - `npm --version`
+
+Secondly, you can run the following command to install Ganache globally: `npm install ganache --global`.<br>
+Once installed globally, you can start ganache right from your command line: `ganache`
+
+For further information, please visit the [Installing and Updating NVM](https://github.com/nvm-sh/nvm#installing-and-updating), 
+[Installing Node.js and NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and 
+[Ganache](https://github.com/trufflesuite/ganache) websites 
+
+#### Abigen Installation
+We use Abigen to creates ABIs for Go native applications. You can run the following commands for installation:
+- To download source package: `wget -O $HOME/go-ethereum-1.10.17.tar.gz https://github.com/ethereum/go-ethereum/archive/refs/tags/v1.10.17.tar.gz`
+- To extract the archive: `cd $HOME && tar -C $HOME -xzf go-ethereum-1.10.17.tar.gz`
+- To build: `cd $HOME/go-ethereum-1.10.17/cmd/abigen && go build .`
+- To add the executable binary to the PATH environment variable: `export PATH=$PATH:$HOME/go-ethereum-1.10.17/cmd/abigen`
+
+After the installation, please restart your terminal or run the command: `source ~/.bashrc` for the changes to take effect.
+
 ### Network Configuration
 To add IoTeX Testnet and Mainnet configurations, run the following commands separately:
 
