@@ -306,6 +306,22 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     /**
+     * @return The total queued unpaid debt items.
+     */
+    function getUnpaidDebtItems() external view returns (Debt[] memory) {
+        if (headIndex < rearIndex) {
+            uint count = rearIndex - headIndex;
+            Debt[] memory items = new Debt[](count);
+            uint firstIndex = headIndex+1;
+            for (uint i = 0; i < count; i++) {
+                items[i] = iotxDebts[firstIndex+i];
+            }
+            return items;
+        }
+        return new Debt[](0);
+    }
+
+    /**
      * @return The user information of the given account.
      */
     function getUserInfo(address account) external view returns (UserInfo memory) {

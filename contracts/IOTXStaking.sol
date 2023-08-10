@@ -417,8 +417,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
                 return tq;
             }
         }
-        uint[] memory tokenIds = new uint[](0);
-        return tokenIds;
+        return new uint[](0);
     }
 
     /**
@@ -436,8 +435,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
             }
             return tokenIds;
         }
-        uint[] memory tokenIds = new uint[](0);
-        return tokenIds;
+        return new uint[](0);
     }
 
 
