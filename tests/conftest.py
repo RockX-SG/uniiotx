@@ -11,7 +11,7 @@ def w3():
 # Tx deadline
 @pytest.fixture(scope="session", autouse=True)
 def deadline(w3):
-    return w3.eth.get_block('latest').timestamp + 60
+    return w3.eth.get_block('latest').timestamp + 3600
 
 @pytest.fixture(scope="session", autouse=True)
 def zero_address():
