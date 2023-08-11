@@ -2,7 +2,7 @@ import brownie
 import pytest
 
 
-def test_claimPrincipals(fn_isolation, w3, contracts, users, delegates, oracle, admin, stake_amounts):
+def test_claimPrincipals(fn_isolation, w3, contracts, users, oracle, admin):
     system_staking, uni_iotx, iotx_clear, iotx_staking = contracts[0], contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---

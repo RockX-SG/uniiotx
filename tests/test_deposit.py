@@ -2,7 +2,7 @@ import brownie
 import pytest
 
 
-def test_deposit(fn_isolation, w3, contracts, stake_amounts, users, delegates, oracle, admin):
+def test_deposit(fn_isolation, w3, contracts, stake_amounts, users, admin):
     system_staking, uni_iotx, iotx_staking = contracts[0], contracts[1], contracts[3]
 
     # ---Happy path testing---
