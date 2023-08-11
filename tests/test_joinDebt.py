@@ -12,6 +12,19 @@ def test_joinDebt(fn_isolation, contracts, users, delegates, admin):
 
     account = users[0]
     amount = iotx_staking.getRedeemAmountBase()
+
+    # Initially, there should be no item of debt.
+    assert iotx_clear.getTotalDebts() == 0
+    assert iotx_clear.getRewardRate() == 0
+    assert len(iotx_clear.getUnpaidDebtItems()) == 0
+    assert iotx_clear.getTotalDebtItemCount() == 0
+    assert iotx_clear.getPaidDebtItemCount() == 0
+    assert iotx_clear.getUnpaidDebtItemCount() == 0
+    assert iotx_clear.getUserInfo(account)[0] == 0
+    assert iotx_clear.getReward(account) == 0
+    assert iotx_clear.getPrincipal(account) == 0
+    assert iotx_clear.getDebt(account) == 0
+
     tx = iotx_clear.joinDebt(account, amount, {"from": iotx_staking})
     assert "DebtQueued" in tx.events
     assert iotx_clear.getTotalDebts() == amount
