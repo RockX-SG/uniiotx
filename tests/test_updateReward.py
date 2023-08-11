@@ -1,5 +1,4 @@
 import brownie
-import pytest
 
 
 def test_updateReward(fn_isolation, contracts, users, delegates, oracle):

@@ -1,5 +1,4 @@
 import brownie
-import pytest
 
 
 def test_deposit(fn_isolation, w3, contracts, stake_amounts, users, admin):

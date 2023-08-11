@@ -1,5 +1,4 @@
 import brownie
-import pytest
 
 
 def test_updateDelegates(fn_isolation, w3, contracts, users, delegates, oracle, admin):

@@ -1,5 +1,4 @@
 import brownie
-import pytest
 
 
 def test_mint(fn_isolation, contracts, users, zero_address):

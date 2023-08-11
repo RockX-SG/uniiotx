@@ -1,5 +1,4 @@
 import brownie
-import pytest
 
 
 def test_claimPrincipals(fn_isolation, w3, contracts, users, oracle, admin):

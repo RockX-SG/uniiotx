@@ -1,5 +1,4 @@
 import brownie
-import pytest
 
 
 def test_payDebts(fn_isolation, w3, contracts, users, delegates, oracle, admin, stake_amounts, zero_address):

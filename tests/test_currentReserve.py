@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_currentReserve(fn_isolation, w3, contracts, users, delegates, oracle, admin):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 

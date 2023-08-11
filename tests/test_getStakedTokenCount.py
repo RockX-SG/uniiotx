@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_getStakedTokenCount(fn_isolation, w3, contracts, stake_amounts, users):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
