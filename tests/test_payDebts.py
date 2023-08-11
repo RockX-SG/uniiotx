@@ -2,7 +2,7 @@ import brownie
 import pytest
 
 
-def test_payDebts(fn_isolation, w3, contracts, users, delegates, oracle, admin, stake_amounts):
+def test_payDebts(fn_isolation, w3, contracts, users, delegates, oracle, admin, stake_amounts, zero_address):
     uni_iotx, iotx_clear, iotx_staking = contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
@@ -68,7 +68,7 @@ def test_payDebts(fn_isolation, w3, contracts, users, delegates, oracle, admin, 
     assert user_info[2] == reward_user01
     assert user_info[3] == reward_rate1
     assert iotx_clear.rewardRate() == reward_rate1
-    assert debt_item1[0] == "0x0000000000000000000000000000000000000000"
+    assert debt_item1[0] == zero_address
     assert debt_item1[1] == 0
 
     # ---Revert path testing---

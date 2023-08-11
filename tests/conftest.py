@@ -8,6 +8,10 @@ from brownie import SystemStaking, UniIOTX, IOTXClear, IOTXStaking, accounts, Co
 def w3():
     return Web3(Web3.HTTPProvider('http://localhost:8545'))
 
+@pytest.fixture(scope="session", autouse=True)
+def zero_address():
+    return "0x0000000000000000000000000000000000000000"
+
 # Roles
 @pytest.fixture(scope="session", autouse=True)
 def roles(w3):
