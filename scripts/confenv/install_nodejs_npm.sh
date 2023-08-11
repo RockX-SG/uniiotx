@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# Todo: Automate the process of inserting the latest version.
 echo "Installing the latest version of NVM"
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 source ~/.bashrc
