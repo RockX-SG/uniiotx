@@ -112,8 +112,6 @@ Here are commonly used commands related to unit testing:
 
 For further information, please visit the [Brownie Writing Unit Tests](https://eth-brownie.readthedocs.io/en/stable/tests-pytest-intro.html) websites.
 
-**Todo:** Fix problems associated with executing the test suite. 
-
 ### Error Codes from Contracts
 1. SYS001: INACTIVE_BUCKET_TYPE
 1. SYS002: MANAGER_FEE_SHARES_OUT_OF_RANGE

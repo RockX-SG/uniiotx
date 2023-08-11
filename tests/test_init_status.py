@@ -1,7 +1,4 @@
-from configs import *
-from contracts import *
-
-def test_init_status(roles, owner, admin, delegates, oracle, start_amount, common_ratio, sequence_length, stake_amounts, stake_duration, manager_fee_shares, contracts):
+def test_init_status(fn_isolation, roles, owner, admin, delegates, oracle, start_amount, common_ratio, sequence_length, stake_amounts, stake_duration, manager_fee_shares, contracts):
     system_staking, uni_iotx, iotx_clear, iotx_staking = contracts[0], contracts[1], contracts[2], contracts[3]
 
     # Check permissions

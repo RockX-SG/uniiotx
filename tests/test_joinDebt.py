@@ -1,11 +1,8 @@
 import brownie
 import pytest
 
-from configs import *
-from contracts import *
 
-
-def test_joinDebt(contracts, users, delegates, admin):
+def test_joinDebt(fn_isolation, contracts, users, delegates, admin):
     iotx_clear, iotx_staking = contracts[2], contracts[3]
 
     # ---Happy path testing---

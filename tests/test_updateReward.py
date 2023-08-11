@@ -1,11 +1,8 @@
 import brownie
 import pytest
 
-from configs import *
-from contracts import *
 
-
-def test_updateReward(contracts, users, delegates, oracle):
+def test_updateReward(fn_isolation, contracts, users, delegates, oracle):
     iotx_staking = contracts[3]
 
     # ---Happy path testing---

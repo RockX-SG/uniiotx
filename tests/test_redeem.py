@@ -1,11 +1,8 @@
 import brownie
 import pytest
 
-from configs import *
-from contracts import *
 
-
-def test_redeem(w3, contracts, users, delegates, oracle):
+def test_redeem(fn_isolation, w3, contracts, users, delegates, oracle):
     system_staking, uni_iotx, iotx_clear, iotx_staking = contracts[0], contracts[1], contracts[2], contracts[3]
     uint256_max = 115792089237316195423570985008687907853269984665640564039457584007913129639935
 

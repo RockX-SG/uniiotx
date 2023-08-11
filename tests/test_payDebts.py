@@ -1,10 +1,8 @@
 import brownie
 import pytest
 
-from configs import *
-from contracts import *
 
-def test_payDebts(w3, contracts, users, delegates, oracle, admin, stake_amounts):
+def test_payDebts(fn_isolation, w3, contracts, users, delegates, oracle, admin, stake_amounts):
     uni_iotx, iotx_clear, iotx_staking = contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---

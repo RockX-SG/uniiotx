@@ -1,11 +1,8 @@
 import brownie
 import pytest
 
-from configs import *
-from contracts import *
 
-
-def test_withdrawManagerFee(w3, contracts, users, delegates, admin, oracle):
+def test_withdrawManagerFee(fn_isolation, w3, contracts, users, delegates, admin, oracle):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # ---Happy path testing---

@@ -1,9 +1,7 @@
 import pytest
 
-from configs import *
-from contracts import *
 
-def test_getStakedTokenCount(w3, contracts, stake_amounts, users):
+def test_getStakedTokenCount(fn_isolation, w3, contracts, stake_amounts, users):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # Deposit any supported amount for each bucket,
