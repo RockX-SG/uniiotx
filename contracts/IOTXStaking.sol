@@ -346,7 +346,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @return The amount of the manager's reward that is available for upcoming withdrawal.
      */
     function getManagerReward() external view returns (uint) {
-        return accountedUserReward;
+        return accountedManagerReward;
     }
 
     /**
