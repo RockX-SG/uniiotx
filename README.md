@@ -92,8 +92,10 @@ To view the complete list of accounts, you can run the following command: `brown
 For further information, please visit the [Brownie Working wih Accounts](https://eth-brownie.readthedocs.io/en/stable/core-accounts.html) websites.
 
 ### Unit Testing
-We currently conduct unit tests based on [Ganache](https://github.com/trufflesuite/ganache). 
+We currently conduct unit tests based on [Ganache](https://github.com/trufflesuite/ganache).
+
 All the files for unit testing can be found in the [tests](https://github.com/RockX-SG/uniiotx/tree/main/tests) directory.
+
 Specifically, the [tests/conftest.py](https://github.com/RockX-SG/uniiotx/blob/main/tests/conftest.py) file 
 contains all global [fixtures](https://eth-brownie.readthedocs.io/en/stable/tests-pytest-intro.html#fixtures),
 including various accounts. These fixtures are applied across multiple modules.
