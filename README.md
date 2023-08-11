@@ -42,7 +42,8 @@ You can run the subsequent command to verify the version you've recently install
   - `node --version`
   - `npm --version`
 
-Secondly, you can run the following command to install Ganache globally: `npm install ganache --global`.<br>
+Secondly, you can run the following command to install Ganache globally: `npm install ganache --global`.
+
 Once installed globally, you can start ganache right from your command line: `ganache`
 
 For further information, please visit the [Installing and Updating NVM](https://github.com/nvm-sh/nvm#installing-and-updating), 
