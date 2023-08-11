@@ -60,8 +60,7 @@ After the installation, please restart your terminal or run the command: `source
 ### Network Configuration
 To add IoTeX Testnet and Mainnet configurations, run the following commands separately:
 
-- For IoTeX Testnet: `brownie networks add IoTeX iotex-testnet host=https://babel-api.testnet.iotex.io chainid=4690` 
-
+- For IoTeX Testnet: `brownie networks add IoTeX iotex-testnet host=https://babel-api.testnet.iotex.io chainid=4690`
 - For IoTeX Mainnet: `brownie networks add IoTeX iotex-mainnet host=https://babel-api.mainnet.iotex.io chainid=4689`
 
 If you successfully added the network, you'll see a success message along with the network details in the terminal.
@@ -93,18 +92,19 @@ To view the complete list of accounts, you can run the following command: `brown
 For further information, please visit the [Brownie Working wih Accounts](https://eth-brownie.readthedocs.io/en/stable/core-accounts.html) websites.
 
 ### Unit Testing
-We currently conduct unit tests based on [Ganache](https://github.com/trufflesuite/ganache). All the files for unit testing can be located at [uniiotx/tests](https://github.com/RockX-SG/uniiotx/tree/main/tests).
+We currently conduct unit tests based on [Ganache](https://github.com/trufflesuite/ganache). 
+All the files for unit testing can be found in the [tests](https://github.com/RockX-SG/uniiotx/tree/main/tests) directory.<br>
+Specifically, the file [tests/conftest.py](https://github.com/RockX-SG/uniiotx/blob/main/tests/conftest.py) 
+contains all global [fixtures](https://eth-brownie.readthedocs.io/en/stable/tests-pytest-intro.html#fixtures) that are applied across many modules, including various accounts.
 
 Here are commonly used commands related to unit testing:
 
 - To run the complete test suite: `brownie test`.
-
+- To parallelize test execution, add the `-n` flag`: `brownie test -n auto`.
 - To run a specific test: `brownie test tests/test_deposit.py`.
-
+- To only run updated tests, add the `--update` flag: `brownie test --update`.
 - To debug the project during test execution, add the `--interactive` flag: `brownie test --interactive`.
-
 - To generate a gas profile report, add the `--gas` flag: `brownie test --gas`
-
 - To evaluate unit test coverage, add the `--coverage` flag: `brownie test --coverage`
 
 For further information, please visit the [Brownie Writing Unit Tests](https://eth-brownie.readthedocs.io/en/stable/tests-pytest-intro.html) websites.
