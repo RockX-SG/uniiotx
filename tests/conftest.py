@@ -80,8 +80,6 @@ def proxy():
 # The link to the Ganache client: https://github.com/trufflesuite/ganache
 @pytest.fixture()
 def contracts(proxy, owner, deployer, admin, oracle, delegates, stake_duration, start_amount, common_ratio, sequence_length, stake_amounts, manager_fee_shares):
-    proxy = proxy
-
     # Deploy contracts
     system_staking = SystemStaking.deploy({'from': owner})
 
