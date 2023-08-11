@@ -94,9 +94,6 @@ For further information, please visit the [Brownie Working wih Accounts](https:/
 
 ### Unit Testing
 We currently conduct unit tests based on [Ganache](https://github.com/trufflesuite/ganache). All the files for unit testing can be located at [uniiotx/tests](https://github.com/RockX-SG/uniiotx/tree/main/tests).
-Specifically:
-- The file [uniiotx/tests/configs.py](https://github.com/RockX-SG/uniiotx/blob/main/tests/configs.py) contains all global variables, including various accounts.
-- The file [uniiotx/tests/contracts.py](https://github.com/RockX-SG/uniiotx/blob/main/tests/contracts.py) includes a universal function for deploying all contracts.
 
 Here are commonly used commands related to unit testing:
 
