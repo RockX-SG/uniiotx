@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_updateDelegates(fn_isolation, w3, contracts, users, delegates, oracle, admin, deadline):
+def test_updateDelegates(fn_isolation, contracts, users, delegates, oracle, admin, deadline):
     system_staking, uni_iotx, iotx_clear, iotx_staking = contracts[0], contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---

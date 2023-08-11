@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_payDebts(fn_isolation, w3, contracts, users, delegates, oracle, admin, stake_amounts, zero_address, deadline):
+def test_payDebts(fn_isolation, contracts, users, delegates, oracle, admin, stake_amounts, zero_address, deadline):
     uni_iotx, iotx_clear, iotx_staking = contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---

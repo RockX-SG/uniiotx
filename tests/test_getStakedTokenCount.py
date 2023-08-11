@@ -1,4 +1,4 @@
-def test_getStakedTokenCount(fn_isolation, w3, contracts, stake_amounts, users, deadline):
+def test_getStakedTokenCount(fn_isolation, contracts, stake_amounts, users, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # Deposit any supported amount for each bucket,

@@ -1,4 +1,4 @@
-def test_exchangeRatio(fn_isolation, w3, contracts, users, delegates, oracle, admin, deadline):
+def test_exchangeRatio(fn_isolation, contracts, users, delegates, oracle, admin, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # The exchange ratio should be the same as the default value after the first 'deposit' process completes.

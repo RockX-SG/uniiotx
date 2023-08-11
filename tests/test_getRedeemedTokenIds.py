@@ -1,4 +1,4 @@
-def test_getRedeemedTokenIds(fn_isolation, w3, contracts, users, deadline):
+def test_getRedeemedTokenIds(fn_isolation, contracts, users, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # At the beginning, there should be no redeemed token ID, even if 'deposit' has been called.

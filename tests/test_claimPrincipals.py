@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_claimPrincipals(fn_isolation, w3, contracts, users, oracle, admin, deadline):
+def test_claimPrincipals(fn_isolation, contracts, users, oracle, admin, deadline):
     uni_iotx, iotx_clear, iotx_staking = contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---

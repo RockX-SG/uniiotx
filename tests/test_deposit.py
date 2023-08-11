@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_deposit(fn_isolation, w3, contracts, stake_amounts, users, admin, deadline):
+def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, deadline):
     system_staking, uni_iotx, iotx_staking = contracts[0], contracts[1], contracts[3]
 
     # ---Happy path testing---

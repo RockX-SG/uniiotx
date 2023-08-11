@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_withdrawManagerFee(fn_isolation, w3, contracts, users, delegates, admin, oracle, deadline):
+def test_withdrawManagerFee(fn_isolation, contracts, users, delegates, admin, oracle, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # ---Happy path testing---

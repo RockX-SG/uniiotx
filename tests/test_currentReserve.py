@@ -1,4 +1,4 @@
-def test_currentReserve(fn_isolation, w3, contracts, users, delegates, oracle, admin, deadline):
+def test_currentReserve(fn_isolation, contracts, users, delegates, oracle, admin, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # The current reserve is expected to increase once the 'deposit' call is successful.
