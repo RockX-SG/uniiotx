@@ -3,7 +3,7 @@ def test_getRedeemedTokenIds(fn_isolation, contracts, users, deadline):
 
     # At the beginning, there should be no redeemed token ID, even if 'deposit' has been called.
     sequence_length = iotx_staking.sequenceLength()
-    amount = iotx_staking.redeemAmountBase()
+    amount = iotx_staking.getRedeemAmountBase()
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amount, 'allow_revert': True})
     token_ids = iotx_staking.getRedeemedTokenIds(0, 1)
     assert len(token_ids) == 0

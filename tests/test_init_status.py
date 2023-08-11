@@ -22,12 +22,12 @@ def test_init_status(fn_isolation, roles, owner, admin, delegates, oracle, start
 
     assert uni_iotx.symbol() == "uniIOTX"
 
-    assert iotx_clear.debtAmountBase() == iotx_staking.redeemAmountBase()
+    assert iotx_clear.debtAmountBase() == iotx_staking.getRedeemAmountBase()
 
     assert iotx_staking.globalDelegate() == delegates[0].address
     assert iotx_staking.startAmount() == start_amount
     assert iotx_staking.commonRatio() == common_ratio
     assert iotx_staking.sequenceLength() == sequence_length
-    assert iotx_staking.redeemAmountBase() == stake_amounts[2]
+    assert iotx_staking.getRedeemAmountBase() == stake_amounts[2]
     assert iotx_staking.stakeDuration() == stake_duration
     assert iotx_staking.managerFeeShares() == manager_fee_shares

@@ -9,7 +9,7 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracle, deadline):
 
     # The exchange ratio will remain constant until the rewards are updated.
     # Initially, the amount of uniIOTX to burn is equivalent to the amount of IOTX to redeem.
-    amt = iotx_staking.redeemAmountBase()
+    amt = iotx_staking.getRedeemAmountBase()
     for i in range(0, 2):
         iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     # The value transferred here will be considered as rewards from the delegate.

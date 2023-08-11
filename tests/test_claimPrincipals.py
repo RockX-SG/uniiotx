@@ -10,7 +10,7 @@ def test_claimPrincipals(fn_isolation, contracts, users, oracle, admin, deadline
     # Users can claim any available principal amount at various times.
     # Once users have claimed their principals, the individual principal record
     # and the global 'accountedBalance' should be adjusted accordingly.
-    amt = iotx_staking.redeemAmountBase()
+    amt = iotx_staking.getRedeemAmountBase()
 
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     uni_iotx.approve(iotx_staking, amt, {'from': users[0], 'allow_revert': True})

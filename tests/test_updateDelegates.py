@@ -7,7 +7,7 @@ def test_updateDelegates(fn_isolation, contracts, users, delegates, oracle, admi
     # ---Happy path testing---
 
     # The token ID owner should have the ability to update delegates.
-    amt = iotx_staking.redeemAmountBase()
+    amt = iotx_staking.getRedeemAmountBase()
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     token_id = iotx_staking.getTokenId(iotx_staking.sequenceLength() - 1, 0)
     assert system_staking.ownerOf(token_id) == iotx_staking

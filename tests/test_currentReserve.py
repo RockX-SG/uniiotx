@@ -2,7 +2,7 @@ def test_currentReserve(fn_isolation, contracts, users, delegates, oracle, admin
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # The current reserve is expected to increase once the 'deposit' call is successful.
-    redeem_amt = iotx_staking.redeemAmountBase()
+    redeem_amt = iotx_staking.getRedeemAmountBase()
     amt = redeem_amt + 10
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     assert iotx_staking.currentReserve() == amt

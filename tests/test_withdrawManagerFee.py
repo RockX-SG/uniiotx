@@ -8,7 +8,7 @@ def test_withdrawManagerFee(fn_isolation, contracts, users, delegates, admin, or
 
     # An appropriate amount of uniIOTX should be minted, and the value of totalPending should be adjusted accordingly.
     # The value transferred here will be considered as rewards from the delegate.
-    amt = iotx_staking.redeemAmountBase()
+    amt = iotx_staking.getRedeemAmountBase()
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     amt_reward = 200
     delegates[0].transfer(iotx_staking, amt_reward)

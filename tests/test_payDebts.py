@@ -13,7 +13,7 @@ def test_payDebts(fn_isolation, contracts, users, delegates, oracle, admin, stak
     # The withdrawal of NFT during debt payment should not compromise the accuracy of reward recording.
 
     # Users deposit and redeem assets
-    amt = iotx_staking.redeemAmountBase()
+    amt = iotx_staking.getRedeemAmountBase()
     cnt = 10
     amt_total = amt * cnt
     for i in range(0, cnt):

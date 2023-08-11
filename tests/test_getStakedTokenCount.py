@@ -18,7 +18,7 @@ def test_getStakedTokenCount(fn_isolation, contracts, stake_amounts, users, dead
     assert iotx_staking.getStakedTokenCount(1) == 2
 
     # Redeem case
-    amt = iotx_staking.redeemAmountBase()
+    amt = iotx_staking.getRedeemAmountBase()
     uni_iotx.approve(iotx_staking, amt, {'from': users[0], 'allow_revert': True})
     iotx_staking.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
     assert iotx_staking.getStakedTokenCount(sequence_length - 1) == 0

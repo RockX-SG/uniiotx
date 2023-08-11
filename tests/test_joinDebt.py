@@ -11,7 +11,7 @@ def test_joinDebt(fn_isolation, contracts, users, delegates, admin):
     # The value transferred here will be considered as rewards from the delegate.
 
     account = users[0]
-    amount = iotx_staking.redeemAmountBase()
+    amount = iotx_staking.getRedeemAmountBase()
     tx = iotx_clear.joinDebt(account, amount, {"from": iotx_staking})
     assert "DebtQueued" in tx.events
     assert iotx_clear.totalDebts() == amount

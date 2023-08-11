@@ -3,7 +3,7 @@ def test_exchangeRatio(fn_isolation, contracts, users, delegates, oracle, admin,
 
     # The exchange ratio should be the same as the default value after the first 'deposit' process completes.
     default_exchange_ratio = 1000000000000000000
-    amt = iotx_staking.redeemAmountBase()
+    amt = iotx_staking.getRedeemAmountBase()
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     assert iotx_staking.currentReserve() == amt
     assert uni_iotx.totalSupply() == amt
