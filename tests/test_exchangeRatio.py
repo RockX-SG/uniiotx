@@ -1,9 +1,8 @@
-def test_exchangeRatio(fn_isolation, w3, contracts, users, delegates, oracle, admin):
+def test_exchangeRatio(fn_isolation, w3, contracts, users, delegates, oracle, admin, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # The exchange ratio should be the same as the default value after the first 'deposit' process completes.
     default_exchange_ratio = 1000000000000000000
-    deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_staking.redeemAmountBase()
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     assert iotx_staking.currentReserve() == amt

@@ -1,13 +1,12 @@
 import brownie
 
 
-def test_updateDelegates(fn_isolation, w3, contracts, users, delegates, oracle, admin):
+def test_updateDelegates(fn_isolation, w3, contracts, users, delegates, oracle, admin, deadline):
     system_staking, uni_iotx, iotx_clear, iotx_staking = contracts[0], contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
 
     # The token ID owner should have the ability to update delegates.
-    deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_staking.redeemAmountBase()
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     token_id = iotx_staking.getTokenId(iotx_staking.sequenceLength() - 1, 0)

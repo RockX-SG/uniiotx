@@ -1,10 +1,9 @@
-def test_getStakedTokenCount(fn_isolation, w3, contracts, stake_amounts, users):
+def test_getStakedTokenCount(fn_isolation, w3, contracts, stake_amounts, users, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # Deposit any supported amount for each bucket,
     # The number of staked tokens should increase correspondingly, which can be queried from an external source.
     sequence_length = iotx_staking.sequenceLength()
-    deadline = w3.eth.get_block('latest').timestamp+60
     for index in range(0, sequence_length):
         amt = stake_amounts[index]
         iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})

@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_claimPrincipals(fn_isolation, w3, contracts, users, oracle, admin):
+def test_claimPrincipals(fn_isolation, w3, contracts, users, oracle, admin, deadline):
     uni_iotx, iotx_clear, iotx_staking = contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
@@ -10,7 +10,6 @@ def test_claimPrincipals(fn_isolation, w3, contracts, users, oracle, admin):
     # Users can claim any available principal amount at various times.
     # Once users have claimed their principals, the individual principal record
     # and the global 'accountedBalance' should be adjusted accordingly.
-    deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_staking.redeemAmountBase()
 
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})

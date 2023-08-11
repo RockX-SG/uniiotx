@@ -1,13 +1,12 @@
 import brownie
 
 
-def test_deposit(fn_isolation, w3, contracts, stake_amounts, users, admin):
+def test_deposit(fn_isolation, w3, contracts, stake_amounts, users, admin, deadline):
     system_staking, uni_iotx, iotx_staking = contracts[0], contracts[1], contracts[3]
 
     # ---Happy path testing---
 
     # Any deposit amount that is smaller than the 'startAmount' should be acceptable.
-    deadline = w3.eth.get_block('latest').timestamp+60
     start_amt = iotx_staking.startAmount()
     small_amt = start_amt / 10
     tx = iotx_staking.deposit(deadline, {'from': users[0], 'value': small_amt, 'allow_revert': True})

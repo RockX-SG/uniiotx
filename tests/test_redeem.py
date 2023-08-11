@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_redeem(fn_isolation, w3, contracts, users, delegates, oracle):
+def test_redeem(fn_isolation, w3, contracts, users, delegates, oracle, deadline):
     system_staking, uni_iotx, iotx_clear, iotx_staking = contracts[0], contracts[1], contracts[2], contracts[3]
     uint256_max = 115792089237316195423570985008687907853269984665640564039457584007913129639935
 
@@ -9,7 +9,6 @@ def test_redeem(fn_isolation, w3, contracts, users, delegates, oracle):
 
     # The exchange ratio will remain constant until the rewards are updated.
     # Initially, the amount of uniIOTX to burn is equivalent to the amount of IOTX to redeem.
-    deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_staking.redeemAmountBase()
     for i in range(0, 2):
         iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})

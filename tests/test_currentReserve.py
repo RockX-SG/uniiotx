@@ -1,8 +1,7 @@
-def test_currentReserve(fn_isolation, w3, contracts, users, delegates, oracle, admin):
+def test_currentReserve(fn_isolation, w3, contracts, users, delegates, oracle, admin, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # The current reserve is expected to increase once the 'deposit' call is successful.
-    deadline = w3.eth.get_block('latest').timestamp+60
     redeem_amt = iotx_staking.redeemAmountBase()
     amt = redeem_amt + 10
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})

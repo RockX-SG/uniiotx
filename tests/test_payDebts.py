@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_payDebts(fn_isolation, w3, contracts, users, delegates, oracle, admin, stake_amounts, zero_address):
+def test_payDebts(fn_isolation, w3, contracts, users, delegates, oracle, admin, stake_amounts, zero_address, deadline):
     uni_iotx, iotx_clear, iotx_staking = contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
@@ -13,7 +13,6 @@ def test_payDebts(fn_isolation, w3, contracts, users, delegates, oracle, admin, 
     # The withdrawal of NFT during debt payment should not compromise the accuracy of reward recording.
 
     # Users deposit and redeem assets
-    deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_staking.redeemAmountBase()
     cnt = 10
     amt_total = amt * cnt

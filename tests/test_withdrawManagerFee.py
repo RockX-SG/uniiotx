@@ -1,14 +1,13 @@
 import brownie
 
 
-def test_withdrawManagerFee(fn_isolation, w3, contracts, users, delegates, admin, oracle):
+def test_withdrawManagerFee(fn_isolation, w3, contracts, users, delegates, admin, oracle, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # ---Happy path testing---
 
     # An appropriate amount of uniIOTX should be minted, and the value of totalPending should be adjusted accordingly.
     # The value transferred here will be considered as rewards from the delegate.
-    deadline = w3.eth.get_block('latest').timestamp+60
     amt = iotx_staking.redeemAmountBase()
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     amt_reward = 200

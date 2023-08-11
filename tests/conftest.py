@@ -8,6 +8,11 @@ from brownie import SystemStaking, UniIOTX, IOTXClear, IOTXStaking, accounts, Co
 def w3():
     return Web3(Web3.HTTPProvider('http://localhost:8545'))
 
+# Tx deadline
+@pytest.fixture(scope="session", autouse=True)
+def deadline(w3):
+    return w3.eth.get_block('latest').timestamp + 60
+
 @pytest.fixture(scope="session", autouse=True)
 def zero_address():
     return "0x0000000000000000000000000000000000000000"
