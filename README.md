@@ -7,7 +7,8 @@ Next State:  integration test on IoTeX testnet && unit test on local testnet.
 
 ### Prerequisites
 This project, which includes [Solidity](https://soliditylang.org/) contracts, was developed using [Brownie](https://github.com/eth-brownie/brownie) on the [Pop!_OS](https://pop.system76.com/).
-It is dependent on the following projects:
+
+It also relies on the following projects:
 [Python](https://www.python.org/), [Golang](https://go.dev/), [Ganache](https://github.com/trufflesuite/ganache), [Node.js](https://nodejs.org/en), [NPM](https://www.npmjs.com/), [NVM](https://github.com/nvm-sh/nvm), 
 [Abigen](https://github.com/ethereum/go-ethereum/tree/master/cmd/abigen)
 
