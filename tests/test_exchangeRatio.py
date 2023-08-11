@@ -26,7 +26,7 @@ def test_exchangeRatio(fn_isolation, contracts, users, delegates, oracle, admin,
 
     # The exchange ratio should increase when rewards are updated in our contract.
     iotx_staking.updateReward({'from': oracle})
-    manager_fee = iotx_staking.managerFeeShares() * amt_reward / 1000
+    manager_fee = iotx_staking.getManagerFeeShares() * amt_reward / 1000
     current_reserve1 = iotx_staking.currentReserve()
     total_supply1 = uni_iotx.totalSupply()
     exchange_ratio1 = iotx_staking.exchangeRatio()

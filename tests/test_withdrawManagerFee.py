@@ -13,14 +13,14 @@ def test_withdrawManagerFee(fn_isolation, contracts, users, delegates, admin, or
     amt_reward = 200
     delegates[0].transfer(iotx_staking, amt_reward)
     iotx_staking.updateReward({"from": oracle})
-    manager_reward = iotx_staking.managerFeeShares() * amt_reward / 1000
+    manager_reward = iotx_staking.getManagerFeeShares() * amt_reward / 1000
     user_reward = amt_reward - manager_reward
     assert manager_reward == 20
     to_min = manager_reward / 2 * 1e18 / iotx_staking.exchangeRatio()
     tx = iotx_staking.withdrawManagerFee(manager_reward / 2, admin, {"from": admin})
     assert "ManagerFeeWithdrawed" in tx.events
-    assert iotx_staking.accountedManagerReward() == manager_reward / 2
-    assert iotx_staking.totalPending() == user_reward + manager_reward / 2
+    assert iotx_staking.getManagerReward() == manager_reward / 2
+    assert iotx_staking.getTotalPending() == user_reward + manager_reward / 2
     assert uni_iotx.balanceOf(admin) == to_min
 
     # ---Revert path testing---

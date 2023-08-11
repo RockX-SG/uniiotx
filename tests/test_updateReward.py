@@ -15,13 +15,13 @@ def test_updateReward(fn_isolation, contracts, users, delegates, oracle):
     amt_reward = 100
     delegates[0].transfer(iotx_staking, amt_reward)
     tx = iotx_staking.updateReward({"from": oracle})
-    manager_reward = iotx_staking.managerFeeShares() * amt_reward / 1000
+    manager_reward = iotx_staking.getManagerFeeShares() * amt_reward / 1000
     user_reward = amt_reward - manager_reward
     assert "RewardUpdated" in tx.events
-    assert iotx_staking.accountedBalance() == amt_reward
-    assert iotx_staking.accountedUserReward() == user_reward
-    assert iotx_staking.accountedManagerReward() == manager_reward
-    assert iotx_staking.totalPending() == user_reward
+    assert iotx_staking.getAccountedBalance() == amt_reward
+    assert iotx_staking.getUserReward() == user_reward
+    assert iotx_staking.getManagerReward() == manager_reward
+    assert iotx_staking.getTotalPending() == user_reward
 
     # ---Revert path testing---
 

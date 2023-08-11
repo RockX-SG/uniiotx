@@ -10,10 +10,10 @@ def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, deadline)
     start_amt = iotx_staking.startAmount()
     small_amt = start_amt / 10
     tx = iotx_staking.deposit(deadline, {'from': users[0], 'value': small_amt, 'allow_revert': True})
-    assert iotx_staking.accountedBalance() == small_amt
+    assert iotx_staking.getAccountedBalance() == small_amt
     assert iotx_staking.balance() == small_amt
-    assert iotx_staking.totalPending() == small_amt
-    assert iotx_staking.totalStaked() == 0
+    assert iotx_staking.getTotalPending() == small_amt
+    assert iotx_staking.getTotalStaked() == 0
     assert uni_iotx.totalSupply() == small_amt
     assert uni_iotx.balanceOf(users[0]) == small_amt
     assert "Minted" in tx.events
@@ -24,10 +24,10 @@ def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, deadline)
     # if it causes the 'totalPending' exceed the 'startAmount'
     extra_amt = start_amt - small_amt
     tx = iotx_staking.deposit(deadline, {'from': users[0], 'value': extra_amt, 'allow_revert': True})
-    assert iotx_staking.accountedBalance() == 0
+    assert iotx_staking.getAccountedBalance() == 0
     assert iotx_staking.balance() == 0
-    assert iotx_staking.totalPending() == 0
-    assert iotx_staking.totalStaked() == start_amt
+    assert iotx_staking.getTotalPending() == 0
+    assert iotx_staking.getTotalStaked() == start_amt
     assert iotx_staking.getStakedTokenCount(0) == 1
     assert uni_iotx.totalSupply() == start_amt
     assert uni_iotx.balanceOf(users[0]) == start_amt
@@ -36,7 +36,7 @@ def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, deadline)
     assert len(tx.events["Staked"]) == 2
     token_id = iotx_staking.getTokenId(0, 0)
     amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
-    assert (amt, dur, delegate) == (start_amt, iotx_staking.stakeDuration(), iotx_staking.globalDelegate())
+    assert (amt, dur, delegate) == (start_amt, iotx_staking.getStakeDuration(), iotx_staking.getGlobalDelegate())
     assert system_staking.balanceOf(iotx_staking) == 1
     assert system_staking.ownerOf(token_id) == iotx_staking
 
@@ -45,10 +45,10 @@ def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, deadline)
     for i in range(0, iotx_staking.commonRatio() - 2):
         iotx_staking.deposit(deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
     tx = iotx_staking.deposit(deadline, {'from': users[0], 'value': start_amt, 'allow_revert': True})
-    assert iotx_staking.accountedBalance() == 0
+    assert iotx_staking.getAccountedBalance() == 0
     assert iotx_staking.balance() == 0
-    assert iotx_staking.totalPending() == 0
-    assert iotx_staking.totalStaked() == stake_amounts[1]
+    assert iotx_staking.getTotalPending() == 0
+    assert iotx_staking.getTotalStaked() == stake_amounts[1]
     assert iotx_staking.getStakedTokenCount(0) == 0
     assert iotx_staking.getStakedTokenCount(1) == 1
     assert uni_iotx.totalSupply() == stake_amounts[1]
@@ -58,17 +58,17 @@ def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, deadline)
     assert len(tx.events["Staked"]) == 2
     assert token_id == iotx_staking.getTokenId(1, 0)
     amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
-    assert (amt, dur, delegate) == (stake_amounts[1], iotx_staking.stakeDuration(), iotx_staking.globalDelegate())
+    assert (amt, dur, delegate) == (stake_amounts[1], iotx_staking.getStakeDuration(), iotx_staking.getGlobalDelegate())
     assert system_staking.balanceOf(iotx_staking) == 1
     assert system_staking.ownerOf(token_id) == iotx_staking
 
     for i in range(0, iotx_staking.commonRatio() - 2):
         iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
     tx = iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
-    assert iotx_staking.accountedBalance() == 0
+    assert iotx_staking.getAccountedBalance() == 0
     assert iotx_staking.balance() == 0
-    assert iotx_staking.totalPending() == 0
-    assert iotx_staking.totalStaked() == stake_amounts[2]
+    assert iotx_staking.getTotalPending() == 0
+    assert iotx_staking.getTotalStaked() == stake_amounts[2]
     assert iotx_staking.getStakedTokenCount(1) == 0
     assert iotx_staking.getStakedTokenCount(2) == 1
     assert uni_iotx.totalSupply() == stake_amounts[2]
@@ -78,7 +78,7 @@ def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, deadline)
     assert len(tx.events["Staked"]) == 2
     assert token_id == iotx_staking.getTokenId(2, 0)
     amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
-    assert (amt, dur, delegate) == (stake_amounts[2], iotx_staking.stakeDuration(), iotx_staking.globalDelegate())
+    assert (amt, dur, delegate) == (stake_amounts[2], iotx_staking.getStakeDuration(), iotx_staking.getGlobalDelegate())
     assert system_staking.balanceOf(iotx_staking) == 1
     assert system_staking.ownerOf(token_id) == iotx_staking
 
@@ -86,10 +86,10 @@ def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, deadline)
     for i in range(0, iotx_staking.commonRatio() - 2):
         iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
     tx = iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
-    assert iotx_staking.accountedBalance() == 0
+    assert iotx_staking.getAccountedBalance() == 0
     assert iotx_staking.balance() == 0
-    assert iotx_staking.totalPending() == 0
-    assert iotx_staking.totalStaked() == stake_amounts[2] * iotx_staking.commonRatio()
+    assert iotx_staking.getTotalPending() == 0
+    assert iotx_staking.getTotalStaked() == stake_amounts[2] * iotx_staking.commonRatio()
     assert iotx_staking.getStakedTokenCount(2) == 10
     user_balance = stake_amounts[2] * iotx_staking.commonRatio()
     assert uni_iotx.totalSupply() == user_balance
@@ -101,7 +101,7 @@ def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, deadline)
     for i in range(0, 10):
         token_id = iotx_staking.getTokenId(2, i)
         amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
-        assert (amt, dur, delegate) == (stake_amounts[2], iotx_staking.stakeDuration(), iotx_staking.globalDelegate())
+        assert (amt, dur, delegate) == (stake_amounts[2], iotx_staking.getStakeDuration(), iotx_staking.getGlobalDelegate())
         assert system_staking.ownerOf(token_id) == iotx_staking
 
     # ---Revert path testing---

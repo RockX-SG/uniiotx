@@ -14,21 +14,21 @@ def test_joinDebt(fn_isolation, contracts, users, delegates, admin):
     amount = iotx_staking.getRedeemAmountBase()
     tx = iotx_clear.joinDebt(account, amount, {"from": iotx_staking})
     assert "DebtQueued" in tx.events
-    assert iotx_clear.totalDebts() == amount
+    assert iotx_clear.getTotalDebts() == amount
     assert iotx_clear.getTotalDebtItemCount() - iotx_clear.getPaidDebtItemCount() == 1
     assert iotx_clear.getTotalDebtItemCount() == 1
     assert iotx_clear.getUnpaidDebtItem(1)[0] == account
     assert iotx_clear.getUnpaidDebtItem(1)[1] == amount
     assert iotx_clear.getUserInfo(account)[0] == amount
-    assert iotx_clear.rewardRate() == 0
+    assert iotx_clear.getRewardRate() == 0
 
     reward_incr1 = 100
     delegates[0].transfer(iotx_clear, reward_incr1)
-    reward_rate1 = reward_incr1 * 1e18 / iotx_clear.totalDebts()
+    reward_rate1 = reward_incr1 * 1e18 / iotx_clear.getTotalDebts()
     account = users[1]
     tx = iotx_clear.joinDebt(account, amount, {"from": iotx_staking})
     assert "DebtQueued" in tx.events
-    assert iotx_clear.totalDebts() == amount*2
+    assert iotx_clear.getTotalDebts() == amount*2
     assert iotx_clear.getTotalDebtItemCount() - iotx_clear.getPaidDebtItemCount() == 2
     assert iotx_clear.getTotalDebtItemCount() == 2
     assert iotx_clear.getUnpaidDebtItem(2)[0] == account
@@ -36,19 +36,19 @@ def test_joinDebt(fn_isolation, contracts, users, delegates, admin):
     assert iotx_clear.getUserInfo(account)[0] == amount
     assert iotx_clear.getUserInfo(account)[2] == 0
     assert iotx_clear.getUserInfo(account)[3] == reward_rate1
-    assert iotx_clear.accountedBalance() == reward_incr1
-    assert iotx_clear.rewardRate() == reward_rate1
+    assert iotx_clear.getAccountedBalance() == reward_incr1
+    assert iotx_clear.getRewardRate() == reward_rate1
 
     reward_incr2 = 200
     delegates[0].transfer(iotx_clear, reward_incr2)
     account = users[0]
-    reward_rate2 = reward_rate1 + (reward_incr2 * 1e18 / iotx_clear.totalDebts())
+    reward_rate2 = reward_rate1 + (reward_incr2 * 1e18 / iotx_clear.getTotalDebts())
     debt_user0 = iotx_clear.getUserInfo(account)[0]
     reward_rate_user0 = iotx_clear.getUserInfo(account)[2]
     reward_user0 = (reward_rate2 - reward_rate_user0) * debt_user0 / 1e18
     tx = iotx_clear.joinDebt(account, amount, {"from": iotx_staking})
     assert "DebtQueued" in tx.events
-    assert iotx_clear.totalDebts() == amount*3
+    assert iotx_clear.getTotalDebts() == amount*3
     assert iotx_clear.getTotalDebtItemCount() - iotx_clear.getPaidDebtItemCount() == 3
     assert iotx_clear.getTotalDebtItemCount() == 3
     assert iotx_clear.getUnpaidDebtItem(1)[0] == account
@@ -58,19 +58,19 @@ def test_joinDebt(fn_isolation, contracts, users, delegates, admin):
     assert iotx_clear.getUserInfo(account)[0] == amount*2
     assert iotx_clear.getUserInfo(account)[2] == reward_user0
     assert iotx_clear.getUserInfo(account)[3] == reward_rate2
-    assert iotx_clear.accountedBalance() == reward_incr1 + reward_incr2
-    assert iotx_clear.rewardRate() == reward_rate2
+    assert iotx_clear.getAccountedBalance() == reward_incr1 + reward_incr2
+    assert iotx_clear.getRewardRate() == reward_rate2
 
     reward_incr3 = 300
     delegates[0].transfer(iotx_clear, reward_incr3)
     account = users[1]
-    reward_rate3 = reward_rate2 + (reward_incr3 * 1e18 / iotx_clear.totalDebts())
+    reward_rate3 = reward_rate2 + (reward_incr3 * 1e18 / iotx_clear.getTotalDebts())
     debt_user1 = iotx_clear.getUserInfo(account)[0]
     reward_rate_user1 = iotx_clear.getUserInfo(account)[3]
     reward_user1 = (reward_rate3 - reward_rate_user1) * debt_user1 / 1e18
     tx = iotx_clear.joinDebt(account, amount, {"from": iotx_staking})
     assert "DebtQueued" in tx.events
-    assert iotx_clear.totalDebts() == amount*4
+    assert iotx_clear.getTotalDebts() == amount*4
     assert iotx_clear.getTotalDebtItemCount() - iotx_clear.getPaidDebtItemCount() == 4
     assert iotx_clear.getTotalDebtItemCount() == 4
     assert iotx_clear.getUnpaidDebtItem(2)[0] == account
@@ -80,8 +80,8 @@ def test_joinDebt(fn_isolation, contracts, users, delegates, admin):
     assert iotx_clear.getUserInfo(account)[0] == amount*2
     assert iotx_clear.getUserInfo(account)[2] == reward_user1
     assert iotx_clear.getUserInfo(account)[3] == reward_rate3
-    assert iotx_clear.accountedBalance() == reward_incr1 + reward_incr2 + reward_incr3
-    assert iotx_clear.rewardRate() == reward_rate3
+    assert iotx_clear.getAccountedBalance() == reward_incr1 + reward_incr2 + reward_incr3
+    assert iotx_clear.getRewardRate() == reward_rate3
 
     # ---Revert path testing---
 

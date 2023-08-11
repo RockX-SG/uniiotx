@@ -12,7 +12,7 @@ def test_getRedeemedTokenIds(fn_isolation, contracts, users, deadline):
     # As a result, we will be able to query its ID.
     uni_iotx.approve(iotx_staking, amount, {'from': users[0], 'allow_revert': True})
     iotx_staking.redeem(amount, deadline, {'from': users[0], 'allow_revert': True})
-    assert iotx_staking.redeemedTokenCount() == 1
+    assert iotx_staking.getRedeemedTokenCount() == 1
     token_ids = iotx_staking.getRedeemedTokenIds(0, 1)
     assert len(token_ids) == 1
     assert token_ids[0] == iotx_staking.getTokenId(sequence_length - 1, 0)
@@ -23,5 +23,5 @@ def test_getRedeemedTokenIds(fn_isolation, contracts, users, deadline):
     assert len(token_ids) == 0
     token_ids = iotx_staking.getRedeemedTokenIds(1, 0)
     assert len(token_ids) == 0
-    token_ids = iotx_staking.getRedeemedTokenIds(0, iotx_staking.redeemedTokenCount() + 1)
+    token_ids = iotx_staking.getRedeemedTokenIds(0, iotx_staking.getRedeemedTokenCount() + 1)
     assert len(token_ids) == 0

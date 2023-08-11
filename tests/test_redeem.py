@@ -27,14 +27,14 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracle, deadline):
     assert len(tx.events["DebtQueued"]) == 1
     assert unlocked_amt == amt
     assert unlocked_at != uint256_max
-    assert iotx_staking.redeemedTokenCount() == 1
-    assert iotx_staking.totalStaked() == amt
+    assert iotx_staking.getRedeemedTokenCount() == 1
+    assert iotx_staking.getTotalStaked() == amt
     assert uni_iotx.totalSupply() == amt
     assert uni_iotx.balanceOf(users[0]) == amt
     assert system_staking.balanceOf(iotx_staking) == 1
     assert system_staking.ownerOf(token_id) == iotx_clear
     assert system_staking.balanceOf(iotx_clear) == 1
-    assert iotx_clear.totalDebts() == amt
+    assert iotx_clear.getTotalDebts() == amt
     assert debt[0] == users[0]
     assert debt[1] == amt
     assert user_info[0] == amt
@@ -42,7 +42,7 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracle, deadline):
     # Regular updates to rewards can impact the exchange ratio's value.
     # The change in the exchange ratio should be taken into account.
     iotx_staking.updateReward({'from': oracle})
-    manager_fee = iotx_staking.managerFeeShares() * amt_reward / 1000
+    manager_fee = iotx_staking.getManagerFeeShares() * amt_reward / 1000
     exchange_ratio1 = iotx_staking.exchangeRatio()
     assert exchange_ratio1 > 1e18
     max_to_burn = amt * 1e18 / exchange_ratio1
@@ -60,15 +60,15 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracle, deadline):
     assert len(tx.events["DebtQueued"]) == 1
     assert unlocked_amt == amt
     assert unlocked_at != uint256_max
-    assert iotx_staking.redeemedTokenCount() == 2
-    assert iotx_staking.totalPending() == amt_reward - manager_fee
-    assert iotx_staking.totalStaked() == 0
+    assert iotx_staking.getRedeemedTokenCount() == 2
+    assert iotx_staking.getTotalPending() == amt_reward - manager_fee
+    assert iotx_staking.getTotalStaked() == 0
     assert uni_iotx.totalSupply() == amt - max_to_burn
     assert uni_iotx.balanceOf(users[0]) == amt - max_to_burn
     assert system_staking.balanceOf(iotx_staking) == 0
     assert system_staking.ownerOf(token_id) == iotx_clear
     assert system_staking.balanceOf(iotx_clear) == 2
-    assert iotx_clear.totalDebts() == amt*2
+    assert iotx_clear.getTotalDebts() == amt*2
     assert debt[0] == users[0]
     assert debt[1] == amt
     assert user_info[0] == amt*2

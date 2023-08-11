@@ -20,13 +20,13 @@ def test_claimPrincipals(fn_isolation, contracts, users, oracle, admin, deadline
     iotx_clear.unstake(token_ids, {'from': oracle, 'allow_revert': True})
     iotx_clear.payDebts(token_ids, {'from': oracle, 'allow_revert': True})
 
-    accounted_balance0 = iotx_clear.accountedBalance()
+    accounted_balance0 = iotx_clear.getAccountedBalance()
     user0_balance0 = users[0].balance()
     user0_principal0 = iotx_clear.getUserInfo(users[0])[1]
     tx = iotx_clear.claimPrincipals(amt/2, users[0], {'from': users[0]})
     assert "PrincipalClaimed" in tx.events
 
-    accounted_balance1 = iotx_clear.accountedBalance()
+    accounted_balance1 = iotx_clear.getAccountedBalance()
     user0_balance1 = users[0].balance()
     user0_principal1 = iotx_clear.getUserInfo(users[0])[1]
 
@@ -37,7 +37,7 @@ def test_claimPrincipals(fn_isolation, contracts, users, oracle, admin, deadline
     tx = iotx_clear.claimPrincipals(amt/2, users[0], {'from': users[0]})
     assert "PrincipalClaimed" in tx.events
 
-    accounted_balance2 = iotx_clear.accountedBalance()
+    accounted_balance2 = iotx_clear.getAccountedBalance()
     user0_balance2 = users[0].balance()
     user0_principal2 = iotx_clear.getUserInfo(users[0])[1]
 

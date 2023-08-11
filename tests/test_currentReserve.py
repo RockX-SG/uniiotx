@@ -15,7 +15,7 @@ def test_currentReserve(fn_isolation, contracts, users, delegates, oracle, admin
 
     # The current reserve should be updated when rewards are updated.
     iotx_staking.updateReward({'from': oracle})
-    manager_fee = amt_reward * iotx_staking.managerFeeShares() / 1000
+    manager_fee = amt_reward * iotx_staking.getManagerFeeShares() / 1000
     assert iotx_staking.currentReserve() == amt + amt_reward - manager_fee
 
     # If the manager fee is withdrawn, the current reserve should decrease accordingly.

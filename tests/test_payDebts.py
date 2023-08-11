@@ -35,9 +35,9 @@ def test_payDebts(fn_isolation, contracts, users, delegates, oracle, admin, stak
     assert "Withdrawal" in tx.events
     assert "DebtPaid" in tx.events
     assert iotx_clear.getPaidDebtItemCount() == 0
-    assert iotx_clear.totalDebts() == amt_total/2
-    assert iotx_clear.accountedBalance() == mock_reward_incr1 + amt_total/2
-    assert iotx_clear.balance() == iotx_clear.accountedBalance()
+    assert iotx_clear.getTotalDebts() == amt_total/2
+    assert iotx_clear.getAccountedBalance() == mock_reward_incr1 + amt_total/2
+    assert iotx_clear.balance() == iotx_clear.getAccountedBalance()
 
     user_info = iotx_clear.getUserInfo(users[0])
     debt_item1 = iotx_clear.getUnpaidDebtItem(1)
@@ -45,7 +45,7 @@ def test_payDebts(fn_isolation, contracts, users, delegates, oracle, admin, stak
     assert user_info[1] == amt_total/2
     assert user_info[2] == reward_user01
     assert user_info[3] == reward_rate1
-    assert iotx_clear.rewardRate() == reward_rate1
+    assert iotx_clear.getRewardRate() == reward_rate1
     assert debt_item1[0] == users[0]
     assert debt_item1[1] == amt_total/2
 
@@ -55,9 +55,9 @@ def test_payDebts(fn_isolation, contracts, users, delegates, oracle, admin, stak
     assert "Withdrawal" in tx.events
     assert "DebtPaid" in tx.events
     assert iotx_clear.getPaidDebtItemCount() == 1
-    assert iotx_clear.totalDebts() == 0
-    assert iotx_clear.accountedBalance() == mock_reward_incr1 + amt_total
-    assert iotx_clear.balance() == iotx_clear.accountedBalance()
+    assert iotx_clear.getTotalDebts() == 0
+    assert iotx_clear.getAccountedBalance() == mock_reward_incr1 + amt_total
+    assert iotx_clear.balance() == iotx_clear.getAccountedBalance()
 
     user_info = iotx_clear.getUserInfo(users[0])
     debt_item1 = iotx_clear.getUnpaidDebtItem(1)
@@ -65,7 +65,7 @@ def test_payDebts(fn_isolation, contracts, users, delegates, oracle, admin, stak
     assert user_info[1] == amt_total
     assert user_info[2] == reward_user01
     assert user_info[3] == reward_rate1
-    assert iotx_clear.rewardRate() == reward_rate1
+    assert iotx_clear.getRewardRate() == reward_rate1
     assert debt_item1[0] == zero_address
     assert debt_item1[1] == 0
 
