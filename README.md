@@ -82,12 +82,12 @@ and [IoTeX Ethereum API Compatibility](https://docs.iotex.io/reference/babel-web
 
 You can add a new account by running the following command: `brownie accounts new {INSERT-ACCOUNT-NAME}`
 
-Make sure to replace {INSERT-ACCOUNT-NAME} with your name of choice. The following account names are currently used to
+Make sure to replace {INSERT-ACCOUNT-NAME} with your name of choice. The following account are currently used to
 [deploy](https://github.com/RockX-SG/uniiotx/blob/main/scripts/deploy/testnet.py) 
 and [upgrade](https://github.com/RockX-SG/uniiotx/tree/main/scripts/upgrade) contracts on IoTeX Testnet: 
-- IoTeXAdmin 
-- IoTeXDeployer 
-- IoTeXOracle
+- IoTeXAdmin: 0xbFdDf5e269C74157b157c7DaC5E416d44afB790d
+- IoTeXDeployer: 0x3af43AfEd31C00311381A8DF26cc58C9bD2b5375
+- IoTeXOracle: 0xC8a85eD8A9aBF0a21031B7c62C13464D1527cd09
 
 You'll be prompted to enter in your private key and a password to encrypt the account with. If the account was configured successfully,
 you'll see your account address printed to the terminal.
