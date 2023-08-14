@@ -96,11 +96,18 @@ To view the complete list of accounts, you can run the following command: `brown
 
 ![accounts_list](/docs/accounts_list.png) <br>
 
-Additionally, the accounts listed in the [configuration file](https://github.com/RockX-SG/uniiotx/blob/main/brownie-config.yaml) 
-are unlocked for development on the forked IoTeX Testnet and IoTeX Mainnet:
+Additionally, the accounts listed in the [configuration file](https://github.com/RockX-SG/uniiotx/blob/main/brownie-config.yaml)
+are currently unlocked for development on the forked IoTeX Testnet:
+- IoTeXSystemStakingOwner: 0x065e1164818487818E6BA714E8d80B91718ad758
 - IoTeXAdmin: 0xbFdDf5e269C74157b157c7DaC5E416d44afB790d
 - IoTeXDeployer: 0x3af43AfEd31C00311381A8DF26cc58C9bD2b5375
-- IoTeXOracle: 0xC8a85eD8A9aBF0a21031B7c62C13464D1527cd09
+- IoTeXOracle1: 0xC8a85eD8A9aBF0a21031B7c62C13464D1527cd09
+- IoTeXOracle2: 0x912AD2282799C5d62334017578418471f5aF5353
+- IoTeXDelegate1: 0xac82586b613d10a33df00835aC6DAd8541952334  
+- IoTexDelegate2: 0xE88eBFccF58aaf553134AE5f87a77d0608B76d53
+- IoTexDelegate3: 0x53FBC28FAF9a52dFe5F591948A23189E900381B5 
+- IoTexDelegate4: 0x6a354C8DaFf5C6C26F2fa9629558125717c60489 
+- IoTexDelegate5: 0x8d621776e2f461E609B1f9e4630E4eC7106Ee553
 - IoTeXUser1: 0x9ACE9968545089893208f35A81569Fa81cd24F7c
 - IoTeXUser2: 0x912AD2282799C5d62334017578418471f5aF5353
 
