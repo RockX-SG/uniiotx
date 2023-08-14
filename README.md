@@ -62,8 +62,12 @@ After the installation, please restart your terminal or run the command: `source
 ### Network Configuration
 To add IoTeX Testnet and Mainnet configurations, run the following commands separately:
 
-- For IoTeX Testnet: `brownie networks add IoTeX iotex-testnet host=https://babel-api.testnet.iotex.io chainid=4690`
-- For IoTeX Mainnet: `brownie networks add IoTeX iotex-mainnet host=https://babel-api.mainnet.iotex.io chainid=4689`
+- For the live IoTeX Testnet: `brownie networks add IoTeX iotex-testnet host=https://babel-api.testnet.iotex.io chainid=4690`
+- For the live IoTeX Mainnet: `brownie networks add IoTeX iotex-mainnet host=https://babel-api.mainnet.iotex.io chainid=4689`
+- For the forked development IoTeX Testnet: `brownie networks add Development iotex-testnet-fork name="Ganache-CLI (IoTeX Testnet Fork)" host=http://127.0.0.1:8545 cmd=ganache fork=iotex-testnet `
+- For the forked development IoTeX Mainnet: `brownie networks add Development iotex-mainnet-fork name="Ganache-CLI (IoTeX Mainnet Fork)" host=http://127.0.0.1:8545 cmd=ganache fork=iotex-mainnet`
+
+Please be aware that forked development networks rely on the configurations of Ganache and live networks.
 
 If you successfully added the network, you'll see a success message along with the network details in the terminal.
 
@@ -75,9 +79,10 @@ For further information, please visit the [Brownie Network Management](https://e
 and [IoTeX Ethereum API Compatibility](https://docs.iotex.io/reference/babel-web3-api) websites.
 
 ### Account Configuration
+
 You can add a new account by running the following command: `brownie accounts new {INSERT-ACCOUNT-NAME}`
 
-Make sure to replace {INSERT-ACCOUNT-NAME} with your name of choice. The following account names are used to
+Make sure to replace {INSERT-ACCOUNT-NAME} with your name of choice. The following account names are currently used to
 [deploy](https://github.com/RockX-SG/uniiotx/blob/main/scripts/deploy/testnet.py) 
 and [upgrade](https://github.com/RockX-SG/uniiotx/tree/main/scripts/upgrade) contracts on IoTeX Testnet: 
 - IoTeXAdmin 
@@ -91,7 +96,16 @@ To view the complete list of accounts, you can run the following command: `brown
 
 ![accounts_list](/docs/accounts_list.png) <br>
 
-For further information, please visit the [Brownie Working wih Accounts](https://eth-brownie.readthedocs.io/en/stable/core-accounts.html) websites.
+Additionally, the accounts listed in the [configuration file](https://github.com/RockX-SG/uniiotx/blob/main/brownie-config.yaml) 
+are unlocked for development on the forked IoTeX Testnet and IoTeX Mainnet:
+- IoTeXAdmin: 0xbFdDf5e269C74157b157c7DaC5E416d44afB790d
+- IoTeXDeployer: 0x3af43AfEd31C00311381A8DF26cc58C9bD2b5375
+- IoTeXOracle: 0xC8a85eD8A9aBF0a21031B7c62C13464D1527cd09
+- IoTeXUser1: 0x9ACE9968545089893208f35A81569Fa81cd24F7c
+- IoTeXUser2: 0x912AD2282799C5d62334017578418471f5aF5353
+
+For further information, please visit the [Brownie Working wih Accounts](https://eth-brownie.readthedocs.io/en/stable/core-accounts.html)
+and [Brownie Unlocking Accounts on Development Networks](https://eth-brownie.readthedocs.io/en/stable/account-management.html#unlocking-accounts-on-development-networks) websites.
 
 ### Unit Testing
 We currently conduct unit tests based on [Ganache](https://github.com/trufflesuite/ganache).
