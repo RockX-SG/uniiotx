@@ -27,12 +27,8 @@ reports:
 
 networks:
   development:
-    gas_limit: max
-    gas_price: 0
     cmd_settings:
-      gas_limit: 1000000000000000000
-  iotex-testnet-fork:
-    cmd_settings:
+      default_balance: "1000000000000 ether"
       unlock:
         - 0x065e1164818487818E6BA714E8d80B91718ad758  # IoTeXSystemStakingOwner
         - 0xbFdDf5e269C74157b157c7DaC5E416d44afB790d  # IoTeXAdmin
@@ -41,8 +37,18 @@ networks:
         - 0x912AD2282799C5d62334017578418471f5aF5353  # IoTeXOracle2, controlled by @eben.xie
         - 0xac82586b613d10a33df00835aC6DAd8541952334  # IoTeXDelegate1
         - 0xE88eBFccF58aaf553134AE5f87a77d0608B76d53  # IoTexDelegate2
-        - 0x53FBC28FAF9a52dFe5F591948A23189E900381B5  # IoTexDelegate3
-        - 0x6a354C8DaFf5C6C26F2fa9629558125717c60489  # IoTexDelegate4
-        - 0x8d621776e2f461E609B1f9e4630E4eC7106Ee553  # IoTexDelegate5
+        - 0x9ACE9968545089893208f35A81569Fa81cd24F7c  # IoTeXUser1
+        - 0x912AD2282799C5d62334017578418471f5aF5353  # IoTeXUser2, controlled by @eben.xie
+  iotex-testnet-fork:
+    cmd_settings:
+      default_balance: "1000000000000 ether"
+      unlock:
+        - 0x065e1164818487818E6BA714E8d80B91718ad758  # IoTeXSystemStakingOwner
+        - 0xbFdDf5e269C74157b157c7DaC5E416d44afB790d  # IoTeXAdmin
+        - 0x3af43AfEd31C00311381A8DF26cc58C9bD2b5375  # IoTeXDeployer
+        - 0xC8a85eD8A9aBF0a21031B7c62C13464D1527cd09  # IoTeXOracle1
+        - 0x912AD2282799C5d62334017578418471f5aF5353  # IoTeXOracle2, controlled by @eben.xie
+        - 0xac82586b613d10a33df00835aC6DAd8541952334  # IoTeXDelegate1
+        - 0xE88eBFccF58aaf553134AE5f87a77d0608B76d53  # IoTexDelegate2
         - 0x9ACE9968545089893208f35A81569Fa81cd24F7c  # IoTeXUser1
         - 0x912AD2282799C5d62334017578418471f5aF5353  # IoTeXUser2, controlled by @eben.xie

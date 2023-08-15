@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_claimPrincipals(fn_isolation, contracts, users, oracle, admin, deadline):
+def test_claimPrincipals(fn_isolation, contracts, users, oracles, admin, deadline):
     uni_iotx, iotx_clear, iotx_staking = contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
@@ -17,8 +17,8 @@ def test_claimPrincipals(fn_isolation, contracts, users, oracle, admin, deadline
     iotx_staking.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
 
     token_ids = iotx_staking.getRedeemedTokenIds(0, 1)
-    iotx_clear.unstake(token_ids, {'from': oracle, 'allow_revert': True})
-    iotx_clear.payDebts(token_ids, {'from': oracle, 'allow_revert': True})
+    iotx_clear.unstake(token_ids, {'from': oracles[0], 'allow_revert': True})
+    iotx_clear.payDebts(token_ids, {'from': oracles[0], 'allow_revert': True})
 
     accounted_balance0 = iotx_clear.getAccountedBalance()
     user0_balance0 = users[0].balance()

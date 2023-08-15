@@ -1,4 +1,4 @@
-def test_currentReserve(fn_isolation, contracts, users, delegates, oracle, admin, deadline):
+def test_currentReserve(fn_isolation, contracts, users, delegates, oracles, admin, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # The current reserve is expected to increase once the 'deposit' call is successful.
@@ -14,7 +14,7 @@ def test_currentReserve(fn_isolation, contracts, users, delegates, oracle, admin
     assert iotx_staking.currentReserve() == amt
 
     # The current reserve should be updated when rewards are updated.
-    iotx_staking.updateReward({'from': oracle})
+    iotx_staking.updateReward({'from': oracles[0]})
     manager_fee = amt_reward * iotx_staking.getManagerFeeShares() / 1000
     assert iotx_staking.currentReserve() == amt + amt_reward - manager_fee
 

@@ -31,27 +31,33 @@ def roles(w3):
 # Predefined Accounts
 @pytest.fixture(scope="session", autouse=True)
 def owner():
-    return accounts[0]
+    return accounts.at("0x065e1164818487818E6BA714E8d80B91718ad758", True)
 
 @pytest.fixture(scope="session", autouse=True)
 def deployer():
-    return accounts[1]
+    return accounts.at("0x3af43AfEd31C00311381A8DF26cc58C9bD2b5375", True)
 
 @pytest.fixture(scope="session", autouse=True)
 def admin():
-    return accounts[2]
+    return accounts.at("0xbFdDf5e269C74157b157c7DaC5E416d44afB790d", True)
 
 @pytest.fixture(scope="session", autouse=True)
-def oracle():
-    return accounts[3]
+def oracles():
+    oracle0 = accounts.at("0xC8a85eD8A9aBF0a21031B7c62C13464D1527cd09", True)
+    oracle1 = accounts.at("0x912AD2282799C5d62334017578418471f5aF5353", True)
+    return [oracle0, oracle1]
 
 @pytest.fixture(scope="session", autouse=True)
 def delegates():
-    return [accounts[4], accounts[5]]
+    delegate0 = accounts.at("0xac82586b613d10a33df00835aC6DAd8541952334", True)
+    delegate1 = accounts.at("0xE88eBFccF58aaf553134AE5f87a77d0608B76d53", True)
+    return [delegate0, delegate1]
 
 @pytest.fixture(scope="session", autouse=True)
 def users():
-    return [accounts[6], accounts[7]]
+    user0 = accounts.at("0x9ACE9968545089893208f35A81569Fa81cd24F7c", True)
+    user1 = accounts.at("0x912AD2282799C5d62334017578418471f5aF5353", True)
+    return [user0, user1]
 
 # Protocol params
 @pytest.fixture(scope="session", autouse=True)
@@ -84,11 +90,17 @@ def proxy():
     deps = project.load(  Path.home() / ".brownie" / "packages" / config["dependencies"][0])
     return deps.TransparentUpgradeableProxy
 
+@pytest.fixture
+def fund(owner, deployer, admin, oracles, delegates, users):
+    extra_accounts = [owner, deployer, admin, oracles[0], oracles[1], delegates[0], delegates[1], users[0], users[1]]
+    for account in extra_accounts:
+        accounts[0].transfer(account, "100000000 ether")
+        print("Balance:", account.balance())
+
+
 # Contracts
-# Note: The Ganache client must be installed locally prior to executing this script
-# The link to the Ganache client: https://github.com/trufflesuite/ganache
 @pytest.fixture()
-def contracts(proxy, owner, deployer, admin, oracle, delegates, stake_duration, start_amount, common_ratio, sequence_length, stake_amounts, manager_fee_shares):
+def contracts(proxy, fund, owner, deployer, admin, oracles, delegates, stake_duration, start_amount, common_ratio, sequence_length, stake_amounts, manager_fee_shares):
     # Deploy contracts
     system_staking = SystemStaking.deploy({'from': owner})
 
@@ -114,16 +126,16 @@ def contracts(proxy, owner, deployer, admin, oracle, delegates, stake_duration, 
         system_staking,
         uni_iotx_transparent,
         iotx_clear_transparent,
-        oracle,
+        oracles[0],
         start_amount,
         common_ratio,
         sequence_length,
         stake_duration,
         {'from': admin}
     )
-    iotx_clear_transparent.initialize(system_staking, iotx_staking_transparent, oracle, {'from': admin})
+    iotx_clear_transparent.initialize(system_staking, iotx_staking_transparent, oracles[0], {'from': admin})
 
     iotx_staking_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
-    iotx_staking_transparent.setGlobalDelegate(delegates[0], {'from': oracle})
+    iotx_staking_transparent.setGlobalDelegate(delegates[0], {'from': oracles[0]})
 
     return [system_staking, uni_iotx_transparent, iotx_clear_transparent, iotx_staking_transparent]

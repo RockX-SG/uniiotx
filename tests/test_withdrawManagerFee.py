@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_withdrawManagerFee(fn_isolation, contracts, users, delegates, admin, oracle, deadline):
+def test_withdrawManagerFee(fn_isolation, contracts, users, delegates, admin, oracles, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # ---Happy path testing---
@@ -12,7 +12,7 @@ def test_withdrawManagerFee(fn_isolation, contracts, users, delegates, admin, or
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     amt_reward = 200
     delegates[0].transfer(iotx_staking, amt_reward)
-    iotx_staking.updateReward({"from": oracle})
+    iotx_staking.updateReward({"from": oracles[0]})
     manager_reward = iotx_staking.getManagerFeeShares() * amt_reward / 1000
     user_reward = amt_reward - manager_reward
     assert manager_reward == 20

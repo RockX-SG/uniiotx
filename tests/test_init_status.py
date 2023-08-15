@@ -1,4 +1,4 @@
-def test_init_status(fn_isolation, roles, owner, admin, delegates, oracle, start_amount, common_ratio, sequence_length, stake_amounts, stake_duration, manager_fee_shares, contracts):
+def test_init_status(fn_isolation, roles, owner, admin, delegates, oracles, start_amount, common_ratio, sequence_length, stake_amounts, stake_duration, manager_fee_shares, contracts):
     system_staking, uni_iotx, iotx_clear, iotx_staking = contracts[0], contracts[1], contracts[2], contracts[3]
 
     # Check permissions
@@ -10,12 +10,12 @@ def test_init_status(fn_isolation, roles, owner, admin, delegates, oracle, start
 
     assert iotx_clear.hasRole(roles[5], admin.address)  # ROLE_DEFAULT_ADMIN
     assert iotx_clear.hasRole(roles[2], iotx_staking.address)  # ROLE_STAKE
-    assert iotx_clear.hasRole(roles[4], oracle.address)  # ROLE_ORACLE
+    assert iotx_clear.hasRole(roles[4], oracles[0].address)  # ROLE_ORACLE
 
     assert iotx_staking.hasRole(roles[5], admin.address)  # ROLE_DEFAULT_ADMIN
     assert iotx_staking.hasRole(roles[3], admin.address)  # ROLE_FEE_MANAGER
     assert iotx_staking.hasRole(roles[0], admin.address)  # ROLE_PAUSE
-    assert iotx_staking.hasRole(roles[4], oracle.address)  # ROLE_ORACLE
+    assert iotx_staking.hasRole(roles[4], oracles[0].address)  # ROLE_ORACLE
 
     # Check initial status variables
     assert system_staking.UNSTAKE_FREEZE_BLOCKS() == 1

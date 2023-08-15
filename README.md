@@ -97,7 +97,7 @@ To view the complete list of accounts, you can run the following command: `brown
 ![accounts_list](/docs/accounts_list.png) <br>
 
 Additionally, the accounts listed in the [configuration file](https://github.com/RockX-SG/uniiotx/blob/main/brownie-config.yaml)
-are currently unlocked for development on the forked IoTeX Testnet:
+are unlocked on the local Ganache and forked IoTeX Testnet for testing purposes:
 - IoTeXSystemStakingOwner: 0x065e1164818487818E6BA714E8d80B91718ad758
 - IoTeXAdmin: 0xbFdDf5e269C74157b157c7DaC5E416d44afB790d
 - IoTeXDeployer: 0x3af43AfEd31C00311381A8DF26cc58C9bD2b5375
@@ -105,9 +105,6 @@ are currently unlocked for development on the forked IoTeX Testnet:
 - IoTeXOracle2: 0x912AD2282799C5d62334017578418471f5aF5353
 - IoTeXDelegate1: 0xac82586b613d10a33df00835aC6DAd8541952334  
 - IoTexDelegate2: 0xE88eBFccF58aaf553134AE5f87a77d0608B76d53
-- IoTexDelegate3: 0x53FBC28FAF9a52dFe5F591948A23189E900381B5 
-- IoTexDelegate4: 0x6a354C8DaFf5C6C26F2fa9629558125717c60489 
-- IoTexDelegate5: 0x8d621776e2f461E609B1f9e4630E4eC7106Ee553
 - IoTeXUser1: 0x9ACE9968545089893208f35A81569Fa81cd24F7c
 - IoTeXUser2: 0x912AD2282799C5d62334017578418471f5aF5353
 
@@ -115,8 +112,6 @@ For further information, please visit the [Brownie Working wih Accounts](https:/
 and [Brownie Unlocking Accounts on Development Networks](https://eth-brownie.readthedocs.io/en/stable/account-management.html#unlocking-accounts-on-development-networks) websites.
 
 ### Unit Testing
-We currently conduct unit tests based on [Ganache](https://github.com/trufflesuite/ganache).
-
 All the files for unit testing can be found in the [tests](https://github.com/RockX-SG/uniiotx/tree/main/tests) directory.
 
 Specifically, the [tests/conftest.py](https://github.com/RockX-SG/uniiotx/blob/main/tests/conftest.py) file 
@@ -126,12 +121,15 @@ including various accounts. These fixtures are applied across multiple modules.
 Here are commonly used commands related to unit testing:
 
 - To run the complete test suite: `brownie test`.
-- To parallelize test execution, add the `-n` flag`: `brownie test -n auto`.
+- To parallelize test execution, add the `-n` flag: `brownie test -n auto`.
 - To run a specific test: `brownie test tests/test_deposit.py`.
 - To only run updated tests, add the `--update` flag: `brownie test --update`.
 - To debug the project during test execution, add the `--interactive` flag: `brownie test --interactive`.
 - To generate a gas profile report, add the `--gas` flag: `brownie test --gas`
 - To evaluate unit test coverage, add the `--coverage` flag: `brownie test --coverage`
+
+The commands above operate on the local Ganache network. To conduct tests on the forked IoTeX Testnet, 
+add the `--network iotex-testnet-fork` flag. For example: `brownie test --network iotex-testnet-fork`.
 
 For further information, please visit the [Brownie Writing Unit Tests](https://eth-brownie.readthedocs.io/en/stable/tests-pytest-intro.html) websites.
 

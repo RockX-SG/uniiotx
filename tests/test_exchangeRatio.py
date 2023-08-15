@@ -1,4 +1,4 @@
-def test_exchangeRatio(fn_isolation, contracts, users, delegates, oracle, admin, deadline):
+def test_exchangeRatio(fn_isolation, contracts, users, delegates, oracles, admin, deadline):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # The exchange ratio should be the same as the default value after the first 'deposit' process completes.
@@ -25,7 +25,7 @@ def test_exchangeRatio(fn_isolation, contracts, users, delegates, oracle, admin,
     assert iotx_staking.exchangeRatio() == default_exchange_ratio
 
     # The exchange ratio should increase when rewards are updated in our contract.
-    iotx_staking.updateReward({'from': oracle})
+    iotx_staking.updateReward({'from': oracles[0]})
     manager_fee = iotx_staking.getManagerFeeShares() * amt_reward / 1000
     current_reserve1 = iotx_staking.currentReserve()
     total_supply1 = uni_iotx.totalSupply()

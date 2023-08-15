@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_redeem(fn_isolation, contracts, users, delegates, oracle, deadline):
+def test_redeem(fn_isolation, contracts, users, delegates, oracles, deadline):
     system_staking, uni_iotx, iotx_clear, iotx_staking = contracts[0], contracts[1], contracts[2], contracts[3]
     uint256_max = 115792089237316195423570985008687907853269984665640564039457584007913129639935
 
@@ -41,7 +41,7 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracle, deadline):
 
     # Regular updates to rewards can impact the exchange ratio's value.
     # The change in the exchange ratio should be taken into account.
-    iotx_staking.updateReward({'from': oracle})
+    iotx_staking.updateReward({'from': oracles[0]})
     manager_fee = iotx_staking.getManagerFeeShares() * amt_reward / 1000
     exchange_ratio1 = iotx_staking.exchangeRatio()
     assert exchange_ratio1 > 1e18

@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_payDebts(fn_isolation, contracts, users, delegates, oracle, admin, stake_amounts, zero_address, deadline):
+def test_payDebts(fn_isolation, contracts, users, delegates, oracles, admin, stake_amounts, zero_address, deadline):
     uni_iotx, iotx_clear, iotx_staking = contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
@@ -28,10 +28,10 @@ def test_payDebts(fn_isolation, contracts, users, delegates, oracle, admin, stak
 
     # Oracle makes the first debt payment
     token_ids = iotx_staking.getRedeemedTokenIds(0, cnt)
-    iotx_clear.unstake(token_ids[0:5], {'from': oracle, 'allow_revert': True})
+    iotx_clear.unstake(token_ids[0:5], {'from': oracles[0], 'allow_revert': True})
     reward_rate1 = mock_reward_incr1 * 1e18 / amt_total
     reward_user01 = (reward_rate1 - 0) * amt_total / 1e18
-    tx = iotx_clear.payDebts(token_ids[0:5], {'from': oracle, 'allow_revert': True})
+    tx = iotx_clear.payDebts(token_ids[0:5], {'from': oracles[0], 'allow_revert': True})
     assert "Withdrawal" in tx.events
     assert "DebtPaid" in tx.events
     assert iotx_clear.getPaidDebtItemCount() == 0
@@ -50,8 +50,8 @@ def test_payDebts(fn_isolation, contracts, users, delegates, oracle, admin, stak
     assert debt_item1[1] == amt_total/2
 
     # Oracle makes the second payment
-    iotx_clear.unstake(token_ids[5:cnt], {'from': oracle, 'allow_revert': True})
-    tx = iotx_clear.payDebts(token_ids[5:cnt], {'from': oracle, 'allow_revert': True})
+    iotx_clear.unstake(token_ids[5:cnt], {'from': oracles[0], 'allow_revert': True})
+    tx = iotx_clear.payDebts(token_ids[5:cnt], {'from': oracles[0], 'allow_revert': True})
     assert "Withdrawal" in tx.events
     assert "DebtPaid" in tx.events
     assert iotx_clear.getPaidDebtItemCount() == 1
@@ -74,7 +74,7 @@ def test_payDebts(fn_isolation, contracts, users, delegates, oracle, admin, stak
     # When the contract is on pause, the 'payDebts' function will not operate.
     iotx_clear.pause({'from': admin})
     with brownie .reverts("Pausable: paused"):
-        iotx_clear.payDebts(token_ids, {'from': oracle, 'allow_revert': True})
+        iotx_clear.payDebts(token_ids, {'from': oracles[0], 'allow_revert': True})
     iotx_clear.unpause({'from': admin})
 
     # Only the role of oracle has call permission.
@@ -84,32 +84,32 @@ def test_payDebts(fn_isolation, contracts, users, delegates, oracle, admin, stak
     # Only accept debt tokens whose value is equal to the 'debtAmountBase' value
     iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[0], 'allow_revert': True})
     with brownie .reverts("USR007"):
-        iotx_clear.payDebts([iotx_staking.getTokenId(0, 0)], {'from': oracle, 'allow_revert': True})
+        iotx_clear.payDebts([iotx_staking.getTokenId(0, 0)], {'from': oracles[0], 'allow_revert': True})
 
     iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[1], 'allow_revert': True})
     with brownie .reverts("USR007"):
-        iotx_clear.payDebts([iotx_staking.getTokenId(1, 0)], {'from': oracle, 'allow_revert': True})
+        iotx_clear.payDebts([iotx_staking.getTokenId(1, 0)], {'from': oracles[0], 'allow_revert': True})
 
     # Passing an empty array of token IDs is not allowed
     iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[0], 'allow_revert': True})
     with brownie .reverts("USR008"):
-        iotx_clear.payDebts([], {'from': oracle, 'allow_revert': True})
+        iotx_clear.payDebts([], {'from': oracles[0], 'allow_revert': True})
 
     # The total value of token IDs must not surpass the total value of the existing debt
     iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
     token_id = iotx_staking.getTokenId(2, 10)
     with brownie .reverts("USR008"):
-        iotx_clear.payDebts([token_id], {'from': oracle, 'allow_revert': True})
+        iotx_clear.payDebts([token_id], {'from': oracles[0], 'allow_revert': True})
 
     # The token ID for payment will not be reused; therefore it must exist.
     with brownie .reverts("ERC721: invalid token ID"):
-        iotx_clear.payDebts(token_ids, {'from': oracle, 'allow_revert': True})
+        iotx_clear.payDebts(token_ids, {'from': oracles[0], 'allow_revert': True})
 
     # The corresponding bucket(s) must be unstaked in advance.
     uni_iotx.approve(iotx_staking, amt, {'from': users[0], 'allow_revert': True})
     iotx_staking.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
     with brownie .reverts("not an unstaked bucket"):
-        iotx_clear.payDebts([token_id], {'from': oracle, 'allow_revert': True})
+        iotx_clear.payDebts([token_id], {'from': oracles[0], 'allow_revert': True})
 
     # Note: in IoTeX testnet and mainnet, it can revert "not ready to withdraw".
     # https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol#L279
