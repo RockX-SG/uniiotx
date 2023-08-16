@@ -121,7 +121,6 @@ including various accounts. These fixtures are applied across multiple modules.
 Here are commonly used commands related to unit testing:
 
 - To run the complete test suite: `brownie test`.
-- To parallelize test execution, add the `-n` flag: `brownie test -n auto`.  // Todo
 - To run a specific test: `brownie test tests/test_deposit.py`.
 - To only run updated tests, add the `--update` flag: `brownie test --update`.
 - To debug the project during test execution, add the `--interactive` flag: `brownie test --interactive`.
