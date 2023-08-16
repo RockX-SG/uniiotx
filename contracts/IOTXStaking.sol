@@ -452,6 +452,18 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
+     * @return An array of already redeemed/unlocked token id, which is indexed from 0 in this contract.
+     */
+    function getRedeemedTokenIds() external view returns (uint[] memory) {
+        uint[] memory tq = tokenQueues[sequenceLength-1];
+        uint[] memory tokenIds = new uint[](redeemedTokenCount);
+        for (uint i = 0; i < redeemedTokenCount; i++) {
+            tokenIds[i] = tq[i];
+        }
+        return tokenIds;
+    }
+
+    /**
      * @dev If an invalid tokenQueueIndex is given, an empty array will be returned.
      * @dev It recommended to check the value of 'redeemedTokenCount' beforehand to prevent the passed j from going out of range.
      * @param i, j The valid index values for i and j are determined by this conditional check: i < j && j <= redeemedTokenCount
