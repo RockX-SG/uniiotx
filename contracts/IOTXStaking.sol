@@ -428,7 +428,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * 2. i >= redeemedTokenCount if tokenQueueIndex == sequenceLength-1.
      * @return An [i, j) slice of staked token IDs for the specified index.
      */
-    function getStakedTokenIdsSlice(uint tokenQueueIndex, uint i, uint j) external view returns (uint[] memory) {
+    function getStakedTokenIdSlice(uint tokenQueueIndex, uint i, uint j) external view returns (uint[] memory) {
         if (tokenQueueIndex < sequenceLength && i < j) {
             uint[] memory tq = tokenQueues[tokenQueueIndex];
             uint[] memory tokenIds = new uint[](j-i);
@@ -469,7 +469,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @param i, j The valid index values for i and j are determined by this conditional check: i < j && j <= redeemedTokenCount
      * @return An [i, j) slice of already redeemed/unlocked token id, which is indexed from 0 in this contract.
      */
-    function getRedeemedTokenIdsSlice(uint i, uint j) external view returns (uint[] memory) {
+    function getRedeemedTokenIdSlice(uint i, uint j) external view returns (uint[] memory) {
         if (i < j && j <= redeemedTokenCount) {
             uint[] memory tq = tokenQueues[sequenceLength-1];
             uint[] memory tokenIds = new uint[](j-i);

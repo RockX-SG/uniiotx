@@ -16,7 +16,7 @@ def test_claimPrincipals(fn_isolation, contracts, users, oracles, admin, deadlin
     uni_iotx.approve(iotx_staking, amt, {'from': users[0], 'allow_revert': True})
     iotx_staking.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
 
-    token_ids = iotx_staking.getRedeemedTokenIdsSlice(0, 1)
+    token_ids = iotx_staking.getRedeemedTokenIdSlice(0, 1)
     iotx_clear.unstake(token_ids, {'from': oracles[0], 'allow_revert': True})
     iotx_clear.payDebts(token_ids, {'from': oracles[0], 'allow_revert': True})
 
