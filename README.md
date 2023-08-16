@@ -132,6 +132,17 @@ add the `--network iotex-testnet-fork` flag. For example: `brownie test --networ
 
 For further information, please visit the [Brownie Writing Unit Tests](https://eth-brownie.readthedocs.io/en/stable/tests-pytest-intro.html) websites.
 
+### Deployed Contracts
+The contracts of this project depends on the [SystemStaking](https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol) contract. 
+The addresses of the contracts deployed on the IoTeX Testnet are as follows:
+- [SystemStaking](https://testnet.iotexscan.io/address/0x52ab0fe2c3a94644de0888a3ba9ea1443672e61f#transactions): 0x52ab0fe2c3a94644de0888a3ba9ea1443672e61f 
+- [UniIOTX](https://testnet.iotexscan.io/address/0x956a03ecEb344eA15A6CbE8949088992fAD88628#transactions): 0x956a03ecEb344eA15A6CbE8949088992fAD88628
+- [IOTXClear](https://testnet.iotexscan.io/address/0x4DC32Ad7BffAF50434b12195D3b59CD66601335D#transactions): 0x4DC32Ad7BffAF50434b12195D3b59CD66601335D
+- [IOTXStaking](https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions): 0xa479659F378d54168CD7859f5025133382EdB3C5
+
+Please note that UniIOTX, IOTXClear and IOTXStaking contracts are upgradable. They employ the [transparent proxy pattern](https://docs.openzeppelin.com/contracts/4.x/api/proxy#TransparentUpgradeableProxy).
+The addresses provided above represent their respective transparent proxy addresses.
+
 ### Error Codes from Contracts
 1. SYS001: INACTIVE_BUCKET_TYPE
 1. SYS002: MANAGER_FEE_SHARES_OUT_OF_RANGE
