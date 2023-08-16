@@ -490,19 +490,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getRedeemedTokenIds",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -515,7 +502,20 @@
         "type": "uint256"
       }
     ],
-    "name": "getRedeemedTokenIdsSlice",
+    "name": "getRedeemedTokenIdSlice",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRedeemedTokenIds",
     "outputs": [
       {
         "internalType": "uint256[]",
@@ -596,9 +596,19 @@
         "internalType": "uint256",
         "name": "tokenQueueIndex",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "i",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "j",
+        "type": "uint256"
       }
     ],
-    "name": "getStakedTokenIds",
+    "name": "getStakedTokenIdSlice",
     "outputs": [
       {
         "internalType": "uint256[]",
@@ -615,19 +625,9 @@
         "internalType": "uint256",
         "name": "tokenQueueIndex",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "i",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "j",
-        "type": "uint256"
       }
     ],
-    "name": "getStakedTokenIdsSlice",
+    "name": "getStakedTokenIds",
     "outputs": [
       {
         "internalType": "uint256[]",
