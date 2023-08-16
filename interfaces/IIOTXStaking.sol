@@ -23,7 +23,7 @@ interface IIOTXStaking is IERC721Receiver {
     function exchangeRatio() external returns (uint ratio);
     function currentReserve() external view returns(uint);
     function redeemAmountBase() external returns(uint);
-    function getRedeemedTokenIds(uint i, uint j) external view returns (uint[] memory tokenIds);
+    function getRedeemedTokenIdsSlice(uint i, uint j) external view returns (uint[] memory tokenIds);
     function getStakedTokenCount(uint tokenQueueIndex) external view returns (uint count);
     function setGlobalDelegate(address delegate) external;
     function updateDelegates(uint[] calldata tokenIds, address delegate) external;

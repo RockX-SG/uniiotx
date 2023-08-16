@@ -16,7 +16,7 @@ def test_updateDelegates(fn_isolation, contracts, users, delegates, oracles, adm
 
     uni_iotx.approve(iotx_staking, amt, {'from': users[0], 'allow_revert': True})
     iotx_staking.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
-    token_ids = iotx_staking.getRedeemedTokenIds(0, 1)
+    token_ids = iotx_staking.getRedeemedTokenIdsSlice(0, 1)
     assert system_staking.ownerOf(token_ids[0]) == iotx_clear
     tx = iotx_clear.updateDelegates(token_ids, delegates[0], {'from': oracles[0]})
     assert "DelegatesUpdated" in tx.events

@@ -27,7 +27,7 @@ def test_payDebts(fn_isolation, contracts, users, delegates, oracles, admin, sta
     delegates[0].transfer(iotx_clear, mock_reward_incr1)
 
     # Oracle makes the first debt payment
-    token_ids = iotx_staking.getRedeemedTokenIds(0, cnt)
+    token_ids = iotx_staking.getRedeemedTokenIdsSlice(0, cnt)
     iotx_clear.unstake(token_ids[0:5], {'from': oracles[0], 'allow_revert': True})
     reward_rate1 = mock_reward_incr1 * 1e18 / amt_total
     reward_user01 = (reward_rate1 - 0) * amt_total / 1e18
