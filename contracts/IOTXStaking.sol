@@ -421,6 +421,37 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
+     * @dev If param values are given, an empty array will be returned.
+     * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength)
+     * @param i, j The index values for i and j should satisfy the following conditions:
+     * 1. i < j && j < tokenQueues[tokenQueueIndex].length.
+     * 2. i >= redeemedTokenCount if tokenQueueIndex == sequenceLength-1.
+     * @return An [i, j) slice of staked token IDs for the specified index.
+     */
+    function getStakedTokenIdsSlice(uint tokenQueueIndex, uint i, uint j) external view returns (uint[] memory) {
+        if (tokenQueueIndex < sequenceLength && i < j) {
+            uint[] memory tq = tokenQueues[tokenQueueIndex];
+            uint[] memory tokenIds = new uint[](j-i);
+
+            if (j <= tq.length) {
+                for (uint k = 0; k < j-i; k++) {
+                    tokenIds[k] = tq[i+k];
+                }
+
+                bool validI = true;
+                if (tokenQueueIndex == sequenceLength-1 && i < redeemedTokenCount) {
+                    validI = false;
+                }
+
+                if (validI) {
+                    return tokenIds;
+                }
+            }
+        }
+        return new uint[](0);
+    }
+
+    /**
      * @dev If an invalid tokenQueueIndex is given, an empty array will be returned.
      * @dev It recommended to check the value of 'redeemedTokenCount' beforehand to prevent the passed j from going out of range.
      * @param i, j The valid index values for i and j are determined by this conditional check: i < j && j <= redeemedTokenCount
