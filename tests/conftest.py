@@ -17,6 +17,10 @@ def deadline(w3):
 def zero_address():
     return "0x0000000000000000000000000000000000000000"
 
+@pytest.fixture(scope="session", autouse=True)
+def uint256_max():
+    return 115792089237316195423570985008687907853269984665640564039457584007913129639935
+
 # Roles
 @pytest.fixture(scope="session", autouse=True)
 def roles(w3):

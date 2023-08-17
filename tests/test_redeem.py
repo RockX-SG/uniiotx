@@ -1,9 +1,8 @@
 import brownie
 
 
-def test_redeem(fn_isolation, contracts, users, delegates, oracles, deadline):
+def test_redeem(fn_isolation, contracts, users, delegates, oracles, deadline, uint256_max):
     system_staking, uni_iotx, iotx_clear, iotx_staking = contracts[0], contracts[1], contracts[2], contracts[3]
-    uint256_max = 115792089237316195423570985008687907853269984665640564039457584007913129639935
 
     # ---Happy path testing---
 
