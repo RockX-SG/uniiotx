@@ -20,7 +20,9 @@ def test_init_status(fn_isolation, roles, owner, admin, delegates, oracles, star
     # Check initial status variables
     assert system_staking.UNSTAKE_FREEZE_BLOCKS() == 1
 
+    assert uni_iotx.name() == "Universal IOTX"
     assert uni_iotx.symbol() == "uniIOTX"
+    assert uni_iotx.decimals() == 18
 
     assert iotx_clear.getDebtAmountBase() == iotx_staking.getRedeemAmountBase()
 
