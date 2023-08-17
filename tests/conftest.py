@@ -14,10 +14,6 @@ def deadline(w3):
     return w3.eth.get_block('latest').timestamp + 3600
 
 @pytest.fixture(scope="session", autouse=True)
-def zero_address():
-    return "0x0000000000000000000000000000000000000000"
-
-@pytest.fixture(scope="session", autouse=True)
 def uint256_max():
     return 115792089237316195423570985008687907853269984665640564039457584007913129639935
 
@@ -62,6 +58,10 @@ def users():
     user0 = accounts.at("0x9ACE9968545089893208f35A81569Fa81cd24F7c", True)
     user1 = accounts.at("0x912AD2282799C5d62334017578418471f5aF5353", True)
     return [user0, user1]
+
+@pytest.fixture(scope="session", autouse=True)
+def zero_address():
+    return accounts.at("0x0000000000000000000000000000000000000000", True)
 
 # Protocol params
 @pytest.fixture(scope="session", autouse=True)
