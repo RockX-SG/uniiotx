@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_transfer(fn_isolation, contracts, users, zero_address, uint256_max):
+def test_transferFrom(fn_isolation, contracts, users, zero_address, uint256_max):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # ---Happy path testing---
