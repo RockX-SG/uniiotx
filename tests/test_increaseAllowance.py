@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_increaseAllowance(fn_isolation, contracts, users, zero_address):
+def test_increaseAllowance(fn_isolation, contracts, users, zero_address, uint256_max):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # ---Happy path testing---
@@ -21,3 +21,6 @@ def test_increaseAllowance(fn_isolation, contracts, users, zero_address):
     with brownie .reverts("ERC20: approve to the zero address"):
         uni_iotx.approve(zero_address, amt, {'from': users[0], 'allow_revert': True})
 
+    # Not allow integer overflow
+    with brownie .reverts("Integer overflow"):
+        uni_iotx.increaseAllowance(iotx_staking, uint256_max, {'from': users[0], 'allow_revert': True})
