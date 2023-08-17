@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_pause(fn_isolation, contracts, admin, oracles, users, zero_address):
+def test_pause(fn_isolation, contracts, users, zero_address):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # ---Happy path testing---
