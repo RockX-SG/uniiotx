@@ -21,7 +21,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "../interfaces/Roles.sol";
 import "../interfaces/IIOTXClear.sol";
@@ -30,8 +29,6 @@ import "../interfaces/IIOTXStaking.sol";
 import "../interfaces/ISystemStaking.sol";
 
 contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, AccessControlUpgradeable, ReentrancyGuardUpgradeable {
-    using SafeERC20 for IERC20;
-
     address public systemStaking;
     address public uniIOTX;
     address public iotxClear;
@@ -733,8 +730,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
 
         // Burn uniIOTXs
         uint toBurn = _convertIotxToUniIOTX(iotxsToRedeem);
-        IERC20(uniIOTX).safeTransferFrom(msg.sender, address(this), toBurn);
-        IUniIOTX(uniIOTX).burn(toBurn);
+        IUniIOTX(uniIOTX).burnFrom(msg.sender, toBurn);
         burned = toBurn;
         totalStaked -= iotxsToRedeem;
 

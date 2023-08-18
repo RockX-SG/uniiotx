@@ -20,7 +20,7 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracles, deadline, ui
     unlocked_amt, _, unlocked_at, _, _ = system_staking.bucketOf(token_id)
     debt = iotx_clear.getUnpaidDebtItem(1)
     user_info = iotx_clear.getUserInfo(users[0])
-    assert len(tx.events["Transfer"]) == 3
+    assert len(tx.events["Transfer"]) == 2
     assert len(tx.events["Unlocked"]) == 1
     assert len(tx.events["Redeemed"]) == 1
     assert len(tx.events["DebtQueued"]) == 1
@@ -53,7 +53,7 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracles, deadline, ui
     unlocked_amt, _, unlocked_at, _, _ = system_staking.bucketOf(token_id)
     debt = iotx_clear.getUnpaidDebtItem(2)
     user_info = iotx_clear.getUserInfo(users[0])
-    assert len(tx.events["Transfer"]) == 3
+    assert len(tx.events["Transfer"]) == 2
     assert len(tx.events["Unlocked"]) == 1
     assert len(tx.events["Redeemed"]) == 1
     assert len(tx.events["DebtQueued"]) == 1
