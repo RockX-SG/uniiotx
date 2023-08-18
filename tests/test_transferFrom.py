@@ -27,7 +27,7 @@ def test_transferFrom(fn_isolation, contracts, users, zero_address, uint256_max)
 
     # ---Revert path testing---
 
-    # Not allowed to approve from the zero address
+    # Insufficient allowance
     uni_iotx.approve(iotx_staking, 0, {'from': users[0], 'allow_revert': True})
     with brownie .reverts("ERC20: insufficient allowance"):
         uni_iotx.transferFrom(users[0], users[1], amt, {'from': iotx_staking, 'allow_revert': True})
