@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_revokeRole(fn_isolation, contracts, users, roles, admin, oracles):
+def test_revokeRole(fn_isolation, contracts, users, roles, admin):
     uni_iotx, iotx_clear, iotx_staking = contracts[1], contracts[2], contracts[3]
 
     # ---Happy path testing---
