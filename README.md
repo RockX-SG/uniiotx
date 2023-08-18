@@ -132,16 +132,34 @@ add the `--network iotex-testnet-fork` flag. For example: `brownie test --networ
 
 For further information, please visit the [Brownie Writing Unit Tests](https://eth-brownie.readthedocs.io/en/stable/tests-pytest-intro.html) websites.
 
-### Deployed Contracts
-The contracts of this project depends on the [SystemStaking](https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol) contract. 
+### Contract Deployment
+This project, essential for completing the full business process cycle, relies on the [SystemStaking](https://github.com/iotexproject/iip13-contracts/blob/main/src/SystemStaking.sol) contract.
+
+The contracts for this project, specifically UniIOTX, IOTXClear,  and IOTXStaking contracts, are upgradable. They employ the [transparent proxy pattern](https://docs.openzeppelin.com/contracts/4.x/api/proxy#TransparentUpgradeableProxy).
+
+#### Deploying Contracts
+The directory [scripts/deploy](https://github.com/RockX-SG/uniiotx/tree/main/scripts/deploy) houses scripts needed for the initial contract deployment.
+
+Here are the convenient commands for deploying contracts:
+- On the local Ganache network: `brownie run scripts/deploy/testnet.py`
+- On the IoTeX Testnet: `brownie run scripts/deploy/testnet.py  --network=iotex-testnet`
+
+#### Upgrading Contracts
+The directory [scripts/upgrade](https://github.com/RockX-SG/uniiotx/tree/main/scripts/upgrade) contains scripts for contract upgrades.
+
+Here are the convenient commands for upgrading contracts on the IoTeX Testnet:
+- [UniIOTX](https://testnet.iotexscan.io/address/0x956a03ecEb344eA15A6CbE8949088992fAD88628#transactions): `brownie run scripts/upgrade/testnet_UniIOTX.py  --network=iotex-testnet`
+- [IOTXClear](https://testnet.iotexscan.io/address/0x4DC32Ad7BffAF50434b12195D3b59CD66601335D#transactions): `brownie run scripts/upgrade/testnet_IOTXClear.py  --network=iotex-testnet`
+- [IOTXStaking](https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions): `brownie run scripts/upgrade/testnet_IOTXStaking.py  --network=iotex-testnet`
+
+#### Deployed Contracts
 The addresses of the contracts deployed on the IoTeX Testnet are as follows:
 - [SystemStaking](https://testnet.iotexscan.io/address/0x52ab0fe2c3a94644de0888a3ba9ea1443672e61f#transactions): 0x52ab0fe2c3a94644de0888a3ba9ea1443672e61f 
 - [UniIOTX](https://testnet.iotexscan.io/address/0x956a03ecEb344eA15A6CbE8949088992fAD88628#transactions): 0x956a03ecEb344eA15A6CbE8949088992fAD88628
 - [IOTXClear](https://testnet.iotexscan.io/address/0x4DC32Ad7BffAF50434b12195D3b59CD66601335D#transactions): 0x4DC32Ad7BffAF50434b12195D3b59CD66601335D
 - [IOTXStaking](https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions): 0xa479659F378d54168CD7859f5025133382EdB3C5
 
-Please note that UniIOTX, IOTXClear and IOTXStaking contracts are upgradable. They employ the [transparent proxy pattern](https://docs.openzeppelin.com/contracts/4.x/api/proxy#TransparentUpgradeableProxy).
-The addresses provided above represent their respective transparent proxy addresses.
+The addresses for UniIOTX, IOTXClear, and IOTXStaking correspond to their respective transparent proxy addresses.
 
 ### Error Codes from Contracts
 1. SYS001: INACTIVE_BUCKET_TYPE
