@@ -61,6 +61,14 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
     }
 
     /**
+     * @dev This function burns the specified quantity of uniIOTXs for the specified account
+     */
+    function burnFrom(address account, uint256 amount) public override onlyRole(ROLE_MINTER) {
+        _spendAllowance(account, _msgSender(), amount);
+        _burn(account, amount);
+    }
+
+    /**
      * @dev This function mints the specified quantity of uniIOTXs for the 'MINTER'
      */
     function mint(address to, uint amount) public onlyRole(ROLE_MINTER) {
