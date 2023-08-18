@@ -54,14 +54,15 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
     }
 
     /**
-     * @dev This function burns the specified quantity of uniIOTXs for the 'MINTER'
+     * @dev This function destroys 'amount' uniIOTXs from the caller.
      */
     function burn(uint amount) public override onlyRole(ROLE_MINTER) {
         _burn(_msgSender(), amount);
     }
 
     /**
-     * @dev This function burns the specified quantity of uniIOTXs for the specified account
+     * @dev This function destroys 'amount' uniIOTXs from 'account', deducting from the caller's allowance and
+     * reducing the total supply.
      */
     function burnFrom(address account, uint256 amount) public override onlyRole(ROLE_MINTER) {
         _spendAllowance(account, _msgSender(), amount);
@@ -69,10 +70,10 @@ contract UniIOTX is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, E
     }
 
     /**
-     * @dev This function mints the specified quantity of uniIOTXs for the 'MINTER'
+     * @dev This function creates 'amount' uniIOTXs and assigns them to 'account', increasing the total supply.
      */
-    function mint(address to, uint amount) public onlyRole(ROLE_MINTER) {
-        _mint(to, amount);
+    function mint(address account, uint amount) public onlyRole(ROLE_MINTER) {
+        _mint(account, amount);
     }
 
     /**
