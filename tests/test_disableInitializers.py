@@ -1,6 +1,3 @@
-import pytest
-from web3 import Web3
-from pathlib import Path
 import brownie
 from brownie import SystemStaking, UniIOTX, IOTXClear, IOTXStaking, accounts, Contract, project, config
 
