@@ -4,11 +4,11 @@ To-Do: This document is awaiting perfection.
 
 ## Backgrounds
 
-## Business Lifecycle
-![business_lifecycle](./business_lifecycle.png) <br>
-
 ## System Architecture and Context
 ![architecture_context](./architecture_context.png) <br>
+
+## Business Lifecycle
+![business_lifecycle](./business_lifecycle.png) <br>
 
 ## Business Proces: Depositing IOTXs
 ![business_process_deposit](./business_process_deposit.png) <br>
