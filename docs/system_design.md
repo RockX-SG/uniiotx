@@ -75,3 +75,11 @@ The Oracle service collaborates with the IOTXStaking and IOTXClear contracts to 
 ![business_process_redeem](./business_process_redeem.png) <br>
 
 ## References
+- [The IoTeX Network](https://iotex.io/)
+- [Roll-DPoS Consensus Mechanism](https://res.cloudinary.com/dokc3pa1x/image/upload/v1559623484/Research%20Paper/Academic_Paper_Yellow_Paper.pdf?ref=iotex.io)
+- [Staking on IoTeX](https://stake.iotex.io/?ref=iotex.io)
+- [Delegates on IoTeX](https://delegates.iotex.io/introduction/what-is-a-delegate)
+- [IIP-13: Represent Staking Buckets As Non-fungible Tokens](https://community.iotex.io/t/iip-13-represent-staking-buckets-as-non-fungible-tokens/10262?ref=iotex.io)
+- [SystemStaking Contract for IIP-13](https://github.com/iotexproject/iip13-contracts)
+- [Liquid Staking Explained by Lido](https://docs.lido.fi/?ref=iotex.io#liquid-staking)
+- [RockX ETH2.0 Liquid Staking Explained](https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf)
