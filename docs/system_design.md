@@ -6,8 +6,8 @@ This document serves the following purposes:
 2. It outlines the system-level architecture and contract context.
 3. It describes the lifecycle of the liquid staking business.
 4. It elaborates on two crucial business processes: 
-- The process of depositing IOTX
-- The process of redeeming IOTX
+   - The process of depositing IOTX
+   - The process of redeeming IOTX
 
 ## Backgrounds
 The following background information is compiled from official materials. For more details, please refer to the relevant websites. 
