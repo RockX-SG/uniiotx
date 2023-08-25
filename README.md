@@ -1,5 +1,5 @@
 # Contracts of RockX Liquid Staking on IoTeX
-This repository maintains the smart contract code for liquid staking on the [IoTeX Network](https://stake.IOTX.io/).
+This repository maintains the smart contract code for liquid staking on the [IoTeX Network](https://iotex.io/).
 
 The primary focus of the content herein is on the development, testing and deployment of contracts.
 
