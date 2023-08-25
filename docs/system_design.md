@@ -3,6 +3,32 @@ To-Do: This document is awaiting perfection.
 ## Introduction
 
 ## Backgrounds
+The following background information is compiled from official materials. For more details, please refer to the relevant websites. 
+### The IoTeX Network
+[IoTeX](https://iotex.io/) is a blockchain network that employs [Roll-DPoS](https://res.cloudinary.com/dokc3pa1x/image/upload/v1559623484/Research%20Paper/Academic_Paper_Yellow_Paper.pdf?ref=iotex.io) 
+consensus mechanism, which enhances the decentralization and security of the IoTeX Network without compromising 
+performance by randomly selecting 24 out of the top 36 community-voted Delegates to mine every hour.
+
+### Staking IOTX
+Token-holders can [Stake](https://stake.iotex.io/?ref=iotex.io) IOTX and vote for [Delegates](https://delegates.iotex.io/introduction/what-is-a-delegate) to support and expand the network.
+This not only strengthens the overall security of the IoTeX Network, but also provides token-holders with significant returns on their staked IOTX.
+
+To start staking you need to decide on several factors:
+- Delegate: Each Delegate pay different amounts of rewards. You can switch your vote to another Delegate at any time.
+- Amount: This determines the amount of IOTX you wish to stake/vote.
+- Stake Duration: This is the amount of time you wish to stake your coins (between 0-1050 days).
+- Stake-Lock: When you turn stake-lock ON, you pause your lock duration countdown until you decide to turn it OFF and the countdown resumes.
+  
+Note: Once the stake duration has expired, the unstaking process takes an additional 3 days. After this you may withdraw your coins to your wallet.
+
+### Liquid Staking
+[IIP-13](https://community.iotex.io/t/iip-13-represent-staking-buckets-as-non-fungible-tokens/10262?ref=iotex.io)(IoTeX Improvement Proposal 13)
+proposes to natively support the representation of staking buckets as Non-fungible Tokens(NFT) and clears the way for [Liquid Staking](https://docs.lido.fi/?ref=iotex.io#liquid-staking) dApps and interest-earning 
+derivatives to flourish in the IoTeX ecosystem.
+
+[SystemStaking](https://github.com/iotexproject/iip13-contracts) is the contract implemented for IIP-13. It issues an 
+NFT token for each bucket creation. Owner of the NFT token could update/transfer/unstake the corresponding bucket. 
+The buckets created in this contract will be counted in the staking procotol in iotex-core.
 
 ## System Architecture and Context
 This project is based on the IoTex network. It entails multiple collaborative roles and modules where smart contracts are crucial.
