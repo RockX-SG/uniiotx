@@ -49,6 +49,9 @@ rewards are automatically compounded. In the unlocked phase, investors can claim
 The manager's fee is deducted from the investors' shared rewards during the locked phase, 
 a procedure that is regulated by the IOTXStaking contract.
 
+When investors deposit or redeem IOTX, or when the manager fee is withdrawn, the IOTXStaking contract ensures a constant exchange ratio to prevent user arbitrage.
+For a mathematical proof, please refer to this document: [RockX ETH2.0 Liquid Staking Explained](https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf)
+
 ![business_lifecycle](./business_lifecycle.png) <br>
 
 ## Business Proces: Depositing IOTXs
