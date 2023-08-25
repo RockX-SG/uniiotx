@@ -1,9 +1,17 @@
 # Design of RockX Liquid Staking Contracts on IoTeX
-To-Do: This document is awaiting perfection.
+
 ## Introduction
+This document serves the following purposes:
+1. It provides an overview of the technical background.
+2. It outlines the system-level architecture and contract context.
+3. It describes the lifecycle of the liquid staking business.
+4. It elaborates on two crucial business processes: 
+- The process of depositing IOTX
+- The process of redeeming IOTX
 
 ## Backgrounds
 The following background information is compiled from official materials. For more details, please refer to the relevant websites. 
+
 ### The IoTeX Network
 [IoTeX](https://iotex.io/) is a blockchain network that employs [Roll-DPoS](https://res.cloudinary.com/dokc3pa1x/image/upload/v1559623484/Research%20Paper/Academic_Paper_Yellow_Paper.pdf?ref=iotex.io) 
 consensus mechanism, which enhances the decentralization and security of the IoTeX Network without compromising 
