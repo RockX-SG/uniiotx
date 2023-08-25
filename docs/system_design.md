@@ -1,4 +1,4 @@
-# Design of IoTeX Liquid Staking Contracts
+# Design of RockX Liquid Staking Contracts on IoTeX
 To-Do: This document is awaiting perfection.
 ## Introduction
 
@@ -28,7 +28,7 @@ derivatives to flourish in the IoTeX ecosystem.
 
 [SystemStaking](https://github.com/iotexproject/iip13-contracts) is the contract implemented for IIP-13. It issues an 
 NFT token for each bucket creation. Owner of the NFT token could update/transfer/unstake the corresponding bucket. 
-The buckets created in this contract will be counted in the staking procotol in iotex-core.
+The buckets created in this contract will be counted in the staking protocol in iotex-core.
 
 ## System Architecture and Context
 This project is based on the IoTex network. It entails multiple collaborative roles and modules where smart contracts are crucial.
