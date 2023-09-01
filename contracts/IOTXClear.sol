@@ -422,9 +422,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         require(info.principal >= amount, "USR004");  // Insufficient accounted principal
 
         // Transfer principal
-        payable(recipient).sendValue(amount);
         info.principal -= amount;
         accountedBalance -= amount;
+        payable(recipient).sendValue(amount);
 
         emit PrincipalClaimed(msg.sender, recipient, amount);
     }
@@ -441,9 +441,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         require(info.reward >= amount, "USR005");  // Insufficient accounted reward
 
         // Transfer reward
-        payable(recipient).sendValue(amount);
         info.reward -= amount;
         accountedBalance -= amount;
+        payable(recipient).sendValue(amount);
 
         emit RewardClaimed(msg.sender, recipient, amount);
     }
