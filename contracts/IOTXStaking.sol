@@ -182,6 +182,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         address _uniIOTX,
         address _iotxClear,
         address _oracle,
+        address pauser,
         uint _startAmount,
         uint _commonRatio,
         uint _sequenceLength,
@@ -195,7 +196,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         // Roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(ROLE_FEE_MANAGER, msg.sender);
-        _setupRole(ROLE_PAUSER, msg.sender);
+        _setupRole(ROLE_PAUSER, pauser);
         _setupRole(ROLE_ORACLE, _oracle);
 
         // Collaborative contracts

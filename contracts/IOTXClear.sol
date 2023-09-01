@@ -178,7 +178,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     function initialize(
         address _systemStaking,
         address _iotxStaking,
-        address _oracle
+        address _oracle,
+        address pauser
     ) public initializer  {
         // Init
         __Pausable_init();
@@ -187,7 +188,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
         // Roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(ROLE_PAUSER, msg.sender);
+        _setupRole(ROLE_PAUSER, pauser);
         _setupRole(ROLE_STAKER, _iotxStaking);
         _setupRole(ROLE_ORACLE, _oracle);
 
