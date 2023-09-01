@@ -515,15 +515,10 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
 
     /**
      * @dev This function distributes recently accrued rewards from delegates among users and the manager.
-     * It also automatically reinvests the users' share into totalStaking for upcoming staking activities.
+     * It also automatically reinvests the users' share into totalPending for upcoming staking activities.
      */
     function updateReward() external onlyRole(ROLE_ORACLE) {
-        uint reward = _syncReward();
-        if ( reward > 0 ){
-            uint userReward = _splitReward(reward);
-            _compoundReward(userReward);
-            emit RewardUpdated(reward);
-        }
+       _updateReward();
     }
 
 
@@ -758,11 +753,13 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @dev This function calculates uniIOTX amount based on IOTX amount for mint and burn operation,
-     * aiming to keep the exchange ratio invariant to avoid user arbitrage.
+     * @dev This function calculates uniIOTX amount based on IOTX amount for mint and burn operation after updating
+     * rewards, aiming to keep the exchange ratio invariant to avoid user arbitrage.
      * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
      */
-    function _convertIotxToUniIOTX(uint amountIOTX) internal view returns (uint uniIOTXAmount) {
+    function _convertIotxToUniIOTX(uint amountIOTX) internal returns (uint uniIOTXAmount) {
+        _updateReward();
+
         uint totalSupply = IUniIOTX(uniIOTX).totalSupply();
         uint currentReserveAmt = _currentReserve();
         uniIOTXAmount = DEFAULT_EXCHANGE_RATIO * amountIOTX;
@@ -788,6 +785,19 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      */
     function _currentReserve() internal view returns(uint) {
         return totalPending + totalStaked;
+    }
+
+    /**
+     * @dev This function distributes recently accrued rewards from delegates among users and the manager.
+     * It also automatically reinvests the users' share into totalPending for upcoming staking activities.
+     */
+    function _updateReward() internal {
+        uint reward = _syncReward();
+        if ( reward > 0 ){
+            uint userReward = _splitReward(reward);
+            _compoundReward(userReward);
+            emit RewardUpdated(reward);
+        }
     }
 
     /**
