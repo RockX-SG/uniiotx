@@ -96,7 +96,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * 3. It increases when the manager fee is withdrawn.
      * 4. It decreases when pending IOTXs are staked with delegates.
      */
-    uint public totalPending;
+    uint public accountedPending;
 
     /**
      * @dev The total staked IOTXs fluctuates due to several factors:
@@ -262,7 +262,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @dev The returned amount is determined by the following contributions:
      * 1. User deposits/stakes their principal.
      * 2. Rewards generated from delegation, excluding manager rewards, are added to the reserve.
-     * 3. The manager fee is withdrawn and included in the totalPending amount.
+     * 3. The manager fee is withdrawn and included in the accountedPending amount.
      * 4. When users make a 'redeem' call, the totalStaked amount decreases.
      * 5. The Oracle service should regularly call the 'updateReward' function to account for new rewards.
      * @return The current reserve of IOTXs in our liquid staking protocol.
@@ -317,7 +317,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      */
     function getTotalPending() external view returns (uint) {
         (uint pendingUserReward, ) = _calcPendingReward();
-        return totalPending + pendingUserReward;
+        return accountedPending + pendingUserReward;
     }
 
     /**
@@ -526,7 +526,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
 
     /**
      * @dev This function distributes recently accrued rewards from delegates among users and the manager.
-     * It also automatically reinvests the users' share into totalPending for upcoming staking activities.
+     * It also automatically reinvests the users' share into accountedPending for upcoming staking activities.
      */
     function updateReward() external onlyRole(ROLE_ORACLE) {
        _updateReward();
@@ -575,7 +575,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     /**
      * @dev This function handles manager reward in this way:
      * 1. Mint uniIOTXs to the given recipient based on the given IOTX amount;
-     * 2. Shift the corresponding amount of accountedManagerReward to totalPending.
+     * 2. Shift the corresponding amount of accountedManagerReward to accountedPending.
      */
     function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
         require(amount <= accountedManagerReward, "USR006");  // Insufficient accounted manager reward
@@ -584,7 +584,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         IUniIOTX(uniIOTX).mint(recipient, toMint);
 
         accountedManagerReward -= amount;
-        totalPending += amount;
+        accountedPending += amount;
 
         emit ManagerFeeWithdrawed(amount, toMint, recipient);
     }
@@ -608,7 +608,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         IUniIOTX(uniIOTX).mint(msg.sender, toMint);
         minted = toMint;
 
-        totalPending += msg.value;
+        accountedPending += msg.value;
 
         emit Minted(msg.sender, minted);
     }
@@ -633,7 +633,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      */
     function _stakeAndMergeAtSubLevel() internal {
         uint nextLevel = sequenceLength-2;
-        while (totalPending >= startAmount) {
+        while (accountedPending >= startAmount) {
             nextLevel = _tryStake(nextLevel);
         }
     }
@@ -681,7 +681,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         }
 
         // Update fund status
-        totalPending -= totalAmount;
+        accountedPending -= totalAmount;
         totalStaked  += totalAmount;
         accountedBalance -= totalAmount;
 
@@ -694,7 +694,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      */
     function _getStakeAmountAndCount(uint level) internal view returns(uint amount, uint count) {
         amount = startAmount * (commonRatio**level);
-        count = totalPending / amount;
+        count = accountedPending / amount;
     }
 
     /**
@@ -796,19 +796,19 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      */
     function _currentReserve() internal view returns(uint) {
         (uint pendingUserReward, ) = _calcPendingReward();
-        return totalPending + totalStaked + pendingUserReward;
+        return accountedPending + totalStaked + pendingUserReward;
     }
 
     /**
      * @dev This function computes and provides the accounted reserved IOTXs.
      */
     function _accountedReserve() internal view returns(uint) {
-        return totalPending + totalStaked;
+        return accountedPending + totalStaked;
     }
 
     /**
      * @dev This function distributes recently accrued rewards from delegates among users and the manager.
-     * It also automatically reinvests the users' share into totalPending for upcoming staking activities.
+     * It also automatically reinvests the users' share into accountedPending for upcoming staking activities.
      */
     function _updateReward() internal {
         uint reward = _syncReward();
@@ -840,10 +840,10 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @dev This function incorporates the specified reward amount into the 'totalPending' value.
+     * @dev This function incorporates the specified reward amount into the 'accountedPending' value.
      */
     function _compoundReward(uint amount) internal {
-        totalPending += amount;
+        accountedPending += amount;
     }
 
     /**
