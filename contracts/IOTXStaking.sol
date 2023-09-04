@@ -252,7 +252,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
 
     /**
      * @dev The factors that affect the returned result are the same as those of the 'currentReserve' function.
-     * @return ratio The exchange ratio of uniIOTX to IOTX, multiplied by 1e18.
+     * @return ratio The current exchange ratio of uniIOTX to IOTX, multiplied by 1e18.
      */
     function exchangeRatio() external view returns (uint ratio) {
         return _exchangeRatio();
@@ -268,7 +268,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @return The current reserve of IOTXs in our liquid staking protocol.
      */
     function currentReserve() external view returns(uint) {
-        return _accountedReserve();
+        return _currentReserve();
     }
 
     /**
@@ -313,10 +313,11 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @return The total amount of IOTX awaiting staking.
+     * @return The total amount of IOTX awaiting staking, including the unaccounted user reward.
      */
     function getTotalPending() external view returns (uint) {
-        return totalPending;
+        (uint userRewardIncr, ) = _rewardIncr();
+        return totalPending + userRewardIncr;
     }
 
     /**
@@ -334,17 +335,19 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @return The amount of the user's shared reward that has been automatically compounded for upcoming staking requests.
+     * @return The amount of the user's shared reward, including the unaccounted portion.
      */
     function getUserReward() external view returns (uint) {
-        return accountedUserReward;
+        (uint userRewardIncr, ) = _rewardIncr();
+        return accountedUserReward + userRewardIncr;
     }
 
     /**
-     * @return The amount of the manager's reward that is available for upcoming withdrawal.
+     * @return The amount of the manager's reward, including the unaccounted portion.
      */
     function getManagerReward() external view returns (uint) {
-        return accountedManagerReward;
+        (, uint managerFeeIncr) = _rewardIncr();
+        return accountedManagerReward + managerFeeIncr;
     }
 
     /**
@@ -778,7 +781,15 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         if (uniIOTXAmount == 0) {
             return DEFAULT_EXCHANGE_RATIO * MULTIPLIER;
         }
-        ratio = _accountedReserve() * MULTIPLIER / uniIOTXAmount;
+        ratio = _currentReserve() * MULTIPLIER / uniIOTXAmount;
+    }
+
+    /**
+     * @dev This function computes and provides the current reserved IOTXs.
+     */
+    function _currentReserve() internal view returns(uint) {
+        (uint userRewardIncr, ) = _rewardIncr();
+        return totalPending + totalStaked + userRewardIncr;
     }
 
     /**
@@ -826,6 +837,15 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      */
     function _compoundReward(uint amount) internal {
         totalPending += amount;
+    }
+
+    /**
+     * @dev This function returns the unaccounted user reward and manager fee increment.
+     */
+    function _rewardIncr() internal view returns(uint userRewardIncr, uint managerFeeIncr) {
+        uint rewardIncr = address(this).balance - accountedBalance;
+        uint feeIncr = rewardIncr * managerFeeShares / 1000;
+        return (rewardIncr - feeIncr, feeIncr);
     }
 }
 
