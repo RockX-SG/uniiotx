@@ -268,7 +268,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @return The current reserve of IOTXs in our liquid staking protocol.
      */
     function currentReserve() external view returns(uint) {
-        return _currentReserve();
+        return _accountedReserve();
     }
 
     /**
@@ -762,7 +762,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         _updateReward();
 
         uint totalSupply = IUniIOTX(uniIOTX).totalSupply();
-        uint currentReserveAmt = _currentReserve();
+        uint currentReserveAmt = _accountedReserve();
         uniIOTXAmount = DEFAULT_EXCHANGE_RATIO * amountIOTX;
 
         if (currentReserveAmt > 0) { // avert division overflow
@@ -778,13 +778,13 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         if (uniIOTXAmount == 0) {
             return DEFAULT_EXCHANGE_RATIO * MULTIPLIER;
         }
-        ratio = _currentReserve() * MULTIPLIER / uniIOTXAmount;
+        ratio = _accountedReserve() * MULTIPLIER / uniIOTXAmount;
     }
 
     /**
-     * @dev This function computes and provides the current reserved IOTXs.
+     * @dev This function computes and provides the accounted reserved IOTXs.
      */
-    function _currentReserve() internal view returns(uint) {
+    function _accountedReserve() internal view returns(uint) {
         return totalPending + totalStaked;
     }
 
