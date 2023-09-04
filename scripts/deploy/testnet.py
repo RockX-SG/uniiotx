@@ -70,13 +70,14 @@ def main():
         uni_iotx_transparent,
         iotx_clear_transparent,
         oracle,
+        admin,
         start_amount,
         common_ratio,
         sequence_length,
         stake_duration,
         {'from': admin}
     )
-    iotx_clear_transparent.initialize(system_staking, iotx_staking_transparent, oracle, {'from': admin})
+    iotx_clear_transparent.initialize(system_staking, iotx_staking_transparent, oracle, admin, {'from': admin})
 
     iotx_staking_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
     iotx_staking_transparent.setGlobalDelegate(delegate, {'from': oracle})
@@ -86,7 +87,7 @@ def main():
     role_oracle = w3.keccak(text='ROLE_ORACLE')
     oracle_xie = "0x912AD2282799C5d62334017578418471f5aF5353"
     iotx_staking_transparent.grantRole(role_oracle, oracle_xie, {'from': admin})
-    iotx_clear_transparent.grantRole((role_oracle, oracle_xie, {'from': admin}))
+    iotx_clear_transparent.grantRole(role_oracle, oracle_xie, {'from': admin})
 
 
 

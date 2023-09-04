@@ -31,6 +31,7 @@ def test_disableInitializers(proxy, fund, owner, deployer, admin, oracles, deleg
             uni_iotx_transparent,
             iotx_clear_transparent,
             oracles[0],
+            admin,
             start_amount,
             common_ratio,
             sequence_length,
@@ -38,7 +39,7 @@ def test_disableInitializers(proxy, fund, owner, deployer, admin, oracles, deleg
             {'from': admin}
         )
     with brownie .reverts("Initializable: contract is already initialized"):
-        iotx_clear.initialize(system_staking, iotx_staking_transparent, oracles[0], {'from': admin})
+        iotx_clear.initialize(system_staking, iotx_staking_transparent, oracles[0], admin, {'from': admin})
 
     uni_iotx_transparent.initialize(iotx_staking_transparent, {'from': admin})
     iotx_staking_transparent.initialize(
@@ -46,13 +47,14 @@ def test_disableInitializers(proxy, fund, owner, deployer, admin, oracles, deleg
         uni_iotx_transparent,
         iotx_clear_transparent,
         oracles[0],
+        admin,
         start_amount,
         common_ratio,
         sequence_length,
         stake_duration,
         {'from': admin}
     )
-    iotx_clear_transparent.initialize(system_staking, iotx_staking_transparent, oracles[0], {'from': admin})
+    iotx_clear_transparent.initialize(system_staking, iotx_staking_transparent, oracles[0], admin, {'from': admin})
 
     iotx_staking_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
     iotx_staking_transparent.setGlobalDelegate(delegates[0], {'from': oracles[0]})
@@ -65,6 +67,7 @@ def test_disableInitializers(proxy, fund, owner, deployer, admin, oracles, deleg
             uni_iotx,
             iotx_clear,
             oracles[0],
+            admin,
             start_amount,
             common_ratio,
             sequence_length,
@@ -72,4 +75,4 @@ def test_disableInitializers(proxy, fund, owner, deployer, admin, oracles, deleg
             {'from': admin}
         )
     with brownie .reverts("Initializable: contract is already initialized"):
-        iotx_clear_transparent.initialize(system_staking, iotx_staking, oracles[0], {'from': admin})
+        iotx_clear_transparent.initialize(system_staking, iotx_staking, oracles[0], admin, {'from': admin})

@@ -131,13 +131,14 @@ def contracts(proxy, fund, owner, deployer, admin, oracles, delegates, stake_dur
         uni_iotx_transparent,
         iotx_clear_transparent,
         oracles[0],
+        admin,
         start_amount,
         common_ratio,
         sequence_length,
         stake_duration,
         {'from': admin}
     )
-    iotx_clear_transparent.initialize(system_staking, iotx_staking_transparent, oracles[0], {'from': admin})
+    iotx_clear_transparent.initialize(system_staking, iotx_staking_transparent, oracles[0], admin, {'from': admin})
 
     iotx_staking_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
     iotx_staking_transparent.setGlobalDelegate(delegates[0], {'from': oracles[0]})

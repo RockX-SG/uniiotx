@@ -70,13 +70,14 @@ def main():
         uni_iotx_transparent,
         iotx_clear_transparent,
         oracle,
+        admin,
         start_amount,
         common_ratio,
         sequence_length,
         stake_duration,
         {'from': admin}
     )
-    iotx_clear_transparent.initialize(system_staking, iotx_staking_transparent, oracle, {'from': admin})
+    iotx_clear_transparent.initialize(system_staking, iotx_staking_transparent, oracle, admin, {'from': admin})
 
     iotx_staking_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
     iotx_staking_transparent.setGlobalDelegate(delegate, {'from': oracle})
