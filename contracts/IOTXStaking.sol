@@ -90,7 +90,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     uint public accountedBalance;
 
     /**
-     * @dev The total pending IOTXs fluctuates due to several factors:
+     * @dev The accounted pending IOTXs fluctuates due to several factors:
      * 1. It increases when users deposit IOTXs for liquid staking service.
      * 2. It increases when users' rewards are compounded..
      * 3. It increases when the manager fee is withdrawn.
