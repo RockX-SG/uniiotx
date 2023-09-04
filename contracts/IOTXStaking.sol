@@ -320,7 +320,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @return The total amount of IOTX awaiting staking, including the unaccounted user reward.
+     * @return The total amount of IOTX awaiting staking, including the pending user reward.
      */
     function getTotalPending() external view returns (uint) {
         (uint pendingUserReward, ) = _calcPendingReward();
@@ -342,7 +342,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @return The amount of the user's shared reward, including the unaccounted portion.
+     * @return The amount of the user's shared reward, including the pending portion.
      */
     function getUserReward() external view returns (uint) {
         (uint userRewardIncr, ) = _calcPendingReward();
@@ -350,7 +350,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @return The amount of the manager's reward, including the unaccounted portion.
+     * @return The amount of the manager's reward, including the pending portion.
      */
     function getManagerReward() external view returns (uint) {
         (, uint pendingManagerReward) = _calcPendingReward();
