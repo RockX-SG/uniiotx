@@ -316,8 +316,8 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @return The total amount of IOTX awaiting staking, including the unaccounted user reward.
      */
     function getTotalPending() external view returns (uint) {
-        (uint userRewardIncr, ) = _rewardIncr();
-        return totalPending + userRewardIncr;
+        (uint pendingUserReward, ) = _calcPendingReward();
+        return totalPending + pendingUserReward;
     }
 
     /**
@@ -338,7 +338,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @return The amount of the user's shared reward, including the unaccounted portion.
      */
     function getUserReward() external view returns (uint) {
-        (uint userRewardIncr, ) = _rewardIncr();
+        (uint userRewardIncr, ) = _calcPendingReward();
         return accountedUserReward + userRewardIncr;
     }
 
@@ -346,8 +346,8 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @return The amount of the manager's reward, including the unaccounted portion.
      */
     function getManagerReward() external view returns (uint) {
-        (, uint managerFeeIncr) = _rewardIncr();
-        return accountedManagerReward + managerFeeIncr;
+        (, uint pendingManagerReward) = _calcPendingReward();
+        return accountedManagerReward + pendingManagerReward;
     }
 
     /**
@@ -795,8 +795,8 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @dev This function computes and provides the current reserved IOTXs.
      */
     function _currentReserve() internal view returns(uint) {
-        (uint userRewardIncr, ) = _rewardIncr();
-        return totalPending + totalStaked + userRewardIncr;
+        (uint pendingUserReward, ) = _calcPendingReward();
+        return totalPending + totalStaked + pendingUserReward;
     }
 
     /**
@@ -847,12 +847,12 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
-     * @dev This function returns the unaccounted user reward and manager fee increment.
+     * @dev This function calculates the pending reward that has not yet been synchronized and accounted for.
      */
-    function _rewardIncr() internal view returns(uint userRewardIncr, uint managerFeeIncr) {
-        uint rewardIncr = address(this).balance - accountedBalance;
-        uint feeIncr = rewardIncr * managerFeeShares / 1000;
-        return (rewardIncr - feeIncr, feeIncr);
+    function _calcPendingReward() internal view returns(uint pendingUserReward, uint pendingManagerReward) {
+        uint pendingReward = address(this).balance - accountedBalance;
+        uint pendingManagerReward = pendingReward * managerFeeShares / 1000;
+        return (pendingReward - pendingManagerReward, pendingManagerReward);
     }
 }
 
