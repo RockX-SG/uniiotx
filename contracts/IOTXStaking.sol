@@ -851,8 +851,11 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      */
     function _calcPendingReward() internal view returns(uint pendingUserReward, uint pendingManagerReward) {
         uint pendingReward = address(this).balance - accountedBalance;
-        uint pendingManagerReward = pendingReward * managerFeeShares / 1000;
-        return (pendingReward - pendingManagerReward, pendingManagerReward);
+        if (pendingReward > 0) {
+            uint pendingManagerReward = pendingReward * managerFeeShares / 1000;
+            return (pendingReward - pendingManagerReward, pendingManagerReward);
+        }
+        return (0, 0);
     }
 }
 
