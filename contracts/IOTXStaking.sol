@@ -313,6 +313,13 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
+     * @return the pending reward that has not yet been synchronized and accounted for.
+     */
+    function getPendingReward() external view returns(uint) {
+        return address(this).balance - accountedBalance;
+    }
+
+    /**
      * @return The total amount of IOTX awaiting staking, including the unaccounted user reward.
      */
     function getTotalPending() external view returns (uint) {
