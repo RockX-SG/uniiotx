@@ -351,6 +351,13 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     }
 
     /**
+     * @return The amount of the user's shared reward that has been automatically compounded for upcoming staking requests.
+     */
+    function getCompoundedAmount() external view returns (uint) {
+        return accountedUserReward;
+    }
+
+    /**
      * @dev If an invalid tokenQueueIndex is given, a zero value will be returned.
      * @param tokenQueueIndex The token queue index falls within the range of [0, sequenceLength).
      * @return The length of the queried token queue.
