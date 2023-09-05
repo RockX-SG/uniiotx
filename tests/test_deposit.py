@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, deadline):
+def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, delegates, deadline):
     system_staking, uni_iotx, iotx_staking = contracts[0], contracts[1], contracts[3]
 
     # ---Happy path testing---
@@ -103,6 +103,26 @@ def test_deposit(fn_isolation, contracts, stake_amounts, users, admin, deadline)
         amt, dur, _, _, delegate = system_staking.bucketOf(token_id)
         assert (amt, dur, delegate) == (stake_amounts[2], iotx_staking.getStakeDuration(), iotx_staking.getGlobalDelegate())
         assert system_staking.ownerOf(token_id) == iotx_staking
+
+    # The pending reward should be updated prior to the minting of uniIOTX.
+    total_deposited = stake_amounts[2] * 10
+    assert iotx_staking.getPendingReward() == 0
+    assert uni_iotx.totalSupply() == user_balance
+    assert iotx_staking.currentReserve() == total_deposited
+    assert iotx_staking.exchangeRatio() == 1e18
+    amt_reward = 10000
+    delegates[0].transfer(iotx_staking, amt_reward)
+    manager_fee = iotx_staking.getManagerFeeShares() * amt_reward / 1000
+    user_reward = amt_reward - manager_fee
+    assert iotx_staking.getPendingReward() == amt_reward
+    assert uni_iotx.totalSupply() == user_balance
+    assert iotx_staking.currentReserve() == total_deposited + user_reward
+    assert iotx_staking.exchangeRatio() == 1090000000000000000
+    iotx_staking.deposit(deadline, {'from': users[0], 'value': stake_amounts[2], 'allow_revert': True})
+    assert iotx_staking.getPendingReward() == 0
+    assert iotx_staking.currentReserve() == total_deposited + user_reward + stake_amounts[2]
+    assert uni_iotx.totalSupply() == user_balance + 9174
+    assert iotx_staking.exchangeRatio() == 1090003114294612270
 
     # ---Revert path testing---
 
