@@ -6,12 +6,20 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracles, deadline, ui
 
     # ---Happy path testing---
 
+    assert iotx_staking.getPendingReward() == 0
+    assert iotx_staking.currentReserve() == 0
+    assert uni_iotx.totalSupply() == 0
+    assert iotx_staking.exchangeRatio() == 1e18
+
     amt = iotx_staking.getRedeemAmountBase()
     for i in range(0, 2):
         iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     amt_reward = 100
     delegates[0].transfer(iotx_staking, amt_reward)
     assert iotx_staking.getPendingReward() == amt_reward
+    assert iotx_staking.currentReserve() == 20090
+    assert uni_iotx.totalSupply() == 20000
+    assert iotx_staking.exchangeRatio() == 1004500000000000000
 
     uni_iotx.approve(iotx_staking, amt, {'from': users[0], 'allow_revert': True})
     tx = iotx_staking.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
@@ -28,7 +36,9 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracles, deadline, ui
     assert iotx_staking.getRedeemedTokenCount() == 1
     assert iotx_staking.getTotalStaked() == amt
     assert iotx_staking.getPendingReward() == 0
+    assert iotx_staking.currentReserve() == 10090
     assert uni_iotx.totalSupply() == 10045
+    assert iotx_staking.exchangeRatio() == 1004479840716774514
     assert uni_iotx.balanceOf(users[0]) == 10045
     assert system_staking.balanceOf(iotx_staking) == 1
     assert system_staking.ownerOf(token_id) == iotx_clear
