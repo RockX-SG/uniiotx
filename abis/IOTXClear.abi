@@ -634,6 +634,11 @@
         "internalType": "address",
         "name": "_oracle",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_pauser",
+        "type": "address"
       }
     ],
     "name": "initialize",

@@ -426,6 +426,19 @@
   },
   {
     "inputs": [],
+    "name": "getCompoundedAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getGlobalDelegate",
     "outputs": [
       {
@@ -453,6 +466,19 @@
   {
     "inputs": [],
     "name": "getManagerReward",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPendingReward",
     "outputs": [
       {
         "internalType": "uint256",
@@ -795,6 +821,11 @@
       {
         "internalType": "address",
         "name": "_oracle",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_pauser",
         "type": "address"
       },
       {
