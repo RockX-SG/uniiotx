@@ -585,6 +585,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * 2. Shift the corresponding amount of accountedManagerReward to totalPending.
      */
     function withdrawManagerFee(uint amount, address recipient) external nonReentrant onlyRole(ROLE_FEE_MANAGER)  {
+        // Update the reward to help maintain a consistent exchange ratio
+        _updateReward();
+
         require(amount <= accountedManagerReward, "USR006");  // Insufficient accounted manager reward
 
         uint toMint = _convertIotxToUniIOTX(amount);
@@ -610,6 +613,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      */
     function _mint() internal returns (uint minted) {
         accountedBalance += msg.value;
+
+        // Update the reward to help maintain a consistent exchange ratio
+        _updateReward();
 
         uint toMint = _convertIotxToUniIOTX(msg.value);
         IUniIOTX(uniIOTX).mint(msg.sender, toMint);
@@ -741,6 +747,9 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         // Check redeem condition
         require(iotxsToRedeem >= redeemAmountBase && iotxsToRedeem % redeemAmountBase == 0, "USR003");  // Invalid redeem amount
 
+        // Update the reward to help maintain a consistent exchange ratio
+        _updateReward();
+
         // Burn uniIOTXs
         uint toBurn = _convertIotxToUniIOTX(iotxsToRedeem);
         IUniIOTX(uniIOTX).burnFrom(msg.sender, toBurn);
@@ -776,8 +785,6 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
      */
     function _convertIotxToUniIOTX(uint amountIOTX) internal returns (uint uniIOTXAmount) {
-        _updateReward();
-
         uint totalSupply = IUniIOTX(uniIOTX).totalSupply();
         uint currentReserveAmt = _accountedReserve();
         uniIOTXAmount = DEFAULT_EXCHANGE_RATIO * amountIOTX;
