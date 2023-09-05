@@ -7,18 +7,19 @@ def test_currentReserve(fn_isolation, contracts, users, delegates, oracles, admi
     iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
     assert iotx_staking.currentReserve() == amt
 
-    # The rewards that have not been updated yet should not affect the current reserve.
-    # The value sent here will be considered as rewards from the delegate
+    # The current reserve should consistently reflect the most recently distributed reward
     amt_reward = 10
     delegates[0].transfer(iotx_staking, amt_reward)
-    assert iotx_staking.currentReserve() == amt
+    manager_fee = iotx_staking.getManagerFeeShares() * amt_reward / 1000
+    user_reward = amt_reward - manager_fee
+    assert iotx_staking.getPendingReward() == amt_reward
+    assert iotx_staking.currentReserve() == amt + user_reward
 
-    # The current reserve should be updated when rewards are updated.
+    # The current reserve should be finally updated when rewards are updated.
     iotx_staking.updateReward({'from': oracles[0]})
-    manager_fee = amt_reward * iotx_staking.getManagerFeeShares() / 1000
-    assert iotx_staking.currentReserve() == amt + amt_reward - manager_fee
+    assert iotx_staking.currentReserve() == amt + user_reward
 
-    # If the manager fee is withdrawn, the current reserve should decrease accordingly.
+    # If the manager fee is withdrawn, the current reserve should increase accordingly.
     iotx_staking.withdrawManagerFee(manager_fee, admin, {'from': admin})
     assert iotx_staking.currentReserve() == amt + amt_reward
 
