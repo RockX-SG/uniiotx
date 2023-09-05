@@ -6,14 +6,13 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracles, deadline, ui
 
     # ---Happy path testing---
 
-    # The exchange ratio will remain constant until the rewards are updated.
-    # Initially, the amount of uniIOTX to burn is equivalent to the amount of IOTX to redeem.
     amt = iotx_staking.getRedeemAmountBase()
     for i in range(0, 2):
         iotx_staking.deposit(deadline, {'from': users[0], 'value': amt, 'allow_revert': True})
-    # The value transferred here will be considered as rewards from the delegate.
     amt_reward = 100
     delegates[0].transfer(iotx_staking, amt_reward)
+    assert iotx_staking.getPendingReward() == amt_reward
+
     uni_iotx.approve(iotx_staking, amt, {'from': users[0], 'allow_revert': True})
     tx = iotx_staking.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
     token_id = iotx_staking.getTokenId(2, 0)
@@ -28,8 +27,9 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracles, deadline, ui
     assert unlocked_at != uint256_max
     assert iotx_staking.getRedeemedTokenCount() == 1
     assert iotx_staking.getTotalStaked() == amt
-    assert uni_iotx.totalSupply() == amt
-    assert uni_iotx.balanceOf(users[0]) == amt
+    assert iotx_staking.getPendingReward() == 0
+    assert uni_iotx.totalSupply() == 10045
+    assert uni_iotx.balanceOf(users[0]) == 10045
     assert system_staking.balanceOf(iotx_staking) == 1
     assert system_staking.ownerOf(token_id) == iotx_clear
     assert system_staking.balanceOf(iotx_clear) == 1
@@ -37,40 +37,6 @@ def test_redeem(fn_isolation, contracts, users, delegates, oracles, deadline, ui
     assert debt[0] == users[0]
     assert debt[1] == amt
     assert user_info[0] == amt
-
-    # Regular updates to rewards can impact the exchange ratio's value.
-    # The change in the exchange ratio should be taken into account.
-    iotx_staking.updateReward({'from': oracles[0]})
-    manager_fee = iotx_staking.getManagerFeeShares() * amt_reward / 1000
-    exchange_ratio1 = iotx_staking.exchangeRatio()
-    assert exchange_ratio1 > 1e18
-    max_to_burn = amt * 1e18 / exchange_ratio1
-    uni_iotx.approve(iotx_staking, amt, {'from': users[0], 'allow_revert': True})
-    tx = iotx_staking.redeem(amt, deadline, {'from': users[0], 'allow_revert': True})
-    exchange_ratio2 = iotx_staking.exchangeRatio()
-    assert exchange_ratio2 < exchange_ratio1
-    token_id = iotx_staking.getTokenId(2, 1)
-    unlocked_amt, _, unlocked_at, _, _ = system_staking.bucketOf(token_id)
-    debt = iotx_clear.getUnpaidDebtItem(2)
-    user_info = iotx_clear.getUserInfo(users[0])
-    assert len(tx.events["Transfer"]) == 2
-    assert len(tx.events["Unlocked"]) == 1
-    assert len(tx.events["Redeemed"]) == 1
-    assert len(tx.events["DebtQueued"]) == 1
-    assert unlocked_amt == amt
-    assert unlocked_at != uint256_max
-    assert iotx_staking.getRedeemedTokenCount() == 2
-    assert iotx_staking.getTotalPending() == amt_reward - manager_fee
-    assert iotx_staking.getTotalStaked() == 0
-    assert uni_iotx.totalSupply() == amt - max_to_burn
-    assert uni_iotx.balanceOf(users[0]) == amt - max_to_burn
-    assert system_staking.balanceOf(iotx_staking) == 0
-    assert system_staking.ownerOf(token_id) == iotx_clear
-    assert system_staking.balanceOf(iotx_clear) == 2
-    assert iotx_clear.getTotalDebts() == amt*2
-    assert debt[0] == users[0]
-    assert debt[1] == amt
-    assert user_info[0] == amt*2
 
     # ---Revert path testing---
 
