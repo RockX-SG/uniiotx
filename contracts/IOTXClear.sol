@@ -421,6 +421,9 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * The rewards will be subtracted first, followed by the principal.
      */
     function claim(uint amount, address recipient) external nonReentrant whenNotPaused {
+        // Update reward
+        _updateUserReward(msg.sender);
+
         // Check user quota
         UserInfo storage info = userInfos[msg.sender];
         require(info.principal + info.reward >= amount, "USR009");  // Insufficient accounted asset
