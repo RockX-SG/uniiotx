@@ -556,9 +556,15 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @return minted The quantity of minted uniIOTXs
      */
     function deposit(uint deadline) external payable nonReentrant whenNotPaused onlyValidTransaction(deadline) returns (uint minted) {
+        // Verify the transferred value
         require(msg.value > 0, "USR002");  // Invalid deposit amount
+        accountedBalance += msg.value;
 
+        // Update the reward to help maintain a consistent exchange ratio
+        _updateReward();
         minted = _mint();
+
+        // Proceed with the staking process.
         _stakeAtTopLevel();
         _stakeAndMergeAtSubLevel();
     }
@@ -614,11 +620,6 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @dev This function mints uniIOTXs for the user based on their sent value and the latest exchange ratio.
      */
     function _mint() internal returns (uint minted) {
-        accountedBalance += msg.value;
-
-        // Update the reward to help maintain a consistent exchange ratio
-        _updateReward();
-
         uint toMint = _convertIotxToUniIOTX(msg.value);
         IUniIOTX(uniIOTX).mint(msg.sender, toMint);
         minted = toMint;
