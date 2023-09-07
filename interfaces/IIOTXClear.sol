@@ -26,4 +26,6 @@ interface IIOTXClear is IERC721Receiver {
     function unstake(uint[] calldata tokenIds) external;
     function payDebts(uint[] calldata tokenIds) external;
     function claimRewards(uint amount, address recipient) external;
+    function claimPrincipals(uint amount, address recipient) external;
+    function claim(uint amount, address recipient) external;
 }
