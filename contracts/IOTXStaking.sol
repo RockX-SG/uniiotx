@@ -528,7 +528,10 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * It synchronizes the most recently distributed reward before conducting the staking operation.
      */
     function stake() external whenNotPaused onlyRole(ROLE_ORACLE) {
+        // Synchronize rewards
         _updateReward();
+
+        // Proceed with the staking process.
         _stakeAtTopLevel();
         _stakeAndMergeAtSubLevel();
     }
@@ -560,7 +563,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
         require(msg.value > 0, "USR002");  // Invalid deposit amount
         accountedBalance += msg.value;
 
-        // Update the reward to help maintain a consistent exchange ratio
+        // Mint uniIOTX, keeping a consistent exchange ratio
         _updateReward();
         minted = _mint();
 
