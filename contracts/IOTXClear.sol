@@ -119,6 +119,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
 
     event DebtQueued(address account, uint amount, uint debtIndex);
     event DebtPaid(address account, uint amount, uint debtIndex);
+    event Claimed(address claimer, address recipient, uint amount);
     event PrincipalClaimed(address claimer, address recipient, uint amount);
     event RewardClaimed(address claimer, address recipient, uint amount);
     event DelegatesUpdated(uint[] tokenIds, address delegate);
@@ -413,6 +414,29 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      *
      * ======================================================================================
      */
+
+    /**
+     * @dev This function allows users to claim their claimable asset to the specified recipient.
+     * The assets that the user can claim consist of rewards and principal.
+     * The rewards will be subtracted first, followed by the principal.
+     */
+    function claim(uint amount, address recipient) external nonReentrant whenNotPaused {
+        // Check user quota
+        UserInfo storage info = userInfos[msg.sender];
+        require(info.principal + info.reward >= amount, "USR009");  // Insufficient accounted asset
+
+        // Transfer asset
+        if (info.reward >= amount) {
+            info.reward -= amount;
+        } else {
+            info.reward = 0;
+            info.principal -= amount - info.reward;
+        }
+        accountedBalance -= amount;
+        payable(recipient).sendValue(amount);
+
+        emit Claimed(msg.sender, recipient, amount);
+    }
 
     /**
      * @dev This function allows users to claim their principals to the specified recipient.
