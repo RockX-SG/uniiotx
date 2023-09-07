@@ -525,8 +525,10 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
 
     /**
      * @dev This function stakes any pending IOTXs and merges staked buckets when conditions are fulfilled.
+     * It synchronizes the most recently distributed reward before conducting the staking operation.
      */
     function stake() external whenNotPaused onlyRole(ROLE_ORACLE) {
+        _updateReward();
         _stakeAtTopLevel();
         _stakeAndMergeAtSubLevel();
     }
