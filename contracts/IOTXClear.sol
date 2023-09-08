@@ -431,9 +431,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
         if (info.reward >= amount) {
             info.reward -= amount;
         } else {
-            uint infoReward = info.reward;
+            info.principal -= amount - info.reward;
             info.reward = 0;
-            info.principal -= amount - infoReward;
         }
         accountedBalance -= amount;
         payable(recipient).sendValue(amount);
