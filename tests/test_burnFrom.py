@@ -1,7 +1,7 @@
 import brownie
 
 
-def test_burn(fn_isolation, contracts, users, roles, admin, zero_address):
+def test_burnFrom(fn_isolation, contracts, users, roles, admin, zero_address):
     uni_iotx, iotx_staking = contracts[1], contracts[3]
 
     # ---Happy path testing---
