@@ -56,7 +56,7 @@ def test_claim(fn_isolation, contracts, users, oracles, admin, delegates, deadli
     assert iotx_clear.getUserInfo(users[0])[2] == 0
     assert iotx_clear.getUserInfo(users[0])[1] == amt/2
 
-    # Claim the rest of rewards principal
+    # Claim the rest of principal
     tx = iotx_clear.claim(amt/2, users[1], {'from': users[0], 'allow_revert': True})
     assert "Claimed" in tx.events
     assert users[1].balance() == balance0 + mock_reward + amt
