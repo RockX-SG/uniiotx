@@ -250,6 +250,13 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     }
 
     /**
+     * @return The user's balance, comprising both rewards and principal, is available for future claims.
+     */
+    function getBalance(address account) external view returns (uint) {
+        return userInfos[account].reward + _calcPendingReward(account) + userInfos[account].principal;
+    }
+
+    /**
      * @dev The returned value includes the pending reward that hasn't been accounted yet.
      * @return The user's reward that is available for future claims.
      */
