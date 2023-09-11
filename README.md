@@ -97,7 +97,7 @@ To view the complete list of accounts, you can run the following command: `brown
 ![accounts_list](/docs/accounts_list.png) <br>
 
 Additionally, the accounts listed in the [configuration file](https://github.com/RockX-SG/uniiotx/blob/main/brownie-config.yaml)
-are unlocked on the local Ganache and forked IoTeX Testnet for testing purposes:
+are unlocked on the local Ganache, as well as the forked IoTeX Testnet and Mainnet for testing purposes:
 - IoTeXSystemStakingOwner: 0x065e1164818487818E6BA714E8d80B91718ad758
 - IoTeXAdmin: 0xbFdDf5e269C74157b157c7DaC5E416d44afB790d
 - IoTeXDeployer: 0x3af43AfEd31C00311381A8DF26cc58C9bD2b5375
