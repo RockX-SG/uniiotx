@@ -175,3 +175,7 @@ The addresses for UniIOTX, IOTXClear, and IOTXStaking correspond to their respec
 1. USR007: INVALID_TOKEN_AMOUNT_FOR_DEBT_PAYMENT
 1. USR008: INVALID_TOTAL_PRINCIPAL_FOR_DEBT_PAYMENT
 1. USR009: INSUFFICIENT_ACCOUNTED_ASSET
+
+### Security Audit Report
+The most recent audit, conducted by PeckShield, can be accessed here: 
+[SMART CONTRACT AUDIT REPORT for RockX Liquid Staking (IoTeX), September 1, 2023](https://github.com/RockX-SG/uniiotx/blob/main/docs/PeckShield-Audit-Report-RockXStaking-IOTEX-v1.0.pdf).
