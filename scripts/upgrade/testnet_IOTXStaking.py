@@ -1,11 +1,6 @@
 from brownie import IOTXStaking, accounts, project, config
 from pathlib import Path
 
-# The configuration of the IoTeX testnet is necessary to run this script.
-# Please refer to this link to obtain the chainID and endpoint information:
-# https://docs.iotex.io/reference/babel-web3-api
-# Todo: add a tutorial
-
 # The command to run this script: `brownie run scripts/upgrade/testnet_IOTXStaking.py  --network=iotex-testnet`
 
 

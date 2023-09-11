@@ -2,9 +2,6 @@ from brownie import SystemStaking, UniIOTX, IOTXClear, IOTXStaking, accounts, Co
 from pathlib import Path
 from brownie import *
 
-# Note: The Ganache client must be installed locally prior to executing this script
-# The link to the Ganache client: https://github.com/trufflesuite/ganache
-
 # The command to run this script: `brownie run scripts/deploy/ganache.py`
 
 
