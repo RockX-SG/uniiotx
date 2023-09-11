@@ -40,6 +40,7 @@ def test_claim(fn_isolation, contracts, users, oracles, admin, delegates, deadli
     assert users[1].balance() == balance0 + mock_reward/2
     assert iotx_clear.balance() == amt + mock_reward/2
     assert iotx_clear.getAccountedBalance() == amt + mock_reward/2
+    assert iotx_clear.getBalance(users[0]) == mock_reward/2 + amt
     assert iotx_clear.getReward(users[0]) == mock_reward/2
     assert iotx_clear.getPrincipal(users[0]) == amt
     assert iotx_clear.getUserInfo(users[0])[2] == mock_reward/2
@@ -51,6 +52,7 @@ def test_claim(fn_isolation, contracts, users, oracles, admin, delegates, deadli
     assert users[1].balance() == balance0 + mock_reward + amt/2
     assert iotx_clear.balance() == amt/2
     assert iotx_clear.getAccountedBalance() == amt/2
+    assert iotx_clear.getBalance(users[0]) == amt/2
     assert iotx_clear.getReward(users[0]) == 0
     assert iotx_clear.getPrincipal(users[0]) == amt/2
     assert iotx_clear.getUserInfo(users[0])[2] == 0
@@ -62,6 +64,7 @@ def test_claim(fn_isolation, contracts, users, oracles, admin, delegates, deadli
     assert users[1].balance() == balance0 + mock_reward + amt
     assert iotx_clear.balance() == 0
     assert iotx_clear.getAccountedBalance() == 0
+    assert iotx_clear.getBalance(users[0]) == 0
     assert iotx_clear.getReward(users[0]) == 0
     assert iotx_clear.getPrincipal(users[0]) == 0
     assert iotx_clear.getUserInfo(users[0])[2] == 0
@@ -89,6 +92,7 @@ def test_claim(fn_isolation, contracts, users, oracles, admin, delegates, deadli
     assert users[1].balance() == balance0 + 2*mock_reward + 2*amt
     assert iotx_clear.balance() == 0
     assert iotx_clear.getAccountedBalance() == 0
+    assert iotx_clear.getBalance(users[0]) == 0
     assert iotx_clear.getReward(users[0]) == 0
     assert iotx_clear.getPrincipal(users[0]) == 0
     assert iotx_clear.getUserInfo(users[0])[2] == 0
@@ -106,4 +110,4 @@ def test_claim(fn_isolation, contracts, users, oracles, admin, delegates, deadli
     with brownie .reverts("USR009"):
         iotx_clear.claim(amt/2, users[0], {'from': users[0]})
 
-    # # Todo: Handle nonReentrant
+    # Todo: Handle nonReentrant
