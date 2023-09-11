@@ -1,6 +1,9 @@
 from brownie import UniIOTX, accounts, project, config
 from pathlib import Path
 
+# Todo:
+# Reminder: Please ensure to update the relevant addresses once the contracts have been successfully upgraded.
+
 # The command to run this script: `brownie run scripts/upgrade/testnet_UniIOTX.py  --network=iotex-testnet`
 
 

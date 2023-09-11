@@ -2,6 +2,9 @@ from brownie import SystemStaking, UniIOTX, IOTXClear, IOTXStaking, accounts, Co
 from pathlib import Path
 from web3 import Web3
 
+# Todo:
+# Reminder: Please ensure to update the relevant addresses once the contracts have been successfully deployed.
+
 # The command to run this script: `brownie run scripts/deploy/testnet.py  --network=iotex-testnet`
 
 

@@ -161,6 +161,11 @@ The addresses of the contracts deployed on the IoTeX Testnet are as follows:
 
 The addresses for UniIOTX, IOTXClear, and IOTXStaking correspond to their respective transparent proxy addresses.
 
+**Reminder**: Please also ensure to update the relevant address information in the files under the 
+[scripts/deploy](https://github.com/RockX-SG/uniiotx/tree/main/scripts/deploy) and 
+[scripts/upgrade](https://github.com/RockX-SG/uniiotx/tree/main/scripts/upgrade) folders once the contracts have been 
+successfully deployed/upgraded.
+
 ### Error Codes from Contracts
 1. SYS001: INACTIVE_BUCKET_TYPE
 1. SYS002: MANAGER_FEE_SHARES_OUT_OF_RANGE

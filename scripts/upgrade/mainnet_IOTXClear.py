@@ -4,6 +4,9 @@ from pathlib import Path
 # Note: This script file is currently in draft form. Please do not execute it.
 # Todo: Confirm the parameters again.
 
+# Todo:
+# Reminder: Please ensure to update the relevant addresses once the contracts have been successfully upgraded.
+
 # The command to run this script: `brownie run scripts/upgrade/mainnet_IOTXClear.py  --network=iotex-testnet`
 
 

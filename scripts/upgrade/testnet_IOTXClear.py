@@ -1,6 +1,9 @@
 from brownie import IOTXClear, accounts, project, config
 from pathlib import Path
 
+# Todo:
+# Reminder: Please ensure to update the relevant addresses once the contracts have been successfully upgraded.
+
 # The command to run this script: `brownie run scripts/upgrade/testnet_IOTXClear.py  --network=iotex-testnet`
 
 
