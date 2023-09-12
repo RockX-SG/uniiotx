@@ -3,7 +3,6 @@ from pathlib import Path
 from web3 import Web3
 
 # Note: This script file is currently in draft form. Please do not execute it.
-# Todo: Confirm the parameters again.
 
 # Todo:
 # Reminder: Please ensure to update the relevant addresses once the contracts have been successfully deployed.
@@ -22,7 +21,7 @@ def main():
     stake_duration = 1572480  # (91 * 24 * 60 * 60) / 5
 
     # Manager fee shares
-    manager_fee_shares = 100
+    manager_fee_shares = 50
 
     # SystemStaking contract address
     # https://iotexscan.io/address/0x68db92a6a78a39dcaff1745da9e89e230ef49d3d#code
@@ -36,14 +35,19 @@ def main():
 
     # Fund accounts
     # Assume that the admin account holds sufficient assets
-    # fund_base = 1e18
-    # if deployer.balance() < fund_base:
-    #     admin.transfer(deployer, fund_base*10)
-    # if oracle.balance() < fund_base:
-    #     admin.transfer(oracle, fund_base*10)
+    fund_base = 1e18
+    if deployer.balance() < fund_base:
+        admin.transfer(deployer, fund_base)
+    if oracle.balance() < fund_base:
+        admin.transfer(oracle, fund_base)
+
+    # Record balances before deployment
+    deployer_bal_0 = deployer.balance()
+    admin_bal_0 = admin.balance()
+    oracle_bal_0 = oracle.balance()
 
     # Init delegate
-    delegate = "0xac82586b613d10a33df00835aC6DAd8541952334"  # io14jp9s6mp85g2x00spq66cmdds4qe2ge5r0p72d
+    delegate = "0xFE82234dE6b7F4DAE188552dfAa64C1dF5674caA"
 
     # Deploy contracts
     gas_limit = '6721975'
@@ -81,6 +85,21 @@ def main():
 
     iotx_staking_transparent.setManagerFeeShares(manager_fee_shares, {'from': admin})
     iotx_staking_transparent.setGlobalDelegate(delegate, {'from': oracle})
+
+    # Deployment gas fee estimation
+    deployer_bal_1 = deployer.balance()
+    admin_bal_1 = admin.balance()
+    oracle_bal_1 = oracle.balance()
+
+    gas_fee_deployer = deployer_bal_0 - deployer_bal_1
+    gas_fee_admin = admin_bal_0 - admin_bal_1
+    gas_fee_oracle = oracle_bal_0 - oracle_bal_1
+
+    print("Gas fee for Deployer: ", gas_fee_deployer)
+    print("Gas fee for Admin: ", gas_fee_admin)
+    print("Gas fee for Oracle: ", gas_fee_oracle)
+
+    print("Total gas fee: ", gas_fee_deployer + gas_fee_admin + gas_fee_oracle)
 
 
 

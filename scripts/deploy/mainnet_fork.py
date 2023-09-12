@@ -20,7 +20,7 @@ def main():
     stake_duration = 1572480  # (91 * 24 * 60 * 60) / 5
 
     # Manager fee shares
-    manager_fee_shares = 100
+    manager_fee_shares = 50
 
     # SystemStaking contract address
     # https://iotexscan.io/address/0x68db92a6a78a39dcaff1745da9e89e230ef49d3d#code
@@ -44,7 +44,7 @@ def main():
     oracle_bal_0 = oracle.balance()
 
     # Init delegate
-    delegate = "0xac82586b613d10a33df00835aC6DAd8541952334"  # io14jp9s6mp85g2x00spq66cmdds4qe2ge5r0p72d
+    delegate = "0xFE82234dE6b7F4DAE188552dfAa64C1dF5674caA"
 
     # Deploy contracts
     gas_limit = '6721975'
