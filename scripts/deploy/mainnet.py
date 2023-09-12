@@ -19,7 +19,7 @@ def main():
     start_amount = 10000 * 1e18
     common_ratio = 10
     sequence_length = 3
-    stake_duration = 7862400  # 91 * 24 * 60 * 60
+    stake_duration = 1572480  # (91 * 24 * 60 * 60) / 5
 
     # Manager fee shares
     manager_fee_shares = 100
