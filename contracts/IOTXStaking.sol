@@ -789,7 +789,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * rewards, aiming to keep the exchange ratio invariant to avoid user arbitrage.
      * Reference: https://github.com/RockX-SG/stake/blob/main/doc/uniETH_ETH2_0_Liquid_Staking_Explained.pdf
      */
-    function _convertIotxToUniIOTX(uint amountIOTX) internal returns (uint uniIOTXAmount) {
+    function _convertIotxToUniIOTX(uint amountIOTX) internal view returns (uint uniIOTXAmount) {
         uint totalSupply = IUniIOTX(uniIOTX).totalSupply();
         uint currentReserveAmt = _accountedReserve();
         uniIOTXAmount = DEFAULT_EXCHANGE_RATIO * amountIOTX;
@@ -871,7 +871,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
     function _calcPendingReward() internal view returns(uint pendingUserReward, uint pendingManagerReward) {
         uint pendingReward = address(this).balance - accountedBalance;
         if (pendingReward > 0) {
-            uint pendingManagerReward = pendingReward * managerFeeShares / 1000;
+            pendingManagerReward = pendingReward * managerFeeShares / 1000;
             return (pendingReward - pendingManagerReward, pendingManagerReward);
         }
         return (0, 0);
