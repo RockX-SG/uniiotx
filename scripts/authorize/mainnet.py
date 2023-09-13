@@ -1,7 +1,7 @@
 from brownie import UniIOTX, IOTXClear, IOTXStaking, accounts
 from web3 import Web3
 
-# The command to run this script: `brownie run scripts/authorize/admin_mainnet.py  --network=iotex-mainnet`
+# The command to run this script: `brownie run scripts/authorize/mainnet.py  --network=iotex-mainnet`
 
 # Executing the following scripts will:
 # 1. Grant the Company's Admin account the roles of ROLE_PAUSER, ROLE_FEE_MANAGER, and DEFAULT_ADMIN_ROLE,
