@@ -1,11 +1,6 @@
 from brownie import SystemStaking, UniIOTX, IOTXClear, IOTXStaking, accounts, Contract, project, config
 from pathlib import Path
 
-# Note: This script file is currently in draft form. Please do not execute it.
-
-# Todo:
-# Reminder: Please ensure to update the relevant addresses once the contracts have been successfully deployed.
-
 # The command to run this script: `brownie run scripts/deploy/mainnet_fork.py  --network=iotex-mainnet-fork`
 
 def main():
@@ -49,22 +44,22 @@ def main():
     # Deploy contracts
     gas_limit = '6721975'
     gas_price = 'auto'
-    uni_iotx = UniIOTX.deploy({'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})  # https://testnet.iotexscan.io/address/0xa223567B74581F1B995b346e36e26C291d1cC1B4#transactions
-    uni_iotx_proxy = TransparentUpgradeableProxy.deploy(uni_iotx, deployer, b'', {'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})  # https://testnet.iotexscan.io/address/0x956a03ecEb344eA15A6CbE8949088992fAD88628#transactions
+    uni_iotx = UniIOTX.deploy({'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})
+    uni_iotx_proxy = TransparentUpgradeableProxy.deploy(uni_iotx, deployer, b'', {'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})
 
-    iotx_clear = IOTXClear.deploy({'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})  # https://testnet.iotexscan.io/address/0x7c193769f46D2B32819eb76E7c9Aeb580260A668#transactions
-    iotx_clear_proxy = TransparentUpgradeableProxy.deploy(iotx_clear, deployer, b'', {'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})  # https://testnet.iotexscan.io/address/0x4DC32Ad7BffAF50434b12195D3b59CD66601335D#transactions
+    iotx_clear = IOTXClear.deploy({'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})
+    iotx_clear_proxy = TransparentUpgradeableProxy.deploy(iotx_clear, deployer, b'', {'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})
 
-    iotx_staking = IOTXStaking.deploy({'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})  # https://testnet.iotexscan.io/address/0x171977bf57e93C9be280569F4853325719130C22#transactions
-    iotx_staking_proxy = TransparentUpgradeableProxy.deploy(iotx_staking, deployer, b'', {'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})  # https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions
+    iotx_staking = IOTXStaking.deploy({'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})
+    iotx_staking_proxy = TransparentUpgradeableProxy.deploy(iotx_staking, deployer, b'', {'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})
 
     uni_iotx_transparent = Contract.from_abi("UniIOTX", uni_iotx_proxy.address, UniIOTX.abi)
     iotx_clear_transparent = Contract.from_abi("IOTXClear", iotx_clear_proxy.address, IOTXClear.abi)
     iotx_staking_transparent = Contract.from_abi("IOTXStaking", iotx_staking_proxy.address, IOTXStaking.abi)
 
-    print("Deployed UniIOTX address:", uni_iotx_transparent)  # https://testnet.iotexscan.io/address/0x956a03ecEb344eA15A6CbE8949088992fAD88628#transactions
-    print("Deployed IOTXClear address:", iotx_clear_transparent)  # https://testnet.iotexscan.io/address/0x4DC32Ad7BffAF50434b12195D3b59CD66601335D#transactions
-    print("Deployed IOTXStaking address:", iotx_staking_transparent)  # https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions
+    print("Deployed UniIOTX address:", uni_iotx_transparent)
+    print("Deployed IOTXClear address:", iotx_clear_transparent)
+    print("Deployed IOTXStaking address:", iotx_staking_transparent)
 
     uni_iotx_transparent.initialize(iotx_staking_transparent, {'from': admin, 'gas_limit': gas_limit, 'gas_price': gas_price})
     iotx_staking_transparent.initialize(
