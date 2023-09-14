@@ -1,5 +1,7 @@
 /*
  * ==================================================================
+ * SPDX-License-Identifier: GNU GPLv3
+ *
  * Copyright (C) 2023 Altstake Technology Pte. Ltd. (RockX)
  * This code is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as
