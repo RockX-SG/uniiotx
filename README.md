@@ -153,6 +153,7 @@ Here are the convenient commands for upgrading contracts on the IoTeX Testnet:
 - IOTXStaking: `brownie run scripts/upgrade/testnet_IOTXStaking.py  --network=iotex-testnet`
 
 #### Deployed Contracts
+#### IoTeX Testnet
 The addresses of the contracts deployed on the IoTeX Testnet are as follows:
 - [SystemStaking](https://testnet.iotexscan.io/address/0x52ab0fe2c3a94644de0888a3ba9ea1443672e61f#transactions): 0x52ab0fe2c3a94644de0888a3ba9ea1443672e61f 
 - [UniIOTX](https://testnet.iotexscan.io/address/0x956a03ecEb344eA15A6CbE8949088992fAD88628#transactions): 0x956a03ecEb344eA15A6CbE8949088992fAD88628
@@ -160,6 +161,20 @@ The addresses of the contracts deployed on the IoTeX Testnet are as follows:
 - [IOTXStaking](https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions): 0xa479659F378d54168CD7859f5025133382EdB3C5
 
 The addresses for UniIOTX, IOTXClear, and IOTXStaking correspond to their respective transparent proxy addresses.
+
+#### IoTeX Mainnet
+The addresses of the contracts deployed on the IoTeX Mainnet are as follows.
+
+The original addresses:
+- [SystemStaking](https://iotexscan.io/address/0x68db92a6a78a39dcaff1745da9e89e230ef49d3d#transactions): 0x68db92a6a78a39dcaff1745da9e89e230ef49d3d
+- [UniIOTX](https://iotexscan.io/address/0x16221CaD160b441db008eF6DA2d3d89a32A05859#transactions): 0x16221CaD160b441db008eF6DA2d3d89a32A05859
+- [IOTXClear](https://iotexscan.io/address/0x3423AC3e8E780C1081C5a1194E7f862fB1e09d5F#transactions): 0x3423AC3e8E780C1081C5a1194E7f862fB1e09d5F
+- [IOTXStaking](https://iotexscan.io/address/0x54B045860E49711eABDa160eBd5db8be1fC85A55#transactions): 0x54B045860E49711eABDa160eBd5db8be1fC85A55
+
+The transparent proxy addresses:
+- [UniIOTX](https://iotexscan.io/address/0x236f8c0a61dA474dB21B693fB2ea7AAB0c803894#transactions): 0x236f8c0a61dA474dB21B693fB2ea7AAB0c803894
+- [IOTXClear](https://iotexscan.io/address/0x7AD800771743F4e29f55235A55895273035FB546#transactions): 0x7AD800771743F4e29f55235A55895273035FB546
+- [IOTXStaking](https://iotexscan.io/address/0x2c914Ba874D94090Ba0E6F56790bb8Eb6D4C7e5f#transactions): 0x2c914Ba874D94090Ba0E6F56790bb8Eb6D4C7e5f
 
 **Reminder**: Please also ensure to update the relevant address information in the files under the 
 [scripts/deploy](https://github.com/RockX-SG/uniiotx/tree/main/scripts/deploy) and 
