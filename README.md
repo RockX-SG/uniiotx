@@ -160,18 +160,9 @@ The addresses of the contracts deployed on the IoTeX Testnet are as follows:
 - [IOTXClear](https://testnet.iotexscan.io/address/0x4DC32Ad7BffAF50434b12195D3b59CD66601335D#transactions): 0x4DC32Ad7BffAF50434b12195D3b59CD66601335D
 - [IOTXStaking](https://testnet.iotexscan.io/address/0xa479659F378d54168CD7859f5025133382EdB3C5#transactions): 0xa479659F378d54168CD7859f5025133382EdB3C5
 
-The addresses for UniIOTX, IOTXClear, and IOTXStaking correspond to their respective transparent proxy addresses.
-
 #### IoTeX Mainnet
 The addresses of the contracts deployed on the IoTeX Mainnet are as follows.
-
-The original addresses:
 - [SystemStaking](https://iotexscan.io/address/0x68db92a6a78a39dcaff1745da9e89e230ef49d3d#transactions): 0x68db92a6a78a39dcaff1745da9e89e230ef49d3d
-- [UniIOTX](https://iotexscan.io/address/0x16221CaD160b441db008eF6DA2d3d89a32A05859#transactions): 0x16221CaD160b441db008eF6DA2d3d89a32A05859
-- [IOTXClear](https://iotexscan.io/address/0x3423AC3e8E780C1081C5a1194E7f862fB1e09d5F#transactions): 0x3423AC3e8E780C1081C5a1194E7f862fB1e09d5F
-- [IOTXStaking](https://iotexscan.io/address/0x54B045860E49711eABDa160eBd5db8be1fC85A55#transactions): 0x54B045860E49711eABDa160eBd5db8be1fC85A55
-
-The transparent proxy addresses:
 - [UniIOTX](https://iotexscan.io/address/0x236f8c0a61dA474dB21B693fB2ea7AAB0c803894#transactions): 0x236f8c0a61dA474dB21B693fB2ea7AAB0c803894
 - [IOTXClear](https://iotexscan.io/address/0x7AD800771743F4e29f55235A55895273035FB546#transactions): 0x7AD800771743F4e29f55235A55895273035FB546
 - [IOTXStaking](https://iotexscan.io/address/0x2c914Ba874D94090Ba0E6F56790bb8Eb6D4C7e5f#transactions): 0x2c914Ba874D94090Ba0E6F56790bb8Eb6D4C7e5f
