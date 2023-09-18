@@ -18,7 +18,7 @@ def main():
     deployer = accounts.load("IoTeXDeployer")
     gas_limit = '6721975'
 
-    iotx_staking_proxy_addr = "0xa479659F378d54168CD7859f5025133382EdB3C5"
+    iotx_staking_proxy_addr = "0x2c914Ba874D94090Ba0E6F56790bb8Eb6D4C7e5f"
     iotx_staking_proxy = TransparentUpgradeableProxy.at(iotx_staking_proxy_addr)
 
     iotx_staking_upgraded = IOTXStaking.deploy({'from': deployer, 'gas_limit': gas_limit})

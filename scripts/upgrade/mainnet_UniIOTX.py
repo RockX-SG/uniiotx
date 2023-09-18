@@ -18,12 +18,12 @@ def main():
     deployer = accounts.load("IoTeXDeployer")
     gas_limit = '6721975'
 
-    uni_iotx_proxy_addr = "0x956a03ecEb344eA15A6CbE8949088992fAD88628"
+    uni_iotx_proxy_addr = "0x236f8c0a61dA474dB21B693fB2ea7AAB0c803894"
     uni_iotx_proxy = TransparentUpgradeableProxy.at(uni_iotx_proxy_addr)
 
     uni_iotx_upgraded = UniIOTX.deploy({'from': deployer, 'gas_limit': gas_limit})
     uni_iotx_proxy.upgradeTo(uni_iotx_upgraded, {'from': deployer, 'gas_limit': gas_limit})
 
-    print("Upgraded UniIOTX address:", uni_iotx_upgraded)  # https://testnet.iotexscan.io/address/0x209925387e9293cc2d901c684b569720D10c19eB#transactions
+    print("Upgraded UniIOTX address:", uni_iotx_upgraded)  # https://iotexscan.io/address/0x16221CaD160b441db008eF6DA2d3d89a32A05859#transactions
 
 

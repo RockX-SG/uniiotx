@@ -26,10 +26,9 @@ def main():
     role_default_admin = w3.toBytes(hexstr="0x00")
 
     # Contracts, managed by the following personal Admin account
-    # Todo: update contract addresses
-    uni_iotx = UniIOTX.at("0x956a03ecEb344eA15A6CbE8949088992fAD88628")
-    iotx_clear = IOTXClear.at("0x4DC32Ad7BffAF50434b12195D3b59CD66601335D")
-    iotx_staking = IOTXStaking.at("0xa479659F378d54168CD7859f5025133382EdB3C5")
+    uni_iotx = UniIOTX.at("0x236f8c0a61dA474dB21B693fB2ea7AAB0c803894")
+    iotx_clear = IOTXClear.at("0x7AD800771743F4e29f55235A55895273035FB546")
+    iotx_staking = IOTXStaking.at("0x2c914Ba874D94090Ba0E6F56790bb8Eb6D4C7e5f")
 
     # Personal Admin account
     personal_admin = accounts.load("IoTeXAdmin")

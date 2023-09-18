@@ -18,12 +18,12 @@ def main():
     deployer = accounts.load("IoTeXDeployer")
     gas_limit = '6721975'
 
-    iotx_clear_proxy_addr = "0x4DC32Ad7BffAF50434b12195D3b59CD66601335D"
+    iotx_clear_proxy_addr = "0x7AD800771743F4e29f55235A55895273035FB546"
     iotx_clear_proxy = TransparentUpgradeableProxy.at(iotx_clear_proxy_addr)
 
     iotx_clear_upgraded = IOTXClear.deploy({'from': deployer, 'gas_limit': gas_limit})
     iotx_clear_proxy.upgradeTo(iotx_clear_upgraded, {'from': deployer, 'gas_limit': gas_limit})
 
-    print("Upgraded IOTXClear address:", iotx_clear_upgraded)  # https://testnet.iotexscan.io/address/0x18b05a0f14716DD7A8462EcdF9f0F009390BFf97#transactions
+    print("Upgraded IOTXClear address:", iotx_clear_upgraded)  # https://iotexscan.io/address/0x54B045860E49711eABDa160eBd5db8be1fC85A55#transactions
 
 
