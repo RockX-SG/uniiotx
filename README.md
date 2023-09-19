@@ -184,4 +184,4 @@ The addresses of the contracts deployed on the IoTeX Testnet and Mainnet are as 
 
 ### Security Audit Report
 The most recent audit, conducted by PeckShield, can be accessed here: 
-[SMART CONTRACT AUDIT REPORT for RockX Liquid Staking (IoTeX), September 1, 2023](https://github.com/RockX-SG/uniiotx/blob/main/docs/PeckShield-Audit-Report-RockXStaking-IOTEX-v1.0.pdf).
+[SMART CONTRACT AUDIT REPORT for Bedrock Liquid Staking (IoTeX), September 1, 2023](https://github.com/RockX-SG/uniiotx/blob/main/docs/PeckShield-Audit-Report-Bedrock-v1.0.pdf).
