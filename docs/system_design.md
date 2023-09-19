@@ -1,4 +1,4 @@
-# Design of RockX Liquid Staking Contracts on IoTeX
+# Design of Bedrock Liquid Staking Contracts on IoTeX
 
 ## Introduction
 This document serves the following purposes:

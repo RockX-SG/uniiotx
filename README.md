@@ -1,9 +1,9 @@
-# Contracts of RockX Liquid Staking on IoTeX
+# Contracts of Bedrock Liquid Staking on IoTeX
 This repository maintains the smart contract code for liquid staking on the [IoTeX Network](https://iotex.io/).
 
 The primary focus of the content herein is on the development, testing and deployment of contracts.
 
-For more information, please refer to the design document: [Design of RockX Liquid Staking Contracts on IoTeX](https://github.com/RockX-SG/uniiotx/blob/main/docs/system_design.md)
+For more information, please refer to the design document: [Design of Bedrock Liquid Staking Contracts on IoTeX](https://github.com/RockX-SG/uniiotx/blob/main/docs/system_design.md)
 
 ### Prerequisites
 This project, which includes [Solidity](https://soliditylang.org/) contracts, was developed using [Brownie](https://github.com/eth-brownie/brownie) on the [Pop!_OS](https://pop.system76.com/).
