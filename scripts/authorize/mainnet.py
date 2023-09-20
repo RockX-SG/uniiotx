@@ -34,7 +34,7 @@ def main():
     personal_admin = accounts.load("IoTeXAdmin")
 
     # Personal Oracle account
-    personal_oracle = accounts.at("0xC8a85eD8A9aBF0a21031B7c62C13464D1527cd09", True)
+    personal_oracle = accounts.load("IoTeXOracle")
 
     # Company Admin account, which will take over the aforementioned contracts
     # Todo: update company Admin account address
@@ -65,7 +65,7 @@ def main():
 
     # Permission transferred:: ROLE_ORACLE (Personal Oracle --> Company Oracle)
     if not iotx_clear.hasRole(role_oracle, company_oracle):
-        iotx_clear.grantRole(role_oracle, company_oracle, {'from': personal_oracle})
+        iotx_clear.grantRole(role_oracle, company_oracle, {'from': personal_admin})
     assert iotx_clear.hasRole(role_oracle, company_oracle)
 
     if iotx_clear.hasRole(role_oracle, personal_oracle):
@@ -102,7 +102,7 @@ def main():
 
     # Permission transferred:: ROLE_ORACLE (Personal Oracle --> Company Oracle)
     if not iotx_staking.hasRole(role_oracle, company_oracle):
-        iotx_staking.grantRole(role_oracle, company_oracle, {'from': personal_oracle})
+        iotx_staking.grantRole(role_oracle, company_oracle, {'from': personal_admin})
     assert iotx_staking.hasRole(role_oracle, company_oracle)
 
     if iotx_staking.hasRole(role_oracle, personal_oracle):

@@ -68,7 +68,7 @@ def main():
 
     # Permission transferred:: ROLE_ORACLE (Personal Oracle --> Company Oracle)
     if not iotx_clear.hasRole(role_oracle, company_oracle):
-        iotx_clear.grantRole(role_oracle, company_oracle, {'from': personal_oracle})
+        iotx_clear.grantRole(role_oracle, company_oracle, {'from': personal_admin})
     assert iotx_clear.hasRole(role_oracle, company_oracle)
 
     if iotx_clear.hasRole(role_oracle, personal_oracle):
@@ -105,7 +105,7 @@ def main():
 
     # Permission transferred:: ROLE_ORACLE (Personal Oracle --> Company Oracle)
     if not iotx_staking.hasRole(role_oracle, company_oracle):
-        iotx_staking.grantRole(role_oracle, company_oracle, {'from': personal_oracle})
+        iotx_staking.grantRole(role_oracle, company_oracle, {'from': personal_admin})
     assert iotx_staking.hasRole(role_oracle, company_oracle)
 
     if iotx_staking.hasRole(role_oracle, personal_oracle):
