@@ -41,8 +41,7 @@ def main():
     company_admin = "0x9ACE9968545089893208f35A81569Fa81cd24F7c"
 
     # Fake company Oracle account
-    # Todo: update company Oracle account address
-    company_oracle = "0x912AD2282799C5d62334017578418471f5aF5353"
+    company_oracle = "0x5e3cD45341893E8129941Ea3f782BE8D68CE308d"
 
     # -------------------- UniIOTX --------------------
     # Permission transferred: DEFAULT_ADMIN_ROLE (Personal Admin --> Company Admin)
