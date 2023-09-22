@@ -3,7 +3,10 @@ This repository maintains the smart contract code for liquid staking on the [IoT
 
 The primary focus of the content herein is on the development, testing and deployment of contracts.
 
-For more information, please refer to the design document: [Design of Bedrock Liquid Staking Contracts on IoTeX](https://github.com/RockX-SG/uniiotx/blob/main/docs/system_design.md)
+For more information, please consult the white paper, design document, and security audit report.:
+- [Bedrock IOTX Liquid Staking Explained](https://github.com/RockX-SG/uniiotx/blob/main/docs/Bedrock_IOTX_Liquid_Staking_Explained.pdf)
+- [Design of Bedrock Liquid Staking Contracts on IoTeX](https://github.com/RockX-SG/uniiotx/blob/main/docs/system_design.md)
+- [Smart Contract Audit Report for Bedrock Liquid Staking (IoTeX)](https://github.com/RockX-SG/uniiotx/blob/main/docs/PeckShield-Audit-Report-Bedrock-v1.0.pdf).
 
 ### Prerequisites
 This project, which includes [Solidity](https://soliditylang.org/) contracts, was developed using [Brownie](https://github.com/eth-brownie/brownie) on the [Pop!_OS](https://pop.system76.com/).
@@ -181,7 +184,3 @@ The addresses of the contracts deployed on the IoTeX Testnet and Mainnet are as 
 1. USR007: INVALID_TOKEN_AMOUNT_FOR_DEBT_PAYMENT
 1. USR008: INVALID_TOTAL_PRINCIPAL_FOR_DEBT_PAYMENT
 1. USR009: INSUFFICIENT_ACCOUNTED_ASSET
-
-### Security Audit Report
-The most recent audit, conducted by PeckShield, can be accessed here: 
-[SMART CONTRACT AUDIT REPORT for Bedrock Liquid Staking (IoTeX), September 1, 2023](https://github.com/RockX-SG/uniiotx/blob/main/docs/PeckShield-Audit-Report-Bedrock-v1.0.pdf).
