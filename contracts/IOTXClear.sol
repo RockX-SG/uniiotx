@@ -378,14 +378,14 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
     /**
      * @dev This function unstakes unlocked tokens, allowing them to be used for future debt payment.
      */
-    function unstake(uint[] calldata tokenIds) external whenNotPaused onlyDebtToken(tokenIds) onlyRole(ROLE_ORACLE) {
+    function unstake(uint[] calldata tokenIds) external nonReentrant whenNotPaused onlyDebtToken(tokenIds) {
         if (tokenIds.length > 0) ISystemStaking(systemStaking).unstake(tokenIds);
     }
 
     /**
      * @dev This function withdraws the specified tokens for debt payment.
      */
-    function payDebts(uint[] calldata tokenIds) external whenNotPaused onlyDebtToken(tokenIds) onlyRole(ROLE_ORACLE) {
+    function payDebts(uint[] calldata tokenIds) external nonReentrant whenNotPaused onlyDebtToken(tokenIds) {
         uint totalTokenCntToPay = tokenIds.length;
         require(totalTokenCntToPay > 0 && totalDebts >= totalTokenCntToPay*debtAmountBase, "USR008");  // Invalid total principal for debt payment
         uint paidTokenCnt;
