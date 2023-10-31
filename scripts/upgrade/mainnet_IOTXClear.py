@@ -7,7 +7,7 @@ from pathlib import Path
 # Todo:
 # Reminder: Please ensure to update the relevant addresses once the contracts have been successfully upgraded.
 
-# The command to run this script: `brownie run scripts/upgrade/mainnet_IOTXClear.py  --network=iotex-testnet`
+# The command to run this script: `brownie run scripts/upgrade/mainnet_IOTXClear.py  --network=iotex-mainnet`
 
 
 def main():
@@ -17,13 +17,14 @@ def main():
 
     deployer = accounts.load("IoTeXDeployer")
     gas_limit = '6721975'
+    gas_price = '1000000000000'
 
     iotx_clear_proxy_addr = "0x7AD800771743F4e29f55235A55895273035FB546"
     iotx_clear_proxy = TransparentUpgradeableProxy.at(iotx_clear_proxy_addr)
 
-    iotx_clear_upgraded = IOTXClear.deploy({'from': deployer, 'gas_limit': gas_limit})
-    iotx_clear_proxy.upgradeTo(iotx_clear_upgraded, {'from': deployer, 'gas_limit': gas_limit})
+    iotx_clear_upgraded = IOTXClear.deploy({'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})
+    iotx_clear_proxy.upgradeTo(iotx_clear_upgraded, {'from': deployer, 'gas_limit': gas_limit, 'gas_price': gas_price})
 
-    print("Upgraded IOTXClear address:", iotx_clear_upgraded)  # https://iotexscan.io/address/0x54B045860E49711eABDa160eBd5db8be1fC85A55#transactions
+    print("Upgraded IOTXClear address:", iotx_clear_upgraded)  # https://iotexscan.io/address/0x802d4900209b2292bF7f07ecAE187f836040A709#transactions
 
 
