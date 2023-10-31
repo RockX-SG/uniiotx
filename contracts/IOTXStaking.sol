@@ -577,7 +577,7 @@ contract IOTXStaking is IIOTXStaking, Initializable, PausableUpgradeable, Access
      * @param iotxsToRedeem The number of IOTXs to redeem must be a multiple of the accepted amount of redeeming base.
      * @return burned the quantity of burned uniIOTXs.
      */
-    function redeem(uint iotxsToRedeem, uint deadline) external nonReentrant onlyValidTransaction(deadline) returns(uint burned) {
+    function redeem(uint iotxsToRedeem, uint deadline) external nonReentrant whenNotPaused onlyValidTransaction(deadline) returns(uint burned) {
         burned = _redeem(iotxsToRedeem);
     }
 
