@@ -576,42 +576,45 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * @dev This function synchronizes this contract balance and updates the shared 'rewardRate'.
      */
     function _updateSharedReward() internal {
-        if (address(this).balance > accountedBalance && totalDebts > 0) {
-            // Sync shared pending rewards and update the global rewardRate
-            // Note: The accuracy loss occurs in the calculation result for division rounds towards zero.
-            // This means that uint(5) / uint(2) == uint(2).
-            uint incrReward = address(this).balance - accountedBalance;
-            uint incrRewardRate = incrReward * MULTIPLIER / totalDebts;
-
-            uint accountedReward;
-            if (incrRewardRate > 0) {
-                rewardRate += incrRewardRate;
-                accountedReward = incrRewardRate * totalDebts / MULTIPLIER;
-            }
-
-            // Update the accountedBalance, considering the aforementioned accuracy loss
-            // to ensure that piecemeal rewards do not accumulate over time into a significant amount.
-            accountedBalance = accountedBalance + accountedReward;
+        // Sync shared pending rewards and update the global rewardRate
+        // Note: The _calcIncrRewardRate function can bring an calculation accuracy loss.
+        uint incrRewardRate = _calcIncrRewardRate();
+        uint accountedReward;
+        if (incrRewardRate > 0) {
+            rewardRate += incrRewardRate;
+            accountedReward = incrRewardRate * totalDebts / MULTIPLIER;
         }
+
+        // Update the accountedBalance, considering the calculation accuracy loss
+        // to ensure that piecemeal rewards do not accumulate over time into a significant amount.
+        accountedBalance = accountedBalance + accountedReward;
     }
 
     /**
      * @dev This function calculates the user's pending reward that has not yet been synchronized and accounted for.
      */
     function _calcPendingReward(address account) internal view returns (uint) {
-        // Sync shared pending rewards
-        uint globalRewardRate = rewardRate;
-        if (address(this).balance > accountedBalance && totalDebts > 0) {
-            uint incrReward = address(this).balance - accountedBalance;
-            // Note: The accuracy loss occurs in the calculation result for division rounds towards zero.
-            // This means that uint(5) / uint(2) == uint(2).
-            globalRewardRate += incrReward * MULTIPLIER / totalDebts;
-        }
+        // Calculate the global rewardRate
+        uint globalRewardRate = rewardRate + _calcIncrRewardRate();
 
        // Calculate personal pending rewards
         UserInfo memory info = userInfos[account];
         if (globalRewardRate > info.rewardRate) {
             return (globalRewardRate - info.rewardRate) * info.debt / MULTIPLIER;
+        }
+        return 0;
+    }
+
+    /**
+    * @dev This function calculates the pending reward rate that has not yet been synchronized and accounted for.
+     */
+    function _calcIncrRewardRate() internal view returns (uint) {
+        // Sync shared pending rewards
+        if (address(this).balance > accountedBalance && totalDebts > 0) {
+            uint incrReward = address(this).balance - accountedBalance;
+            // Note: The accuracy loss occurs in the calculation result for division rounds towards zero.
+            // This means that uint(5) / uint(2) == uint(2).
+            return incrReward * MULTIPLIER / totalDebts;
         }
         return 0;
     }
