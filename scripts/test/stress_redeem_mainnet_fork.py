@@ -13,7 +13,7 @@ def main():
     w3 = Web3(Web3.HTTPProvider('https://babel-api.mainnet.iotex.io'))
 
     # Contract
-    unit_iotx = UniIOTX.at("0x236f8c0a61dA474dB21B693fB2ea7AAB0c803894")
+    uni_iotx = UniIOTX.at("0x236f8c0a61dA474dB21B693fB2ea7AAB0c803894")
     iotx_staking = IOTXStaking.at("0x2c914Ba874D94090Ba0E6F56790bb8Eb6D4C7e5f")
 
     # Account
@@ -31,7 +31,8 @@ def main():
 
     # Concurrent redeeming
     def redeem(address):
-        while unit_iotx.balanceOf(address) * iotx_staking.exchangeRatio() / 1e18 >= amt_base:
+        while uni_iotx.balanceOf(address) * iotx_staking.exchangeRatio() / 1e18 >= amt_base:
+            uni_iotx.approve(iotx_staking, amt_base, {'from': address, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
             tx = iotx_staking.redeem(amt_base, deadline, {'from': address, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
             assert "Redeemed" in tx.events
 
