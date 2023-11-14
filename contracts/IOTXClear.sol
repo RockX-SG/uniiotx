@@ -239,7 +239,7 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * @return The reward rate, which is accumulated and shared among users.
      */
     function getRewardRate() external view returns (uint) {
-        return rewardRate;
+        return rewardRate + _calcIncrRewardRate();
     }
 
     /**
