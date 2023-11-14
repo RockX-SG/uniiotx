@@ -577,11 +577,21 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      */
     function _updateSharedReward() internal {
         if (address(this).balance > accountedBalance && totalDebts > 0) {
-            uint incrReward = address(this).balance - accountedBalance;
+            // Sync shared pending rewards and update the global rewardRate
             // Note: The accuracy loss occurs in the calculation result for division rounds towards zero.
             // This means that uint(5) / uint(2) == uint(2).
-            rewardRate += incrReward * MULTIPLIER / totalDebts;
-            accountedBalance = address(this).balance;
+            uint incrReward = address(this).balance - accountedBalance;
+            uint incrRewardRate = incrReward * MULTIPLIER / totalDebts;
+
+            uint accountedReward;
+            if (incrRewardRate > 0) {
+                rewardRate += incrRewardRate;
+                accountedReward = incrRewardRate * totalDebts / MULTIPLIER;
+            }
+
+            // Update the accountedBalance, considering the aforementioned accuracy loss
+            // to ensure that piecemeal rewards do not accumulate over time into a significant amount.
+            accountedBalance = accountedBalance + accountedReward;
         }
     }
 
