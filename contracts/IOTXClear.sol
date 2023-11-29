@@ -428,6 +428,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * The rewards will be subtracted first, followed by the principal.
      */
     function claim(uint amount, address recipient) external nonReentrant whenNotPaused {
+        require(amount > 0, "USR010");
+
         // Update reward
         _updateUserReward(msg.sender);
 
@@ -452,6 +454,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * @dev This function allows users to claim their principals to the specified recipient.
      */
     function claimPrincipals(uint amount, address recipient) external nonReentrant whenNotPaused {
+        require(amount > 0, "USR010");
+
         // Check principal
         UserInfo storage info = userInfos[msg.sender];
         require(info.principal >= amount, "USR004");  // Insufficient accounted principal
@@ -468,6 +472,8 @@ contract IOTXClear is IIOTXClear, Initializable, PausableUpgradeable, AccessCont
      * @dev This function allows users to claim their rewards to the specified recipient.
      */
     function claimRewards(uint amount, address recipient) external nonReentrant whenNotPaused {
+        require(amount > 0, "USR010");
+
          // Update reward
         _updateUserReward(msg.sender);
 
