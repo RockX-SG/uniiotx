@@ -6,11 +6,9 @@ from web3 import Web3
 # Executing the following scripts will:
 # 1. Grant the Company's Admin account the roles of ROLE_PAUSER, ROLE_FEE_MANAGER, and DEFAULT_ADMIN_ROLE,
 #   while simultaneously revoking these permissions from the Personal Admin account.
-# 2. Assign the ROLE_ORACLE to the Company's Oracle account, concurrently renouncing this permission from
-#   the Personal Oracle account.
 
-# The Personal Admin and Oracle accounts are temporarily used for contract deployment and initialization.
-# Subsequently, the Company Admin and Oracle accounts are utilized during the production phase.
+# The Personal Admin is temporarily used for contract deployment and initialization.
+# Subsequently, the Company Admin account is utilized during the production phase.
 
 
 def main():
