@@ -36,59 +36,62 @@ def main():
     # Company Admin account, which will take over the aforementioned contracts
     company_admin = "0xE20aC9B2889EF2e4d9B6A4678e9be8d6048861B8"
 
+    gas_limit = '6721975'
+    gas_price = '1000000000000'
+
     # -------------------- UniIOTX --------------------
     # Permission transferred: DEFAULT_ADMIN_ROLE (Personal Admin --> Company Admin)
     if not uni_iotx.hasRole(role_default_admin, company_admin):
-        uni_iotx.grantRole(role_default_admin, company_admin, {'from': personal_admin})
+        uni_iotx.grantRole(role_default_admin, company_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert uni_iotx.hasRole(role_default_admin, company_admin)
 
     if uni_iotx.hasRole(role_default_admin, personal_admin):
-        uni_iotx.renounceRole(role_default_admin, personal_admin, {'from': personal_admin})
+        uni_iotx.renounceRole(role_default_admin, personal_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert not uni_iotx.hasRole(role_default_admin, personal_admin)
 
     # -------------------- IOTXClear --------------------
     # Permission transferred:: ROLE_PAUSER (Personal Admin --> Company Admin)
     if not iotx_clear.hasRole(role_pauser, company_admin):
-        iotx_clear.grantRole(role_pauser, company_admin, {'from': personal_admin})
+        iotx_clear.grantRole(role_pauser, company_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert iotx_clear.hasRole(role_pauser, company_admin)
 
     if iotx_clear.hasRole(role_pauser, personal_admin):
-        iotx_clear.renounceRole(role_pauser, personal_admin, {'from': personal_admin})
+        iotx_clear.renounceRole(role_pauser, personal_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert not iotx_clear.hasRole(role_pauser, personal_admin)
 
     # Permission transferred:: DEFAULT_ADMIN_ROLE (Personal Admin --> Company Admin)
     if not iotx_clear.hasRole(role_default_admin, company_admin):
-        iotx_clear.grantRole(role_default_admin, company_admin, {'from': personal_admin})
+        iotx_clear.grantRole(role_default_admin, company_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert iotx_clear.hasRole(role_default_admin, company_admin)
 
     if iotx_clear.hasRole(role_default_admin, personal_admin):
-        iotx_clear.renounceRole(role_default_admin, personal_admin, {'from': personal_admin})
+        iotx_clear.renounceRole(role_default_admin, personal_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert not iotx_clear.hasRole(role_default_admin, personal_admin)
 
     # -------------------- IOTXStaking --------------------
     # Permission transferred:: ROLE_FEE_MANAGER (Personal Admin --> Company Admin)
     if not iotx_staking.hasRole(role_fee_manager, company_admin):
-        iotx_staking.grantRole(role_fee_manager, company_admin, {'from': personal_admin})
+        iotx_staking.grantRole(role_fee_manager, company_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert iotx_staking.hasRole(role_fee_manager, company_admin)
 
     if iotx_staking.hasRole(role_fee_manager, personal_admin):
-        iotx_staking.renounceRole(role_fee_manager, personal_admin, {'from': personal_admin})
+        iotx_staking.renounceRole(role_fee_manager, personal_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert not iotx_staking.hasRole(role_fee_manager, personal_admin)
 
     # Permission transferred:: ROLE_PAUSER (Personal Admin --> Company Admin)
     if not iotx_staking.hasRole(role_pauser, company_admin):
-        iotx_staking.grantRole(role_pauser, company_admin, {'from': personal_admin})
+        iotx_staking.grantRole(role_pauser, company_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert iotx_staking.hasRole(role_pauser, company_admin)
 
     if iotx_staking.hasRole(role_pauser, personal_admin):
-        iotx_staking.renounceRole(role_pauser, personal_admin, {'from': personal_admin})
+        iotx_staking.renounceRole(role_pauser, personal_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert not iotx_staking.hasRole(role_pauser, personal_admin)
 
     # Permission transferred:: DEFAULT_ADMIN_ROLE (Personal Admin --> Company Admin)
     if not iotx_staking.hasRole(role_default_admin, company_admin):
-        iotx_staking.grantRole(role_default_admin, company_admin, {'from': personal_admin})
+        iotx_staking.grantRole(role_default_admin, company_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert iotx_staking.hasRole(role_default_admin, company_admin)
 
     if iotx_staking.hasRole(role_default_admin, personal_admin):
-        iotx_staking.renounceRole(role_default_admin, personal_admin, {'from': personal_admin})
+        iotx_staking.renounceRole(role_default_admin, personal_admin, {'from': personal_admin, 'gas_limit': gas_limit, 'gas_price': gas_price, 'allow_revert': True})
     assert not iotx_staking.hasRole(role_default_admin, personal_admin)
