@@ -1,7 +1,7 @@
 from brownie import accounts, project, config
 from pathlib import Path
 
-# The command to run this script: `brownie run scripts/authorize/mainnet_proxy_admin.py  --network=iotex-mainne`
+# The command to run this script: `brownie run scripts/authorize/mainnet_proxy_admin.py  --network=iotex-mainnet`
 
 # Executing the following scripts will:
 # 1. Change the admins of UniIOTX, IOTXClear, IOTXStaking transparent proxies to the given ProxyAdmin contract.
