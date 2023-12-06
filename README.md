@@ -169,6 +169,7 @@ The addresses of the contracts deployed on the IoTeX Testnet and Mainnet are as 
 - [UniIOTX](https://iotexscan.io/address/0x236f8c0a61dA474dB21B693fB2ea7AAB0c803894#transactions): 0x236f8c0a61dA474dB21B693fB2ea7AAB0c803894
 - [IOTXClear](https://iotexscan.io/address/0x7AD800771743F4e29f55235A55895273035FB546#transactions): 0x7AD800771743F4e29f55235A55895273035FB546
 - [IOTXStaking](https://iotexscan.io/address/0x2c914Ba874D94090Ba0E6F56790bb8Eb6D4C7e5f#transactions): 0x2c914Ba874D94090Ba0E6F56790bb8Eb6D4C7e5f
+- [ProxyAdmin](https://iotexscan.io/address/0xb1e2a647A668F349b2D204E6058F41cbD8c6B9B6#transactions): 0xb1e2a647A668F349b2D204E6058F41cbD8c6B9B6
 
 ### Error Codes from Contracts
 1. SYS001: INACTIVE_BUCKET_TYPE
