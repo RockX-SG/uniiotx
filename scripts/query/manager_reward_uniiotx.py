@@ -6,4 +6,4 @@ def main():
     iotx_staking = IOTXStaking.at("0x2c914Ba874D94090Ba0E6F56790bb8Eb6D4C7e5f")
     reward = iotx_staking.getManagerReward()
     exchangeRatio = iotx_staking.exchangeRatio()
-    print("Manager rewards (uniIOTX):", reward * exchangeRatio / 1e18)
+    print("Manager rewards (uniIOTX):", reward * 1e18 / exchangeRatio)
